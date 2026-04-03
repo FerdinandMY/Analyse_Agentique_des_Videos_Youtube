@@ -14,6 +14,9 @@ setup(
         "python-dotenv>=1.0.0",
         "pydantic>=2.0.0",
         "tqdm>=4.66.0",
+        "langgraph",
+        "langchain-core",
+        "langchain-openai",
     ],
     python_requires=">=3.10",
 )

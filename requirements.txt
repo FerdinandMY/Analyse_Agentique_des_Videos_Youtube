@@ -6,6 +6,11 @@ python-dotenv>=1.0.0
 pydantic>=2.0.0
 tqdm>=4.66.0
 
+# LangGraph / LangChain
+langgraph
+langchain-core
+langchain-openai
+
 # Linting / dev (optional)
 # ruff>=0.6.0
 # mypy>=1.10.0
