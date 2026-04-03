@@ -13,6 +13,7 @@ from core.scoring.quality_levels import QualityLevel
 from core.scoring.scorer import Scorer
 from core.config import Config
 from utils.youtube_api import YouTubeAPI
+from utils.language_detector import detect_language
 from utils.text_cleaner import normalize_text
 
 
@@ -150,18 +151,63 @@ def collector_node(state: PipelineState, config: Config) -> dict[str, Any]:
     return updates
 
 
-def preprocessor_node(state: PipelineState) -> dict[str, Any]:
+def preprocessor_node(state: PipelineState, config: Config) -> dict[str, Any]:
+    """
+    Preprocess node (domain logic):
+    - normalize text (via `normalize_text`)
+    - filter too short/empty comments
+    - deduplicate by exact normalized text
+    - optionally attach a `language` field (best-effort, default fallback)
+
+    This node remains deterministic and “state-first”:
+    it only returns updates for `cleaned_comments` (and does not mutate the state directly).
+    """
+    # Small constants to keep prompts bounded and reduce LLM noise.
+    MIN_COMMENT_CHARS = 3
+    MAX_COMMENT_CHARS = 2000
+
+    # Keep track of normalized texts to remove exact duplicates.
+    seen_normalized: set[str] = set()
+
     cleaned: list[Any] = []
     for item in state.get("raw_comments", []) or []:
         text = _as_comment_text(item)
-        norm = normalize_text(text) if text is not None else None
+        if text is None:
+            # Skip items that do not have any usable text.
+            continue
+
+        # Apply normalization early so filtering/dedup are consistent.
+        norm = normalize_text(text)
+        if norm is None:
+            continue
+
+        # Filter: empty/too short comments and overly long comments.
+        # (We cap length to limit context expansion in later nodes.)
+        if len(norm) < MIN_COMMENT_CHARS:
+            continue
+        if len(norm) > MAX_COMMENT_CHARS:
+            norm = norm[:MAX_COMMENT_CHARS]
+
+        # Deduplicate by exact normalized text.
+        if norm in seen_normalized:
+            continue
+        seen_normalized.add(norm)
+
+        # Preserve metadata when raw comment is a dict (YouTube collector returns dicts).
         if isinstance(item, dict):
             next_item = dict(item)
-            if norm is not None:
-                next_item["cleaned_text"] = norm
-            cleaned.append(next_item)
+            next_item["cleaned_text"] = norm
+            # Ensure `text` exists even if source used another key (best-effort).
+            next_item.setdefault("text", text)
         else:
-            cleaned.append({"text": text, "cleaned_text": norm})
+            next_item = {"text": text, "cleaned_text": norm}
+
+        # Best-effort language detection:
+        # - if `langdetect` is not installed, `detect_language` returns `config.default_language`.
+        next_item["language"] = detect_language(text, default=config.default_language)
+
+        cleaned.append(next_item)
+
     return {"cleaned_comments": cleaned}
 
 
@@ -346,7 +392,7 @@ def build_langgraph_app(*, config: Optional[Config] = None, checkpointer: Any) -
 
     # Collector / preprocessor are synchronous and deterministic.
     builder.add_node("collector", lambda state: collector_node(state, resolved_config))
-    builder.add_node("preprocessor", preprocessor_node)
+    builder.add_node("preprocessor", lambda state: preprocessor_node(state, resolved_config))
 
     # LLM nodes: we wrap to inject Config.
     builder.add_node(
