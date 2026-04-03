@@ -34,6 +34,27 @@ class PipelineState(TypedDict, total=False):
     errors: Annotated[list[str], operator.add]
 
 
+def _load_prompt(path: str, fallback: str) -> str:
+    """
+    Load a prompt template from a text file.
+
+    If the file is missing or empty, fall back to the provided default string.
+
+    The prompt can optionally contain the placeholders:
+    - {{context}}             -> will be replaced by comments text
+    - {{format_instructions}} -> will be replaced by parser instructions
+    """
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            content = f.read().strip()
+        if content:
+            return content
+    except FileNotFoundError:
+        # Safe fallback: we use the inline default.
+        pass
+    return fallback
+
+
 def _as_comment_text(item: Any) -> Optional[str]:
     if isinstance(item, str):
         return item
@@ -240,14 +261,18 @@ def sentiment_node(state: PipelineState, config: Config) -> dict[str, Any]:
     format_instructions = parser.get_format_instructions()
     context_text = _build_context_text(state)
 
-    system = (
-        "You are an analyst. Return strictly valid JSON following the schema."
-    )
-    user = (
+    system = "You are an analyst. Return strictly valid JSON following the schema."
+
+    default_user_prompt = (
         "Analyze the overall sentiment expressed by the following comments.\n\n"
-        f"Comments:\n{context_text}\n\n"
+        "Comments:\n{{context}}\n\n"
         "Return sentiment_label and sentiment_score.\n"
-        f"{format_instructions}"
+        "{{format_instructions}}"
+    )
+    template = _load_prompt("src/prompts/sentiment_v1.txt", default_user_prompt)
+    user = (
+        template.replace("{{context}}", context_text)
+        .replace("{{format_instructions}}", format_instructions)
     )
 
     try:
@@ -274,11 +299,17 @@ def discourse_node(state: PipelineState, config: Config) -> dict[str, Any]:
     context_text = _build_context_text(state)
 
     system = "You are an analyst. Return strictly valid JSON following the schema."
-    user = (
+
+    default_user_prompt = (
         "Classify the dominant discourse intent in the following comments.\n\n"
-        f"Comments:\n{context_text}\n\n"
+        "Comments:\n{{context}}\n\n"
         "Return discourse_label and discourse_score.\n"
-        f"{format_instructions}"
+        "{{format_instructions}}"
+    )
+    template = _load_prompt("src/prompts/discourse_v1.txt", default_user_prompt)
+    user = (
+        template.replace("{{context}}", context_text)
+        .replace("{{format_instructions}}", format_instructions)
     )
 
     try:
@@ -305,11 +336,17 @@ def noise_node(state: PipelineState, config: Config) -> dict[str, Any]:
     context_text = _build_context_text(state)
 
     system = "You are an analyst. Return strictly valid JSON following the schema."
-    user = (
+
+    default_user_prompt = (
         "Estimate how noisy/unclear the following comments are.\n\n"
-        f"Comments:\n{context_text}\n\n"
+        "Comments:\n{{context}}\n\n"
         "Return noise_level (0-1) and noise_label (low/medium/high).\n"
-        f"{format_instructions}"
+        "{{format_instructions}}"
+    )
+    template = _load_prompt("src/prompts/noise_detection_v1.txt", default_user_prompt)
+    user = (
+        template.replace("{{context}}", context_text)
+        .replace("{{format_instructions}}", format_instructions)
     )
 
     try:
