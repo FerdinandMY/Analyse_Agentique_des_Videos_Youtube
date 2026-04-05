@@ -1,0 +1,24 @@
+A user is researching the following topic and wants to know if this YouTube video is relevant:
+
+Topic: "{{topic}}"
+
+The following comments were selected from the video's comment section based on their high discourse quality.
+They represent the most informative viewer reactions to the video content.
+
+High-quality comments:
+{{high_quality_comments}}
+
+Your task:
+1. Evaluate how well the video content (as inferred from these comments) aligns with the user's topic.
+2. Consider: Do the comments discuss concepts, terminology, or ideas related to "{{topic}}"?
+3. Consider: Would a person researching "{{topic}}" find this video useful or relevant?
+
+Produce:
+- pertinence_score: float [0.0, 1.0]
+    0.0 = completely unrelated to the topic
+    0.5 = partially related (some overlap)
+    1.0 = highly relevant, directly addresses the topic
+- verdict: a personalised 1–2 sentence explanation in the same language as the topic,
+    explaining why this video is or is not relevant for someone researching "{{topic}}".
+
+{{format_instructions}}

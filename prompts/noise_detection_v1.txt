@@ -1,0 +1,21 @@
+Analyse the following YouTube comments and classify the noise level across 5 categories.
+Noise reduces the reliability of comments as quality signals.
+
+Comments:
+{{context}}
+
+Estimate the proportion of comments (as a fraction 0.0–1.0 of the total) in each noise category:
+
+- spam_ratio:      Promotional messages, repetitive copy-paste, affiliate links, self-promotion.
+- offtopic_ratio:  Comments completely unrelated to the video content.
+- reaction_ratio:  Empty reactions: single words ("lol", "first!", "omg"), emojis only, reactions with no content.
+- toxic_ratio:     Hateful, offensive, discriminatory, or abusive language.
+- bot_ratio:       Suspected bot-generated patterns: generic praise templates, unusual repetition.
+
+Also provide:
+- noise_ratio:  Your overall estimate of the fraction of noisy comments [0.0, 1.0].
+                A value of 0.0 means all comments are genuine and informative.
+                A value of 1.0 means all comments are noise.
+- rationale:    One sentence describing the dominant noise pattern observed.
+
+{{format_instructions}}

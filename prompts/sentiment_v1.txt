@@ -1,0 +1,18 @@
+Analyse the overall sentiment expressed by the following YouTube comments.
+Comments represent the collective viewer reaction to a video.
+
+Comments:
+{{context}}
+
+Instructions:
+- Consider the overall emotional tone, not individual outliers.
+- Positive: majority of comments express appreciation, learning, enjoyment.
+- Negative: majority express disappointment, frustration, or criticism.
+- Neutral: mixed or factual comments with no strong emotional signal.
+
+Produce:
+- sentiment_label: one of "positive", "neutral", "negative"
+- sentiment_score: float [0.0, 1.0]  (0.0 = very negative, 0.5 = neutral, 1.0 = very positive)
+- rationale: one sentence explaining your decision
+
+{{format_instructions}}

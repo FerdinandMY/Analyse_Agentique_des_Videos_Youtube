@@ -1,0 +1,20 @@
+Based on the multi-agent analysis of YouTube comments, write a 2–3 sentence summary
+explaining the overall quality of the video as reflected by its comment section.
+
+Analysis scores (0–100):
+- Sentiment score:  {{sentiment_score}}   (viewer emotional response — higher is more positive)
+- Discourse score:  {{discourse_score}}   (depth and quality of discussion — higher is more substantive)
+- Noise score:      {{noise_score}}       (signal clarity — higher means less noise)
+- Global score:     {{score_global}}      (weighted composite: 0.35×S + 0.40×D + 0.25×N)
+
+Agent rationales:
+- Sentiment:  {{sentiment_rationale}}
+- Discourse:  {{discourse_rationale}}
+- Noise:      {{noise_rationale}}
+
+Write a concise, factual summary (2–3 sentences) that:
+1. States the overall quality signal from the comments.
+2. Highlights the dominant pattern (e.g. rich discussion, mostly noise, polarised reactions).
+3. Gives a clear recommendation: whether the video appears worth watching based on comment evidence.
+
+Summary:

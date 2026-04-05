@@ -1,0 +1,26 @@
+Evaluate the quality of discourse in the following YouTube comments across three dimensions.
+High discourse quality indicates the video likely contains substantive, valuable content.
+
+Comments:
+{{context}}
+
+Score each dimension from 0.0 (very poor) to 1.0 (excellent):
+
+- informativeness:   Do the comments add knowledge, facts, or context about the video topic?
+                     High = comments reference specific concepts, share insights, cite examples.
+                     Low  = vague praise or empty reactions.
+
+- argumentation:     Are claims in comments supported by reasoning or evidence?
+                     High = "this explanation of X is wrong because Y"
+                     Low  = "great video!" or "this sucks"
+
+- constructiveness:  Is the overall tone constructive rather than purely reactive or emotional?
+                     High = viewers engage with the content meaningfully.
+                     Low  = flame wars, off-topic rants, emotional outbursts.
+
+Also provide:
+- high_quality_indices: list of 0-based comment indices where the average dimension score would be >= 0.7
+  (These are the comments used by A7 Topic Matcher for relevance evaluation.)
+- rationale: one sentence summary of the overall discourse quality
+
+{{format_instructions}}
