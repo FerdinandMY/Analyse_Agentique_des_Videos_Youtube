@@ -59,7 +59,7 @@ random.seed(SEED)
 np.random.seed(SEED)
 
 # ── Chemins par défaut ────────────────────────────────────────────────────────
-DEFAULT_CSV    = "data/raw/comments.csv"
+DEFAULT_CSV    = "data/raw/comments_raw.csv"
 GOLD_OUTPUT    = "data/gold_standard/annotated_videos.csv"
 KAPPA_REPORT   = "data/gold_standard/kappa_report.json"
 GIT_TAG        = "v0.1.0"
@@ -443,7 +443,28 @@ def main() -> None:
         sys.exit(1)
 
     df_raw = pd.read_csv(args.csv)
-    df_raw["text"] = df_raw["text"].astype(str).str.strip()
+
+    # Renommage des colonnes (même logique que A1 Loader)
+    _ALIASES = {
+        "texte_commentaire": "text", "comment_text": "text", "body": "text",
+        "nb_likes_commentaire": "author_likes", "likes": "author_likes",
+        "nb_reponses": "reply_count", "replies": "reply_count",
+        "commentaire_id": "comment_id", "publie_le": "published_at",
+    }
+    rename_map = {col: _ALIASES[col] for col in df_raw.columns if col in _ALIASES}
+    if rename_map:
+        df_raw = df_raw.rename(columns=rename_map)
+        _log(f"Colonnes renommées : {rename_map}")
+
+    if "text" not in df_raw.columns:
+        _log(f"ERREUR : colonne 'text' introuvable. Colonnes présentes : {list(df_raw.columns)}")
+        sys.exit(1)
+
+    # Décodage HTML (&#39; → ', <br> → espace)
+    import html as html_lib
+    df_raw["text"] = df_raw["text"].astype(str).apply(
+        lambda t: re.sub(r"<[^>]+>", " ", html_lib.unescape(t)).strip()
+    )
     df_raw = df_raw[df_raw["text"].str.len() > 0]
     _log(f"Corpus chargé : {len(df_raw)} commentaires")
 

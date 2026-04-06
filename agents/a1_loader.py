@@ -25,6 +25,29 @@ logger = get_logger("a1_loader")
 REQUIRED_COLUMNS = {"text"}
 OPTIONAL_COLUMNS = {"video_id", "author_likes", "reply_count"}
 
+# Mapping des noms de colonnes alternatifs → nom canonique attendu par le pipeline
+COLUMN_ALIASES: dict[str, str] = {
+    # Texte du commentaire
+    "texte_commentaire": "text",
+    "comment_text": "text",
+    "body": "text",
+    "content": "text",
+    # Likes du commentaire
+    "nb_likes_commentaire": "author_likes",
+    "likes": "author_likes",
+    "like_count": "author_likes",
+    # Réponses
+    "nb_reponses": "reply_count",
+    "replies": "reply_count",
+    "reply_count": "reply_count",
+    # ID commentaire (ignoré par le pipeline mais conservé)
+    "commentaire_id": "comment_id",
+    # Date (ignorée par le pipeline mais conservée)
+    "publie_le": "published_at",
+    "published_at": "published_at",
+    "date": "published_at",
+}
+
 
 def a1_loader(state: PipelineState) -> dict[str, Any]:
     """
@@ -49,6 +72,12 @@ def a1_loader(state: PipelineState) -> dict[str, Any]:
         df = pd.read_csv(csv_path)
     except Exception as exc:
         return {"errors": [f"a1_loader: failed to read CSV — {exc}"]}
+
+    # Apply column aliases before validation
+    rename_map = {col: COLUMN_ALIASES[col] for col in df.columns if col in COLUMN_ALIASES}
+    if rename_map:
+        logger.info("a1_loader: renaming columns %s", rename_map)
+        df = df.rename(columns=rename_map)
 
     # Validate required columns
     missing = REQUIRED_COLUMNS - set(df.columns)
