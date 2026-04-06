@@ -1,18 +1,37 @@
 Analyse the overall sentiment expressed by the following YouTube comments.
 Comments represent the collective viewer reaction to a video.
 
+Tool measurements (ground your reasoning on these facts):
+- VADER sentiment: {{vader_result}}
+- Sarcasm detection: {{sarcasm_result}}
+
 Comments:
 {{context}}
 
-Instructions:
-- Consider the overall emotional tone, not individual outliers.
-- Positive: majority of comments express appreciation, learning, enjoyment.
-- Negative: majority express disappointment, frustration, or criticism.
-- Neutral: mixed or factual comments with no strong emotional signal.
+Use the ReAct pattern — think before concluding:
 
-Produce:
-- sentiment_label: one of "positive", "neutral", "negative"
-- sentiment_score: float [0.0, 1.0]  (0.0 = very negative, 0.5 = neutral, 1.0 = very positive)
-- rationale: one sentence explaining your decision
+Thought 1: What does the VADER score indicate about the baseline sentiment?
+Action: vader_sentiment was already called — result above.
 
-{{format_instructions}}
+Thought 2: Are there sarcasm markers? If yes, should the apparent sentiment be inverted?
+Action: detect_sarcasm_markers was already called — result above.
+
+Thought 3: What is the overall emotional tone considering VADER + sarcasm correction?
+Consider: positive = appreciation/learning/enjoyment, negative = disappointment/frustration/criticism.
+
+Observation: [your synthesis of Thought 1-3]
+
+Result: Produce the final classification.
+
+Return strictly valid JSON:
+{
+  "reasoning": "your Thought 1→2→3 chain in one paragraph",
+  "sentiment_label": "positive|neutral|negative",
+  "sentiment_score": <float 0.0-1.0>,
+  "confidence": <float 0.0-1.0>,
+  "sarcasm_detected": <bool>,
+  "rationale": "one sentence explaining the final decision"
+}
+
+JSON only. Base your decision ONLY on the comments and tool results provided above.
+Temperature: 0.1 — do not guess, do not invent.

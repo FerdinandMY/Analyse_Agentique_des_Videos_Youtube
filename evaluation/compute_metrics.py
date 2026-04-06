@@ -53,6 +53,38 @@ def rmse(y_true: list[float], y_pred: list[float]) -> float:
     return round(math.sqrt(sum((t - p) ** 2 for t, p in zip(y_true, y_pred)) / len(y_true)), 4)
 
 
+def spearman_r(x: list[float], y: list[float]) -> float:
+    """Coefficient de corrélation de Spearman (basé sur les rangs)."""
+    n = len(x)
+    if n < 2:
+        return 0.0
+
+    def _ranks(lst):
+        sorted_idx = sorted(range(n), key=lambda i: lst[i])
+        r = [0.0] * n
+        i = 0
+        while i < n:
+            j = i
+            while j < n - 1 and lst[sorted_idx[j + 1]] == lst[sorted_idx[i]]:
+                j += 1
+            avg_rank = (i + j) / 2 + 1
+            for k in range(i, j + 1):
+                r[sorted_idx[k]] = avg_rank
+            i = j + 1
+        return r
+
+    rx, ry = _ranks(x), _ranks(y)
+    return pearson_r(rx, ry)
+
+
+def fallback_rate(pred_conditions: list[str], fallback_marker: str = "fallback") -> float:
+    """Taux d'appels LLM ayant nécessité le fallback heuristique."""
+    if not pred_conditions:
+        return 0.0
+    n_fallback = sum(1 for c in pred_conditions if fallback_marker in c)
+    return round(n_fallback / len(pred_conditions), 4)
+
+
 # ── Métriques de classification ───────────────────────────────────────────────
 
 def confusion_matrix(y_true: list[str], y_pred: list[str]) -> dict:
@@ -155,17 +187,31 @@ def compute_all_metrics(gold: pd.DataFrame, preds: pd.DataFrame) -> dict:
 
     report: dict = {"n_evaluated": n}
 
-    # ── H1 : Corrélation Pearson (Score_Global vs gold_score) ────────────────
+    # ── H1 : Corrélation Pearson + Spearman (Score_Global vs gold_score) ───────
     if "gold_score" in merged.columns and "score_global" in merged.columns:
-        r = pearson_r(merged["gold_score"].tolist(), merged["score_global"].tolist())
-        report["pearson_r"]        = r
-        report["h1_satisfied"]     = r >= 0.60
-        report["mae_score_global"] = mae(merged["gold_score"].tolist(), merged["score_global"].tolist())
-        report["rmse_score_global"]= rmse(merged["gold_score"].tolist(), merged["score_global"].tolist())
+        gs = merged["gold_score"].tolist()
+        sg = merged["score_global"].tolist()
+        r   = pearson_r(gs, sg)
+        rho = spearman_r(gs, sg)
+        report["pearson_r"]         = r
+        report["spearman_r"]        = rho
+        report["h1_satisfied"]      = r >= 0.60
+        report["h1_spearman_ok"]    = rho >= 0.55
+        report["mae_score_global"]  = mae(gs, sg)
+        report["rmse_score_global"] = rmse(gs, sg)
         print(f"\n── H1 : Corrélation Score_Global vs Gold ──")
-        print(f"  Pearson r = {r:.4f}  {'✓ H1 validée (r ≥ 0.60)' if r >= 0.60 else '✗ H1 non validée (r < 0.60)'}")
-        print(f"  MAE       = {report['mae_score_global']:.2f}")
-        print(f"  RMSE      = {report['rmse_score_global']:.2f}")
+        print(f"  Pearson r  = {r:.4f}  {'H1 validee (r >= 0.60)' if r >= 0.60 else 'H1 non validee (r < 0.60)'}")
+        print(f"  Spearman r = {rho:.4f}  {'ok (>= 0.55)' if rho >= 0.55 else 'ko (< 0.55)'}")
+        print(f"  MAE        = {report['mae_score_global']:.2f}")
+        print(f"  RMSE       = {report['rmse_score_global']:.2f}")
+
+    # ── Taux de fallback ──────────────────────────────────────────────────────
+    if "condition" in merged.columns:
+        rate = fallback_rate(merged["condition"].tolist())
+        report["fallback_rate"]    = rate
+        report["fallback_rate_ok"] = rate < 0.05
+        print(f"\n── Taux de fallback ──")
+        print(f"  {rate:.1%}  {'ok (< 5%)' if rate < 0.05 else 'KO (>= 5%)'}")
 
     # ── Sentiment classification ──────────────────────────────────────────────
     gold_sent_col = "sentiment_label_gold" if "sentiment_label_gold" in merged.columns else "sentiment_label"

@@ -1,0 +1,53 @@
+The discourse score for these YouTube comments is in the ambiguous zone [0.35–0.65].
+Use Tree of Thought to re-evaluate from three independent angles.
+
+Tool measurements:
+- Text stats: {{text_stats}}
+- Argumentative markers: {{arg_markers}}
+
+Comments:
+{{context}}
+
+Explore exactly 3 branches:
+
+=== Branch 1 — Content Depth ===
+Focus: Do commenters discuss the video's content in depth, or just react superficially?
+Evidence from text_stats and markers: [your analysis]
+Branch 1 score (informativeness + argumentation): <float 0.0-1.0>
+Branch 1 rationale: [one sentence]
+
+=== Branch 2 — Discussion Quality ===
+Focus: Is there back-and-forth, nuanced discussion, or are comments isolated one-liners?
+Evidence: presence of contrast/nuance markers, question_count, unique_word_ratio
+Branch 2 score (constructiveness + argumentation): <float 0.0-1.0>
+Branch 2 rationale: [one sentence]
+
+=== Branch 3 — Epistemic Value ===
+Focus: Do the comments provide information that a viewer would find useful before watching?
+Evidence: avg_word_length, informativeness markers, presence of facts/recommendations
+Branch 3 score (informativeness + constructiveness): <float 0.0-1.0>
+Branch 3 rationale: [one sentence]
+
+=== Synthesis ===
+Select the branch with the highest score as the primary signal.
+Average the three branch scores for the final discourse_score.
+
+Return strictly valid JSON:
+{
+  "tot_used": true,
+  "reasoning": "brief summary of the three-branch reasoning",
+  "tot_branches": {
+    "branch_1": {"name": "Content Depth", "score": <float>, "rationale": "..."},
+    "branch_2": {"name": "Discussion Quality", "score": <float>, "rationale": "..."},
+    "branch_3": {"name": "Epistemic Value", "score": <float>, "rationale": "..."}
+  },
+  "best_branch": "branch_1|branch_2|branch_3",
+  "informativeness": <float 0.0-1.0>,
+  "argumentation": <float 0.0-1.0>,
+  "constructiveness": <float 0.0-1.0>,
+  "discourse_score": <float 0.0-1.0>,
+  "high_quality_indices": [<int>, ...],
+  "rationale": "one sentence final summary"
+}
+
+JSON only. Ground every score in the provided tool measurements and comments.

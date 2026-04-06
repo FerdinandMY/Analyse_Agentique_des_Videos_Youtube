@@ -1,0 +1,44 @@
+Evaluate the quality of discourse in the following YouTube comments.
+
+Tool measurements provided:
+- Text stats: {{text_stats}}
+- Argumentative markers: {{arg_markers}}
+
+Comments:
+{{context}}
+
+Think step by step before scoring:
+
+Thought 1 — Informativeness:
+Look at word_count, unique_word_ratio, and avg_word_length from the text stats.
+Do the comments add knowledge, facts, or useful context about the video topic?
+Preliminary informativeness score: [your estimate 0.0–1.0]
+
+Thought 2 — Argumentation:
+Look at the argumentative markers found (causality, contrast, examples, conclusions).
+Are claims supported by reasoning or evidence? Is the discussion structured?
+Preliminary argumentation score: [your estimate 0.0–1.0]
+
+Thought 3 — Constructiveness:
+Is the overall tone constructive and respectful rather than purely reactive or emotional?
+Consider sentence_count and question_count as signals of engagement.
+Preliminary constructiveness score: [your estimate 0.0–1.0]
+
+Thought 4 — High-quality comments:
+Which comment indices (0-based, max index 29) have an average dimension score >= 0.7?
+List only the indices with clearly above-average discourse quality.
+
+Result — Synthesise into final scores.
+
+Return strictly valid JSON:
+{
+  "reasoning": "your step-by-step thoughts in one paragraph",
+  "informativeness": <float 0.0-1.0>,
+  "argumentation": <float 0.0-1.0>,
+  "constructiveness": <float 0.0-1.0>,
+  "discourse_score": <float 0.0-1.0>,
+  "high_quality_indices": [<int>, ...],
+  "rationale": "one sentence summary"
+}
+
+JSON only. Do not base any score on information not present in the comments above.
