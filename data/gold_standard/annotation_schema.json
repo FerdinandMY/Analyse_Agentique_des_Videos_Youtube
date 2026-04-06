@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "YouTube Comment Annotation Schema",
+  "description": "Gold standard annotation schema — YouTube Quality Analyzer Phase 2",
+  "type": "object",
+  "required": ["comment_id", "text", "sentiment_label", "quality_score", "annotator"],
+  "properties": {
+    "comment_id":      {"type": "string", "description": "Unique comment identifier"},
+    "video_id":        {"type": "string", "description": "YouTube video identifier (optional)"},
+    "text":            {"type": "string", "description": "Raw comment text"},
+    "sentiment_label": {
+      "type": "string",
+      "enum": ["positive", "neutral", "negative"],
+      "description": "Overall sentiment of the comment"
+    },
+    "quality_score": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5,
+      "description": "Perceived quality contribution: 1=bruit pur, 3=neutre, 5=très informatif"
+    },
+    "noise_category": {
+      "type": "string",
+      "enum": ["spam", "offtopic", "reaction_vide", "toxique", "bot", "ok"],
+      "description": "Primary noise category (A5)"
+    },
+    "annotator": {
+      "type": "string",
+      "description": "Annotator identifier (human_1, human_2, llm_pass_1, llm_pass_2)"
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "description": "Annotator confidence in the label"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Free-text annotation notes"
+    }
+  }
+}
