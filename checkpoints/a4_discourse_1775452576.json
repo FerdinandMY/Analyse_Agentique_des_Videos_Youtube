@@ -1,0 +1,14 @@
+{
+  "agent": "a4_discourse",
+  "pipeline_id": "1775452576",
+  "data": {
+    "informativeness": 70.0,
+    "argumentation": 60.0,
+    "constructiveness": 80.0,
+    "discourse_score": 70.0,
+    "high_quality_indices": [
+      0
+    ],
+    "rationale": "Good discourse"
+  }
+}

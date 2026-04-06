@@ -1,0 +1,12 @@
+{
+  "agent": "a4_discourse",
+  "pipeline_id": "1775452363",
+  "data": {
+    "informativeness": 50.0,
+    "argumentation": 50.0,
+    "constructiveness": 50.0,
+    "discourse_score": 50.0,
+    "high_quality_indices": [],
+    "rationale": "Invalid json output: {{invalid\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langchain/errors/OUTPUT_PARSING_FAILURE "
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "agent": "a3_sentiment",
+  "pipeline_id": "1775452363",
+  "data": {
+    "sentiment_label": "neutral",
+    "sentiment_score": 50.0,
+    "rationale": "Invalid json output: not valid json {{\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langchain/errors/OUTPUT_PARSING_FAILURE "
+  }
+}

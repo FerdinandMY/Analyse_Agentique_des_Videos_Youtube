@@ -1,0 +1,9 @@
+{
+  "agent": "a5_noise",
+  "pipeline_id": "1775452363",
+  "data": {
+    "noise_ratio": 30.0,
+    "noise_score": 70.0,
+    "rationale": "Invalid json output: not json\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langchain/errors/OUTPUT_PARSING_FAILURE "
+  }
+}
