@@ -42,6 +42,23 @@ class AnalyzeResponse(BaseModel):
     details: Optional[dict[str, Any]] = None
     comment_count: int
     errors: list[str] = Field(default_factory=list)
+    # ── v3.0 anti-hallucination fields ────────────────────────────────────────
+    hallucination_flags: list[str] = Field(
+        default_factory=list,
+        description="Incohérences inter-champs et flags fallback détectés par le pipeline",
+    )
+    fallback_used: bool = Field(
+        default=False,
+        description="True si au moins un agent a utilisé le fallback heuristique",
+    )
+    sc_consensus: Optional[bool] = Field(
+        default=None,
+        description="Self-Consistency A7 : consensus >= 2/3 atteint",
+    )
+    low_consensus: Optional[bool] = Field(
+        default=None,
+        description="True si le consensus A7 est inférieur à 2/3 (résultat moins fiable)",
+    )
 
 
 class ReportNotFound(BaseModel):

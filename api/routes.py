@@ -70,6 +70,10 @@ def analyze(request: AnalyzeRequest) -> Any:
         details=report.get("details"),
         comment_count=report.get("comment_count") or len(raw_comments),
         errors=report.get("errors") or [],
+        hallucination_flags=report.get("hallucination_flags") or [],
+        fallback_used=bool(report.get("fallback_used", False)),
+        sc_consensus=report.get("sc_consensus"),
+        low_consensus=report.get("low_consensus"),
     )
 
     cache.set(request.video_id, request.topic, response.model_dump())
