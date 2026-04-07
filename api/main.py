@@ -9,6 +9,13 @@ Interactive docs available at:
 """
 from __future__ import annotations
 
+# Charger .env en tout premier (développement local — NFR-05)
+try:
+    from dotenv import load_dotenv  # type: ignore
+    load_dotenv(override=False)
+except ImportError:
+    pass
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 

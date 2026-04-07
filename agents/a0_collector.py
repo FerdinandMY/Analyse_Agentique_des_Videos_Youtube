@@ -57,9 +57,16 @@ _FALLBACK_CSV = "data/raw/comments_raw.csv"
 def _load_api_key() -> str:
     """
     Ordre de priorité :
-    1. Variable d'environnement YOUTUBE_API_KEY
+    1. Variable d'environnement YOUTUBE_API_KEY (ou .env via python-dotenv)
     2. Kaggle Secrets (si disponible)
     """
+    # Charger .env si présent (développement local)
+    try:
+        from dotenv import load_dotenv  # type: ignore
+        load_dotenv(override=False)     # ne remplace pas les variables déjà définies
+    except ImportError:
+        pass
+
     key = os.environ.get("YOUTUBE_API_KEY", "")
     if key:
         return key
@@ -338,41 +345,45 @@ def a0_collector(state: dict) -> dict[str, Any]:
         try:
             service = _build_service(api_key)
 
+            # Lancement des deux appels en parallèle (FR-75)
+            # On récupère les futures DANS le bloc with pour garder les timeouts actifs
             with ThreadPoolExecutor(max_workers=2) as pool:
                 fut_meta     = pool.submit(_fetch_video_metadata, service, video_id)
                 fut_comments = pool.submit(_fetch_comments,       service, video_id)
 
-            # Métadonnées
-            try:
-                metadata = fut_meta.result(timeout=_API_TIMEOUT)
-                quota_used += 1
-            except ValueError as exc:
-                err = str(exc)
-                logger.error("a0_collector: %s", err)
-                return {"errors": [err], "video_id": video_id}
-            except Exception as exc:
-                logger.warning("a0_collector: metadata error — %s", exc)
-                errors.append(f"metadata_error: {exc}")
-
-            # Commentaires
-            try:
-                comments, q = fut_comments.result(timeout=_API_TIMEOUT * _MAX_PAGES)
-                quota_used += q
-            except ValueError as exc:
-                err = str(exc)
-                if err == "COMMENTS_DISABLED":
-                    logger.error("a0_collector: commentaires désactivés pour %s", video_id)
+                # Métadonnées
+                try:
+                    metadata = fut_meta.result(timeout=_API_TIMEOUT)
+                    quota_used += 1
+                except ValueError as exc:
+                    err = str(exc)
+                    logger.error("a0_collector: %s", err)
+                    pool.shutdown(wait=False, cancel_futures=True)
                     return {"errors": [err], "video_id": video_id}
-                raise
-            except PermissionError:
-                logger.warning("a0_collector: quota dépassé — tentative fallback CSV")
-                source   = "csv_fallback"
-                comments = _load_from_csv_fallback(video_id)
-            except Exception as exc:
-                logger.warning("a0_collector: comments error — %s — fallback CSV", exc)
-                source   = "csv_fallback"
-                comments = _load_from_csv_fallback(video_id)
-                errors.append(f"comments_api_error: {exc}")
+                except Exception as exc:
+                    logger.warning("a0_collector: metadata error — %s", exc)
+                    errors.append(f"metadata_error: {exc}")
+
+                # Commentaires
+                try:
+                    comments, q = fut_comments.result(timeout=_API_TIMEOUT * _MAX_PAGES)
+                    quota_used += q
+                except ValueError as exc:
+                    err = str(exc)
+                    if err == "COMMENTS_DISABLED":
+                        logger.error("a0_collector: commentaires désactivés pour %s", video_id)
+                        pool.shutdown(wait=False, cancel_futures=True)
+                        return {"errors": [err], "video_id": video_id}
+                    raise
+                except PermissionError:
+                    logger.warning("a0_collector: quota dépassé — tentative fallback CSV")
+                    source   = "csv_fallback"
+                    comments = _load_from_csv_fallback(video_id)
+                except Exception as exc:
+                    logger.warning("a0_collector: comments error — %s — fallback CSV", exc)
+                    source   = "csv_fallback"
+                    comments = _load_from_csv_fallback(video_id)
+                    errors.append(f"comments_api_error: {exc}")
 
         except Exception as exc:
             logger.warning("a0_collector: API indisponible — %s — fallback CSV", exc)

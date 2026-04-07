@@ -40,13 +40,17 @@ def _build_openai_llm() -> Any:
         raise RuntimeError("langchain-openai is not installed.") from exc
 
     api_key = os.getenv("OPENAI_API_KEY")
-    base_url = os.getenv("OPENAI_BASE_URL")
-    model = os.getenv("LLM_MODEL", "gpt-4o-mini")
-
-    if not api_key or not base_url:
+    if not api_key:
         return None
 
-    return ChatOpenAI(api_key=api_key, base_url=base_url, model=model, temperature=0)
+    base_url = os.getenv("OPENAI_BASE_URL") or None   # None → endpoint OpenAI officiel
+    model    = os.getenv("LLM_MODEL", "gpt-4o-mini")
+
+    kwargs: dict[str, Any] = {"api_key": api_key, "model": model, "temperature": 0}
+    if base_url:
+        kwargs["base_url"] = base_url
+
+    return ChatOpenAI(**kwargs)
 
 
 class _HuggingFaceLLM:

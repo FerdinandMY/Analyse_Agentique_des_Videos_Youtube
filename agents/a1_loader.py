@@ -25,6 +25,9 @@ logger = get_logger("a1_loader")
 REQUIRED_COLUMNS = {"text"}
 OPTIONAL_COLUMNS = {"video_id", "author_likes", "reply_count"}
 
+# Colonnes extras conservées dans les records si présentes, mais non requises par le pipeline
+EXTRA_COLS_PASSTHROUGH = {"comment_id", "published_at"}
+
 # Mapping des noms de colonnes alternatifs → nom canonique attendu par le pipeline
 COLUMN_ALIASES: dict[str, str] = {
     # Texte du commentaire
@@ -93,7 +96,7 @@ def a1_loader(state: PipelineState) -> dict[str, Any]:
     raw_comments: list[dict[str, Any]] = []
     for _, row in df.iterrows():
         record: dict[str, Any] = {"text": row["text"]}
-        for col in OPTIONAL_COLUMNS:
+        for col in OPTIONAL_COLUMNS | EXTRA_COLS_PASSTHROUGH:
             if col in df.columns:
                 record[col] = row[col]
         raw_comments.append(record)
