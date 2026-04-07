@@ -1,0 +1,17 @@
+{
+  "n_comments": 100,
+  "baseline_llm_single": {
+    "pearson_r": 0.1713,
+    "mae": 31.1888,
+    "method": "llm_single_prompt"
+  },
+  "pipeline_multi_agent": {
+    "pearson_r": 0.0,
+    "mae": 50.74,
+    "method": "langgraph_7_agents"
+  },
+  "delta_pearson_r": -0.1713,
+  "h2_satisfied": false,
+  "h2_threshold": 0.1,
+  "interpretation": "ΔPearson = -0.1713 (✗ H2 non validée — seuil > 0.10)"
+}

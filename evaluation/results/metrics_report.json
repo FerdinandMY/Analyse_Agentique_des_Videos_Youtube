@@ -1,0 +1,14 @@
+{
+  "n_evaluated": 100,
+  "pearson_r": 0.7268,
+  "spearman_r": 0.6661,
+  "h1_satisfied": true,
+  "h1_spearman_ok": true,
+  "mae_score_global": 36.0747,
+  "rmse_score_global": 40.791,
+  "fallback_rate": 0.0,
+  "fallback_rate_ok": true,
+  "sentiment_accuracy": 0.92,
+  "sentiment_f1_macro": 0.9436,
+  "sentiment_kappa": 0.8371
+}

@@ -42,10 +42,16 @@ def score_outliers(merged: pd.DataFrame, threshold: float = 20.0) -> list[dict]:
     merged["abs_error"] = (merged["gold_score"] - merged["score_global"]).abs()
     outliers = merged[merged["abs_error"] > threshold].sort_values("abs_error", ascending=False)
 
+    def _get_text(row):
+        for col in ("text_gold", "text", "text_pred"):
+            if col in row.index and str(row[col]) not in ("", "nan"):
+                return str(row[col])[:200]
+        return ""
+
     return [
         {
             "comment_id":   row.get("comment_id", i),
-            "text":         str(row.get("text", ""))[:200],
+            "text":         _get_text(row),
             "gold_score":   round(float(row["gold_score"]), 2),
             "pred_score":   round(float(row["score_global"]), 2),
             "abs_error":    round(float(row["abs_error"]), 2),
@@ -84,7 +90,8 @@ def sentiment_errors(merged: pd.DataFrame) -> dict:
 
     error_records = []
     for _, row in errors.iterrows():
-        text = str(row.get("text", ""))
+        text_col_e = "text_gold" if "text_gold" in row.index else "text"
+        text = str(row.get(text_col_e, "") or "")
         error_records.append({
             "comment_id":      row.get("comment_id", ""),
             "text":            text[:200],
@@ -140,9 +147,10 @@ def noise_errors(merged: pd.DataFrame) -> dict:
     recall    = round(tp / (tp + fn), 4) if (tp + fn) > 0 else 0.0
     f1        = round(2 * precision * recall / (precision + recall), 4) if (precision + recall) > 0 else 0.0
 
-    # Exemples de FP et FN
-    fp_examples = merged[(~gold_noisy) & pred_noisy]["text"].head(5).tolist()
-    fn_examples = merged[gold_noisy & (~pred_noisy)]["text"].head(5).tolist()
+    # Exemples de FP et FN — "text" peut être renommé après merge
+    text_col = "text_gold" if "text_gold" in merged.columns else "text"
+    fp_examples = merged[(~gold_noisy) & pred_noisy][text_col].head(5).tolist()
+    fn_examples = merged[gold_noisy & (~pred_noisy)][text_col].head(5).tolist()
 
     return {
         "available": True,

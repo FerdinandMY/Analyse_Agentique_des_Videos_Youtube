@@ -1,0 +1,58 @@
+{
+  "n_comments": 100,
+  "conditions": {
+    "B0": {
+      "label": "Prompt direct (sans CoT)",
+      "pearson_r": 0.1713,
+      "mae": 31.1888,
+      "f1_sentiment": 0.2393,
+      "fallback_count": 100,
+      "fallback_rate": 1.0
+    },
+    "B1": {
+      "label": "CoT seul",
+      "pearson_r": 0.1713,
+      "mae": 31.1888,
+      "f1_sentiment": 0.2393,
+      "fallback_count": 100,
+      "fallback_rate": 1.0
+    },
+    "B2": {
+      "label": "CoT + ToT",
+      "pearson_r": 0.1713,
+      "mae": 31.1888,
+      "f1_sentiment": 0.2393,
+      "fallback_count": 100,
+      "fallback_rate": 1.0
+    },
+    "B3": {
+      "label": "CoT + ToT + Tools (pipeline)",
+      "pearson_r": -0.004,
+      "mae": 46.6166,
+      "f1_sentiment": 0.2005,
+      "fallback_count": 0,
+      "fallback_rate": 0.0
+    }
+  },
+  "gains_by_step": {
+    "B0->B1": {
+      "delta_pearson_r": 0.0,
+      "delta_f1_pts": 0.0
+    },
+    "B1->B2": {
+      "delta_pearson_r": 0.0,
+      "delta_f1_pts": 0.0
+    },
+    "B2->B3": {
+      "delta_pearson_r": -0.1753,
+      "delta_f1_pts": -3.88
+    }
+  },
+  "h4": {
+    "delta_pearson_r_b0_b3": -0.1753,
+    "delta_f1_pts_b0_b3": -3.88,
+    "h4_satisfied": false,
+    "h4_threshold_f1_gain_pts": 15.0,
+    "interpretation": "Gain F1 B0→B3 = -3.9 pts  (H4 non validee (gain < 15 pts))"
+  }
+}

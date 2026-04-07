@@ -1,0 +1,363 @@
+{
+  "n_evaluated": 100,
+  "mae_global": 36.0747,
+  "outlier_threshold": 20.0,
+  "n_outliers": 70,
+  "outlier_rate": 0.7,
+  "score_outliers": [
+    {
+      "comment_id": "UgzoFHYVl3mXIeUajtF4AaABAg",
+      "text": "bonjour, merci grâce a toi j'ai tout compris je ne suis que en 4e mon prof de maths ne sait pas du tout expliquer en cours comme à la maison je ne comprenez absolument rien à ces équations a inconnu X",
+      "gold_score": 0.0,
+      "pred_score": 72.75,
+      "abs_error": 72.75,
+      "direction": "over"
+    },
+    {
+      "comment_id": "Ugy8HrloO8mmEITsJsl4AaABAg",
+      "text": "ALL GCE O Level past questions from 2017 to 2019\r         Please share this with all the groups in your contacts and help our students! All Njangi groups, student groups and teacher groups, church gro",
+      "gold_score": 0.0,
+      "pred_score": 67.5,
+      "abs_error": 67.5,
+      "direction": "over"
+    },
+    {
+      "comment_id": "UgwWNtZ4nkw1CJ4okc14AaABAg",
+      "text": "👉  Like et Abonne-toi  :  https://bit.ly/3Kp6cNh  \r Je publie une vidéo par semaine sur l'orientation des élèves et étudiants, les débouchés notamment les métiers d'avenir ainsi que des trucs et astuc",
+      "gold_score": 0.0,
+      "pred_score": 65.9,
+      "abs_error": 65.9,
+      "direction": "over"
+    },
+    {
+      "comment_id": "UgxMXi-U6XUAg4l0g754AaABAg",
+      "text": "Super ! Merci",
+      "gold_score": 0.0,
+      "pred_score": 64.19,
+      "abs_error": 64.19,
+      "direction": "over"
+    },
+    {
+      "comment_id": "UgwnJRxHGiKAFSz0drV4AaABAg",
+      "text": "Very sad story. WE have suffered as a nation and WE continue to suffer today. WE have been cursed with Bad leaders but i still think Ahidjo is the better devil out of the lot.They have all shed thé bl",
+      "gold_score": 0.0,
+      "pred_score": 64.0,
+      "abs_error": 64.0,
+      "direction": "over"
+    },
+    {
+      "comment_id": "UgwkE_lpL6SmsXJp7kR4AaABAg",
+      "text": "Merci monsieur !!",
+      "gold_score": 0.0,
+      "pred_score": 62.44,
+      "abs_error": 62.44,
+      "direction": "over"
+    },
+    {
+      "comment_id": "UgzGxk_nRyhGqPkx4yB4AaABAg",
+      "text": "Merci beaucoup vraiment",
+      "gold_score": 0.0,
+      "pred_score": 62.44,
+      "abs_error": 62.44,
+      "direction": "over"
+    },
+    {
+      "comment_id": "UgxIDsh5lqkaKgUdCFt4AaABAg",
+      "text": "sir i follow the steps on every subject but only maths and chemistry is difficult to me and   i am remaining with a week to write   my final Exams on 4 th november",
+      "gold_score": 0.0,
+      "pred_score": 62.37,
+      "abs_error": 62.37,
+      "direction": "over"
+    },
+    {
+      "comment_id": "Ugxr8qz1GbV8-E2lXFJ4AaABAg",
+      "text": "Merci prof",
+      "gold_score": 0.0,
+      "pred_score": 61.96,
+      "abs_error": 61.96,
+      "direction": "over"
+    },
+    {
+      "comment_id": "UgwXdgTUDwHBydpO_UZ4AaABAg",
+      "text": "Merci beaucoup",
+      "gold_score": 0.0,
+      "pred_score": 61.96,
+      "abs_error": 61.96,
+      "direction": "over"
+    },
+    {
+      "comment_id": "Ugwan_zlw1vu111zkbB4AaABAg",
+      "text": "Oh merci",
+      "gold_score": 0.0,
+      "pred_score": 61.96,
+      "abs_error": 61.96,
+      "direction": "over"
+    },
+    {
+      "comment_id": "UgzKZj4VvNsPXbUMKR94AaABAg",
+      "text": "Best teacher",
+      "gold_score": 0.0,
+      "pred_score": 61.96,
+      "abs_error": 61.96,
+      "direction": "over"
+    },
+    {
+      "comment_id": "Ugw2ukCRW2SU61mVlF14AaABAg",
+      "text": "Merci",
+      "gold_score": 0.0,
+      "pred_score": 61.48,
+      "abs_error": 61.48,
+      "direction": "over"
+    },
+    {
+      "comment_id": "Ugw5lGQjP_hP5X8DAL94AaABAg",
+      "text": "Merci",
+      "gold_score": 0.0,
+      "pred_score": 61.48,
+      "abs_error": 61.48,
+      "direction": "over"
+    },
+    {
+      "comment_id": "UgxfvEpZ9MIl4jlGjRN4AaABAg",
+      "text": "Soo all these YEARS of me not understanding Chemistry in school, this dude explained it for 40 mins and I NOW finally understand!!!! Light bulbbbbb",
+      "gold_score": 0.0,
+      "pred_score": 59.5,
+      "abs_error": 59.5,
+      "direction": "over"
+    },
+    {
+      "comment_id": "Ugx8Y7Ir507QDrol-1F4AaABAg",
+      "text": "les 2007 venez",
+      "gold_score": 0.0,
+      "pred_score": 58.94,
+      "abs_error": 58.94,
+      "direction": "over"
+    },
+    {
+      "comment_id": "UgzCZvC7_HYqjiZ7Fh54AaABAg",
+      "text": "T'es fort vieux❤",
+      "gold_score": 0.0,
+      "pred_score": 58.94,
+      "abs_error": 58.94,
+      "direction": "over"
+    },
+    {
+      "comment_id": "UgwuBQ2yO-w6QCWV3ip4AaABAg",
+      "text": "Go to  www.manifestedpublishers.com",
+      "gold_score": 0.0,
+      "pred_score": 58.94,
+      "abs_error": 58.94,
+      "direction": "over"
+    },
+    {
+      "comment_id": "Ugwb-NJFrPD8dxqfyr54AaABAg",
+      "text": "Vous êtes top❤",
+      "gold_score": 0.0,
+      "pred_score": 58.94,
+      "abs_error": 58.94,
+      "direction": "over"
+    },
+    {
+      "comment_id": "UgzEvoQjoFJ0OoGOvOx4AaABAg",
+      "text": "J’adore le concept",
+      "gold_score": 0.0,
+      "pred_score": 58.94,
+      "abs_error": 58.94,
+      "direction": "over"
+    },
+    {
+      "comment_id": "UgyIkQYgxDeeXlZuUhp4AaABAg",
+      "text": "Incroyable 🎉",
+      "gold_score": 0.0,
+      "pred_score": 58.46,
+      "abs_error": 58.46,
+      "direction": "over"
+    },
+    {
+      "comment_id": "UgzSQbA91V_3ULt-ZHJ4AaABAg",
+      "text": "Bien expliqué",
+      "gold_score": 0.0,
+      "pred_score": 58.46,
+      "abs_error": 58.46,
+      "direction": "over"
+    },
+    {
+      "comment_id": "UgwtNfWRsjnrTRx39Gh4AaABAg",
+      "text": "Impeccable !",
+      "gold_score": 0.0,
+      "pred_score": 58.46,
+      "abs_error": 58.46,
+      "direction": "over"
+    },
+    {
+      "comment_id": "Ugzsg52ExYA59duFYUV4AaABAg",
+      "text": "Extra,merci beaucoup",
+      "gold_score": 0.0,
+      "pred_score": 58.46,
+      "abs_error": 58.46,
+      "direction": "over"
+    },
+    {
+      "comment_id": "UgzjxIsGIqkry6HWFCx4AaABAg",
+      "text": "Continue.",
+      "gold_score": 0.0,
+      "pred_score": 57.98,
+      "abs_error": 57.98,
+      "direction": "over"
+    },
+    {
+      "comment_id": "UgzZgFXPV7xiHaEz28h4AaABAg",
+      "text": "felicitation",
+      "gold_score": 0.0,
+      "pred_score": 57.98,
+      "abs_error": 57.98,
+      "direction": "over"
+    },
+    {
+      "comment_id": "UgyUUM49tJK0BBEME1p4AaABAg",
+      "text": "This guy is straight forward, easy to follow and a Great teacher.",
+      "gold_score": 0.0,
+      "pred_score": 56.76,
+      "abs_error": 56.76,
+      "direction": "over"
+    },
+    {
+      "comment_id": "UgwxtzuK3AvAJIbPkGV4AaABAg",
+      "text": "🔥🔥🔥🔥🔥  Merci, vraiment efficace 👌",
+      "gold_score": 0.0,
+      "pred_score": 53.4,
+      "abs_error": 53.4,
+      "direction": "over"
+    },
+    {
+      "comment_id": "Ugw_XAJXZ_xlXm36pKl4AaABAg",
+      "text": "Check Your Results Here:  https://temovision.com/cameroon-gce-board-results-all-years/",
+      "gold_score": 0.0,
+      "pred_score": 49.9,
+      "abs_error": 49.9,
+      "direction": "over"
+    },
+    {
+      "comment_id": "UgwEnF3UQjXl9u-Sfex4AaABAg",
+      "text": "🤣 🤣 🤣 🤣 🤣 🤣",
+      "gold_score": 0.0,
+      "pred_score": 49.55,
+      "abs_error": 49.55,
+      "direction": "over"
+    }
+  ],
+  "sentiment_errors": {
+    "available": true,
+    "n_total": 100,
+    "n_errors": 8,
+    "error_rate": 0.08,
+    "sarcasm_suspect_errors": 2,
+    "confusion_matrix": {
+      "negative": {
+        "negative": 1,
+        "neutral": 0,
+        "positive": 0
+      },
+      "neutral": {
+        "negative": 0,
+        "neutral": 56,
+        "positive": 0
+      },
+      "positive": {
+        "negative": 0,
+        "neutral": 8,
+        "positive": 35
+      }
+    },
+    "top_errors": [
+      {
+        "comment_id": "UgzCAj1MrYQYXMkOdnN4AaABAg",
+        "text": "Thank you so much for the  detailed structure of each step and for helping me realise that even just three questions a week can help build momentum  . I have a problem of thinking that if I don’t see ",
+        "gold_sentiment": "positive",
+        "pred_sentiment": "neutral",
+        "sarcasm_suspect": false
+      },
+      {
+        "comment_id": "UgxzDYk4vGq7AX-LXX94AaABAg",
+        "text": "on se rend pas compte a quel point cette vidéo explique bien",
+        "gold_sentiment": "positive",
+        "pred_sentiment": "neutral",
+        "sarcasm_suspect": false
+      },
+      {
+        "comment_id": "UgwpgxFYM5rb1iuHXbF4AaABAg",
+        "text": "J'ai un exercice aidé moi",
+        "gold_sentiment": "positive",
+        "pred_sentiment": "neutral",
+        "sarcasm_suspect": false
+      },
+      {
+        "comment_id": "UgyIkQYgxDeeXlZuUhp4AaABAg",
+        "text": "Incroyable 🎉",
+        "gold_sentiment": "positive",
+        "pred_sentiment": "neutral",
+        "sarcasm_suspect": true
+      },
+      {
+        "comment_id": "UgwVXYPWxspJAnLuiD54AaABAg",
+        "text": "quelques heures avant l'épreuve en ayant peu révisé ça aide",
+        "gold_sentiment": "positive",
+        "pred_sentiment": "neutral",
+        "sarcasm_suspect": false
+      },
+      {
+        "comment_id": "UgxXK1GwUjswDv0m7g94AaABAg",
+        "text": "incroyable dans mon pays on apprends les puissances en 6e le programma de 3e se fait en 6e",
+        "gold_sentiment": "positive",
+        "pred_sentiment": "neutral",
+        "sarcasm_suspect": true
+      },
+      {
+        "comment_id": "UgzSQbA91V_3ULt-ZHJ4AaABAg",
+        "text": "Bien expliqué",
+        "gold_sentiment": "positive",
+        "pred_sentiment": "neutral",
+        "sarcasm_suspect": false
+      },
+      {
+        "comment_id": "Ugzsg52ExYA59duFYUV4AaABAg",
+        "text": "Extra,merci beaucoup",
+        "gold_sentiment": "positive",
+        "pred_sentiment": "neutral",
+        "sarcasm_suspect": false
+      }
+    ]
+  },
+  "noise_detection": {
+    "available": true,
+    "tp": 12,
+    "fp": 0,
+    "fn": 88,
+    "tn": 0,
+    "precision": 1.0,
+    "recall": 0.12,
+    "f1": 0.2143,
+    "false_positive_examples": [],
+    "false_negative_examples": [
+      "Thank you so much for the  detailed structure of each step and for helping me realise that even just three questions a week can help build momentum  .",
+      "Heureusement que j'ai re-regardé cette vidéo juste avant l'épreuve ça m'a permis de ressortir toutes les formules alors merci beaucoupppp😭✨",
+      "Merci beaucoup",
+      "You have ADDED a value to X so how the heck does it remain the same. Ambiguity at it's level best.",
+      "On juge pas par l'apparence c'est maintenant je vois, je regardais vos vidéos mais waouh 😮😮.. c'est chic même ❤❤❤"
+    ]
+  },
+  "linguistic_patterns": {
+    "over_predicted": {
+      "count": 67,
+      "avg_text_len": 8.3,
+      "url_ratio": 0.03,
+      "emoji_ratio": 0.164
+    },
+    "under_predicted": {
+      "count": 3,
+      "avg_text_len": 36.3,
+      "url_ratio": 0.0,
+      "emoji_ratio": 0.0
+    }
+  }
+}

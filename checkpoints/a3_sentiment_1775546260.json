@@ -1,0 +1,12 @@
+{
+  "agent": "a3_sentiment",
+  "pipeline_id": "1775546260",
+  "data": {
+    "sentiment_label": "positive",
+    "sentiment_score": 70.0,
+    "confidence": 0.5,
+    "rationale": "LLM unavailable — fallback heuristique",
+    "reasoning": "",
+    "sarcasm_detected": false
+  }
+}

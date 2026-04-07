@@ -1,0 +1,16 @@
+{
+  "agent": "a5_noise",
+  "pipeline_id": "1775546313",
+  "data": {
+    "spam_ratio": 0.0,
+    "offtopic_ratio": 0.0,
+    "reaction_ratio": 0.0,
+    "toxic_ratio": 0.0,
+    "bot_ratio": 5.0,
+    "noise_ratio": 12.5,
+    "noise_score": 87.5,
+    "rationale": "SVM only — spam=0.0% bot=5.0%",
+    "reasoning": "",
+    "svm_used": true
+  }
+}

@@ -64,5 +64,24 @@ class PipelineState(TypedDict, total=False):
     fallback_used: Optional[bool]
     # True si au moins un agent a utilisé le fallback heuristique
 
+    # ── A0: Collector output (PRD v1.1) ───────────────────────────────────────
+    source: Optional[str]
+    # "api_v3" | "csv_fallback" | "cache" | "pre_loaded" (FR-81)
+
+    quota_used: Optional[int]
+    # Unités quota YouTube Data API v3 consommées par A0 (FR-79)
+
+    collected_at: Optional[str]
+    # Timestamp ISO8601 de la collecte A0
+
+    transcript: Optional[list]
+    # [{text: str, start: float, duration: float}, ...] — sous-titres vidéo (FR-84)
+
+    transcript_available: Optional[bool]
+    # False si youtube-transcript-api lève une exception (FR-85)
+
+    qa_context: Optional[dict]
+    # {transcript, transcript_available, top_comments, video_title} — stocké en cache (FR-86)
+
     # ── Error accumulator (LangGraph reducer) ─────────────────────────────────
     errors: Annotated[list[str], operator.add]
