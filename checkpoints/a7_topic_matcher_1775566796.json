@@ -2,52 +2,8 @@
   "agent": "a7_topic_matcher",
   "pipeline_id": "1775566796",
   "data": {
-    "score_pertinence": 0.0,
-    "score_final": 15.0,
-    "topic_verdict": "Ce vidéo n'est pas pertinent pour votre recherche sur la musique.",
-    "tot_branches": {
-      "branch_1": {
-        "name": "Content alignment",
-        "score": 0.0,
-        "rationale": "The semantic similarity score of 0.0000 indicates no alignment with the topic of 'musique'."
-      },
-      "branch_2": {
-        "name": "Audience level",
-        "score": 0.0,
-        "rationale": "There are no comments suggesting the video targets an audience interested in 'musique'."
-      },
-      "branch_3": {
-        "name": "Pedagogical value",
-        "score": 0.0,
-        "rationale": "No comments indicate clarity, depth, or learning value related to 'musique'."
-      }
-    },
-    "sc_runs": [
-      {
-        "run": 1,
-        "pertinence_score": 0.0,
-        "label": "non_pertinent",
-        "verdict": "Ce vidéo n'est pas pertinent pour votre recherche sur la musique.",
-        "fallback_used": false
-      },
-      {
-        "run": 2,
-        "pertinence_score": 0.0,
-        "label": "non_pertinent",
-        "verdict": "Ce vidéo n'est pas pertinent pour votre recherche sur la musique.",
-        "fallback_used": false
-      },
-      {
-        "run": 3,
-        "pertinence_score": 0.0,
-        "label": "non_pertinent",
-        "verdict": "Ce vidéo n'est pas pertinent pour votre recherche sur la musique.",
-        "fallback_used": false
-      }
-    ],
-    "sc_consensus": true,
-    "low_consensus": false,
-    "similarity_score": 0.0,
-    "key_topics": []
+    "score_pertinence": 50.0,
+    "score_final": 25.0,
+    "topic_verdict": "Aucune thématique fournie — score basé sur la qualité globale."
   }
 }

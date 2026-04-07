@@ -25,6 +25,10 @@ class AnalyzeRequest(BaseModel):
         default=None,
         description="Pre-collected comments (optional — A0 collecte si absent)",
     )
+    force_refresh: bool = Field(
+        default=False,
+        description="Si True, ignore le cache et relance le pipeline complet",
+    )
 
 
 class ScoreDetails(BaseModel):

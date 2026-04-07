@@ -75,6 +75,14 @@ class ReportCache:
 
     # ── Utilitaires ───────────────────────────────────────────────────────────
 
+    def clear_video(self, video_id: str) -> int:
+        """Supprime toutes les entrées de cache pour un video_id donné (tous topics)."""
+        keys_to_del = [k for k in self._store if k.startswith(f"{video_id}::")]
+        for k in keys_to_del:
+            del self._store[k]
+        self._qa_store.pop(video_id, None)
+        return len(keys_to_del)
+
     def clear(self) -> None:
         self._store.clear()
         self._qa_store.clear()

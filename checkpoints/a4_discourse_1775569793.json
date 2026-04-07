@@ -1,0 +1,30 @@
+{
+  "agent": "a4_discourse",
+  "pipeline_id": "1775569793",
+  "data": {
+    "informativeness": 0.0,
+    "argumentation": 0.0,
+    "constructiveness": 0.0,
+    "discourse_score": 0.0,
+    "high_quality_indices": [],
+    "rationale": "The comment lacks informative content, argumentation, and constructiveness, resulting in a very low discourse quality score.",
+    "reasoning": "The comment consists of a single word, which results in a very low word count and does not provide any informative content about the video topic. The unique word ratio is 1.0, indicating that the comment is not varied, and the average word length is 6.0, but this does not contribute to informativeness. There are no argumentative markers present, leading to a score of 0.0 for argumentation as there are no claims or reasoning. The comment is also not constructive, as it lacks engagement, with only one sentence and no questions. Overall, the comment fails to meet the criteria for high-quality discourse.",
+    "tot_branches": {},
+    "tot_used": false,
+    "text_stats": {
+      "word_count": 1,
+      "char_count": 6,
+      "sentence_count": 1,
+      "avg_word_length": 6.0,
+      "question_count": 0,
+      "unique_word_ratio": 1.0,
+      "caps_ratio": 0.0
+    },
+    "arg_markers": {
+      "total_markers": 0,
+      "categories": {},
+      "argumentation_score": 0.0,
+      "is_argumentative": false
+    }
+  }
+}

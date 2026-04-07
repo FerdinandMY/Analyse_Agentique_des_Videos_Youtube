@@ -1,0 +1,12 @@
+{
+  "agent": "a6_synthesizer",
+  "pipeline_id": "1775569308",
+  "data": {
+    "score_global": 25.0,
+    "quality_label": "Moyen",
+    "sentiment_score": 0.0,
+    "discourse_score": 0.0,
+    "noise_score": 100.0,
+    "summary": "The overall quality of the video, as reflected in the comment section, is low, with a global score of 25.0 indicating a lack of emotional engagement and substantive discussion, despite the clarity of the comments. Given the neutral sentiment and absence of meaningful discourse, it is recommended to approach the video with caution, as it may not provide a rewarding viewing experience."
+  }
+}

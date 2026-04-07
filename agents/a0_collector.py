@@ -240,13 +240,15 @@ def _fetch_transcript(video_id: str) -> tuple[list[dict], bool]:
     """
     try:
         from youtube_transcript_api import YouTubeTranscriptApi  # type: ignore
-        segments = YouTubeTranscriptApi.get_transcript(
-            video_id, languages=_TRANSCRIPT_LANGS
-        )
-        return [
-            {"text": s.get("text", ""), "start": s.get("start", 0.0), "duration": s.get("duration", 0.0)}
-            for s in segments
-        ], True
+        # v1.x : API d'instance avec .fetch() — v0.x utilisait .get_transcript() statique
+        api = YouTubeTranscriptApi()
+        fetched = api.fetch(video_id, languages=_TRANSCRIPT_LANGS)
+        # FetchedTranscript est itérable ; chaque élément est un FetchedTranscriptSnippet
+        segments = [
+            {"text": s.text, "start": s.start, "duration": s.duration}
+            for s in fetched
+        ]
+        return segments, True
     except Exception as exc:
         logger.warning("a0_collector: transcription indisponible pour %s — %s", video_id, exc)
         return [], False

@@ -59,10 +59,13 @@ def analyze(request: AnalyzeRequest) -> Any:
         pass
 
     # ── 2. Vérification cache (FR-78) ─────────────────────────────────────────
-    cached = cache.get(video_id, request.topic)
-    if cached:
-        logger.info("Cache hit pour video_id=%s topic=%s", video_id, request.topic)
-        return cached
+    if not request.force_refresh:
+        cached = cache.get(video_id, request.topic)
+        if cached:
+            logger.info("Cache hit pour video_id=%s topic=%s", video_id, request.topic)
+            return cached
+    else:
+        logger.info("force_refresh=True — cache ignoré pour video_id=%s topic=%s", video_id, request.topic)
 
     # ── 3. Collecte A0 si commentaires absents (PRD v1.1 §2) ──────────────────
     source:               str | None  = None
@@ -304,3 +307,34 @@ def ask(request: AskRequest) -> Any:
         transcript_used=result.get("transcript_used", False),
         fallback_used=result.get("fallback_used", False),
     )
+
+
+# ── DELETE /cache ─────────────────────────────────────────────────────────────
+
+@router.delete(
+    "/cache",
+    summary="Vider le cache (tous les rapports et contextes Q&A)",
+    tags=["admin"],
+)
+def clear_cache() -> dict[str, str]:
+    """
+    Vide entièrement le cache en mémoire.
+    Utile pour forcer une re-collecte sans redémarrer le serveur.
+    """
+    cache.clear()
+    logger.info("Cache vidé via DELETE /cache")
+    return {"status": "ok", "message": "Cache vidé."}
+
+
+@router.delete(
+    "/cache/{video_id}",
+    summary="Vider le cache pour une vidéo spécifique",
+    tags=["admin"],
+)
+def clear_cache_for_video(video_id: str) -> dict[str, str]:
+    """
+    Supprime toutes les entrées de cache pour un video_id donné (tous topics).
+    """
+    removed = cache.clear_video(video_id)
+    logger.info("Cache vidé pour video_id=%s (%d entrées supprimées)", video_id, removed)
+    return {"status": "ok", "video_id": video_id, "entries_removed": str(removed)}

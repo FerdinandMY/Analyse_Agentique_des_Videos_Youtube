@@ -7,8 +7,8 @@
     "constructiveness": 0.0,
     "discourse_score": 0.0,
     "high_quality_indices": [],
-    "rationale": "The comment lacks any informative, argumentative, or constructive elements, resulting in a very low discourse quality score.",
-    "reasoning": "The comment consists of a single word, which results in a very low word count and does not provide any informative content about the video topic. The unique word ratio is 1.0, indicating that the comment is not varied, and the average word length is 6.0, but this does not contribute to informativeness. There are no argumentative markers present, leading to a score of 0.0 for argumentation as there are no claims or reasoning. The comment is also not constructive, as it lacks engagement, with only one sentence and no questions. Overall, the comment fails to meet the criteria for high-quality discourse.",
+    "rationale": "The comment lacks any informative, argumentative, or constructive elements, resulting in a total discourse score of 0.0.",
+    "reasoning": "The comment consists of a single word, which results in a very low word count and no informative content. The unique word ratio is 1.0, but this does not contribute to informativeness as there is no context or knowledge provided. There are no argumentative markers present, indicating a lack of structured reasoning or evidence, leading to a score of 0.0 for argumentation. The comment is also not constructive, as it does not engage in a respectful or meaningful way, reflected in the absence of multiple sentences or questions. Overall, the comment fails to meet the criteria for high-quality discourse.",
     "tot_branches": {},
     "tot_used": false,
     "text_stats": {

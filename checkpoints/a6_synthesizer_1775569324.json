@@ -1,0 +1,12 @@
+{
+  "agent": "a6_synthesizer",
+  "pipeline_id": "1775569324",
+  "data": {
+    "score_global": 63.83,
+    "quality_label": "Bon",
+    "sentiment_score": 80.0,
+    "discourse_score": 33.33,
+    "noise_score": 90.0,
+    "summary": "The overall quality of the video, as reflected in the comment section, indicates a positive viewer sentiment with a score of 80.0, suggesting gratitude and faith among viewers. However, the low discourse score of 33.33 highlights a lack of depth and substantive discussion, while the high noise score of 90.0 indicates that most comments are personal affirmations rather than informative exchanges. Based on this analysis, the video appears worth watching for its positive emotional impact, but viewers seeking in-depth discussion may find it lacking."
+  }
+}

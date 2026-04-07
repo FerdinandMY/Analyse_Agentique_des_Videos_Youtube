@@ -1,0 +1,64 @@
+{
+  "agent": "a7_topic_matcher",
+  "pipeline_id": "1775569324",
+  "data": {
+    "score_pertinence": 0.0,
+    "score_final": 38.3,
+    "topic_verdict": "Cette vidéo n'est pas pertinente pour le sujet de la musique, car les commentaires se concentrent sur des thèmes religieux plutôt que musicaux.",
+    "tot_branches": {
+      "branch_1": {
+        "name": "Content alignment",
+        "score": 0.0,
+        "rationale": "The comments primarily discuss religious themes and do not reference music."
+      },
+      "branch_2": {
+        "name": "Audience level",
+        "score": 0.0,
+        "rationale": "The comments suggest an audience focused on spirituality rather than music."
+      },
+      "branch_3": {
+        "name": "Pedagogical value",
+        "score": 0.0,
+        "rationale": "There is no praise for clarity or learning value related to music in the comments."
+      }
+    },
+    "sc_runs": [
+      {
+        "run": 1,
+        "pertinence_score": 0.0,
+        "label": "non_pertinent",
+        "verdict": "Cette vidéo n'est pas pertinente pour le sujet de la musique, car les commentaires se concentrent sur des thèmes religieux plutôt que musicaux.",
+        "fallback_used": false
+      },
+      {
+        "run": 2,
+        "pertinence_score": 0.0,
+        "label": "non_pertinent",
+        "verdict": "Cette vidéo n'est pas pertinente pour votre recherche sur la musique, car les commentaires se concentrent sur des thèmes religieux.",
+        "fallback_used": false
+      },
+      {
+        "run": 3,
+        "pertinence_score": 0.0,
+        "label": "non_pertinent",
+        "verdict": "Cette vidéo n'est pas pertinente pour votre recherche sur la musique, car les commentaires se concentrent sur des thèmes religieux.",
+        "fallback_used": false
+      }
+    ],
+    "sc_consensus": true,
+    "low_consensus": false,
+    "similarity_score": 0.0,
+    "key_topics": [
+      "dieu",
+      "amen",
+      "seigneur",
+      "christ",
+      "suis",
+      "jesus",
+      "chaque",
+      "jamais",
+      "gloire",
+      "cette"
+    ]
+  }
+}
