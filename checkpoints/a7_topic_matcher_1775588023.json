@@ -1,0 +1,64 @@
+{
+  "agent": "a7_topic_matcher",
+  "pipeline_id": "1775588023",
+  "data": {
+    "score_pertinence": 35.56,
+    "score_final": 43.02,
+    "topic_verdict": "Le contenu de la vidéo semble peu pertinent pour le sujet recherché, bien que les commentaires montrent une appréciation pour Singuila. Cela pourrait intéresser les fans, mais pas ceux qui cherchent une analyse approfondie.",
+    "tot_branches": {
+      "branch_1": {
+        "name": "Content alignment",
+        "score": 0.0,
+        "rationale": "The semantic similarity score is 0.0000, indicating no alignment with the topic."
+      },
+      "branch_2": {
+        "name": "Audience level",
+        "score": 0.7,
+        "rationale": "Comments reflect a knowledgeable audience that appreciates Singuila's impact and artistry."
+      },
+      "branch_3": {
+        "name": "Pedagogical value",
+        "score": 0.2,
+        "rationale": "While comments express admiration, they lack depth or clarity that would enhance learning about the topic."
+      }
+    },
+    "sc_runs": [
+      {
+        "run": 1,
+        "pertinence_score": 30.0,
+        "label": "non_pertinent",
+        "verdict": "Le contenu de la vidéo semble peu pertinent pour le sujet recherché, bien que les commentaires montrent une appréciation pour Singuila. Cela pourrait intéresser les fans, mais pas ceux qui cherchent une analyse approfondie.",
+        "fallback_used": false
+      },
+      {
+        "run": 2,
+        "pertinence_score": 46.67,
+        "label": "moyennement_pertinent",
+        "verdict": "Le vidéo est partiellement pertinente pour ceux qui recherchent 'Singuila - DCDR (Version Longue)', mais la faible similarité sémantique suggère qu'il pourrait y avoir des contenus plus directement liés.",
+        "fallback_used": false
+      },
+      {
+        "run": 3,
+        "pertinence_score": 30.0,
+        "label": "non_pertinent",
+        "verdict": "Bien que la vidéo ne soit pas directement liée au sujet, les commentaires montrent un fort respect pour Singuila. Cela pourrait intéresser ceux qui apprécient sa musique, mais pas nécessairement ceux qui recherchent des informations spécifiques sur 'DCDR (Version Longue)'.",
+        "fallback_used": false
+      }
+    ],
+    "sc_consensus": true,
+    "low_consensus": false,
+    "similarity_score": 0.0,
+    "key_topics": [
+      "nous",
+      "tous",
+      "vrai",
+      "vous",
+      "aussi",
+      "bien",
+      "respecter",
+      "singuila",
+      "continue",
+      "textes"
+    ]
+  }
+}

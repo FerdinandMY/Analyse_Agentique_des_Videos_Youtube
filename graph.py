@@ -33,6 +33,7 @@ def _assemble_report(state: PipelineState) -> dict[str, Any]:
     report = {
         "video_id":           state.get("video_id"),
         "topic":              state.get("topic"),
+        "lang":               state.get("lang", "fr"),
         "score_global":       state.get("score_global"),
         "score_pertinence":   state.get("score_pertinence"),
         "score_final":        state.get("score_final"),
@@ -113,6 +114,7 @@ def run_pipeline(
     csv_path:     str = "",
     video_id:     str = "",
     topic:        str = "",
+    lang:         str = "fr",
     raw_comments: Optional[list] = None,
     thread_id:    str = "default",
     checkpointer: Any = None,
@@ -148,6 +150,7 @@ def run_pipeline(
         "csv_path": csv_path,
         "video_id": video_id,
         "topic":    topic,
+        "lang":     lang,
         "errors":   [],
     }
 

@@ -17,6 +17,7 @@ class PipelineState(TypedDict, total=False):
     csv_path: str                        # Path to CSV already collected
     video_id: str                        # YouTube video identifier
     topic: str                           # User's thematic query (A7)
+    lang: str                            # Langue de sortie LLM : "fr" | "en"
 
     # ── A1: Loader output ─────────────────────────────────────────────────────
     raw_comments: list[dict[str, Any]]   # [{text, video_id?, author_likes?, reply_count?}, ...]

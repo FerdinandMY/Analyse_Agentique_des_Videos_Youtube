@@ -1,0 +1,69 @@
+{
+  "agent": "a4_discourse",
+  "pipeline_id": "1775570456",
+  "data": {
+    "informativeness": 60.0,
+    "argumentation": 80.0,
+    "constructiveness": 40.0,
+    "discourse_score": 43.33,
+    "high_quality_indices": [
+      0,
+      6,
+      10,
+      21,
+      28
+    ],
+    "rationale": "The comments reflect personal testimonies and emotional engagement, but lack depth in discussion and informative content for viewers.",
+    "reasoning": "The analysis reveals that while there is some depth in content and emotional resonance, the overall discussion lacks nuanced back-and-forth and informative value for potential viewers.",
+    "tot_branches": {
+      "branch_1": {
+        "name": "Content Depth",
+        "score": 0.6,
+        "rationale": "Commenters express personal experiences and emotional connections to the video's themes, indicating a moderate depth of content."
+      },
+      "branch_2": {
+        "name": "Discussion Quality",
+        "score": 0.4,
+        "rationale": "The comments are largely isolated expressions of sentiment with minimal contrast or nuanced discussion, resulting in a lower score."
+      },
+      "branch_3": {
+        "name": "Epistemic Value",
+        "score": 0.3,
+        "rationale": "The comments do not provide substantial information or recommendations that would be useful to viewers before watching the video."
+      }
+    },
+    "tot_used": true,
+    "text_stats": {
+      "word_count": 520,
+      "char_count": 2867,
+      "sentence_count": 14,
+      "avg_word_length": 4.48,
+      "question_count": 2,
+      "unique_word_ratio": 0.5154,
+      "caps_ratio": 0.0
+    },
+    "arg_markers": {
+      "total_markers": 8,
+      "categories": {
+        "causality": [
+          "comme",
+          "comme",
+          "as"
+        ],
+        "contrast": [
+          "mais",
+          "mais"
+        ],
+        "example": [
+          "comme",
+          "comme"
+        ],
+        "nuance": [
+          "malgré"
+        ]
+      },
+      "argumentation_score": 0.8,
+      "is_argumentative": true
+    }
+  }
+}

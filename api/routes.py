@@ -75,8 +75,11 @@ def analyze(request: AnalyzeRequest) -> Any:
     transcript_available: bool | None = None
     raw_comments: list[dict] | None   = None
 
-    if request.comments:
-        # Commentaires pré-fournis → bypass A0
+    _MIN_COMMENTS_THRESHOLD = 5  # En dessous, on ignore les comments fournis et on appelle A0
+    use_preloaded = request.comments and len(request.comments) >= _MIN_COMMENTS_THRESHOLD
+
+    if use_preloaded:
+        # Commentaires pré-fournis en nombre suffisant → bypass A0
         raw_comments = [c.model_dump() for c in request.comments]
         source = "pre_loaded"
         logger.info(
@@ -84,8 +87,14 @@ def analyze(request: AnalyzeRequest) -> Any:
             video_id, len(raw_comments),
         )
     else:
-        # Aucun commentaire fourni → invoquer A0
-        logger.info("analyze: invocation A0 Collector pour video_id=%s", video_id)
+        # Pas de commentaires, ou trop peu (<5) → invoquer A0
+        if request.comments:
+            logger.warning(
+                "analyze: %d commentaire(s) fournis < seuil %d — A0 invoqué à la place",
+                len(request.comments), _MIN_COMMENTS_THRESHOLD,
+            )
+        else:
+            logger.info("analyze: invocation A0 Collector pour video_id=%s", video_id)
         try:
             from agents.a0_collector import a0_collector
 
@@ -137,6 +146,7 @@ def analyze(request: AnalyzeRequest) -> Any:
         report = run_pipeline(
             video_id=video_id,
             topic=request.topic,
+            lang=request.lang,
             raw_comments=raw_comments,
             thread_id=thread_id,
             source=source,
@@ -153,6 +163,7 @@ def analyze(request: AnalyzeRequest) -> Any:
     response = AnalyzeResponse(
         video_id=report.get("video_id") or video_id,
         topic=report.get("topic") or request.topic,
+        lang=report.get("lang") or request.lang,
         score_global=report.get("score_global") or 0.0,
         score_pertinence=report.get("score_pertinence") or 0.0,
         score_final=report.get("score_final") or 0.0,

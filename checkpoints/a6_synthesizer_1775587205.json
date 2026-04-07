@@ -1,0 +1,12 @@
+{
+  "agent": "a6_synthesizer",
+  "pipeline_id": "1775587205",
+  "data": {
+    "score_global": 22.5,
+    "quality_label": "Faible",
+    "sentiment_score": 0.0,
+    "discourse_score": 0.0,
+    "noise_score": 90.0,
+    "summary": "The overall quality of the video, as reflected in the comment section, is low, with a global score of 22.5 indicating minimal viewer engagement and interaction. The absence of comments results in a neutral sentiment and a lack of substantive discussion, while the high noise score suggests clarity in the absence of spam or bots. Based on this evidence, the video does not appear worth watching, as it lacks viewer interest and meaningful discourse."
+  }
+}

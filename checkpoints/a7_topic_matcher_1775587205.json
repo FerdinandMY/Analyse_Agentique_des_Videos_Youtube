@@ -1,0 +1,9 @@
+{
+  "agent": "a7_topic_matcher",
+  "pipeline_id": "1775587205",
+  "data": {
+    "score_pertinence": 50.0,
+    "score_final": 22.5,
+    "topic_verdict": "Aucune thématique fournie — score basé sur la qualité globale."
+  }
+}

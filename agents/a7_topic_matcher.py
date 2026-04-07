@@ -40,19 +40,39 @@ _SC_RUNS = 3
 # Seuil de consensus (PRD FR-60)
 _SC_CONSENSUS_THRESHOLD = 2
 
-_SYSTEM = (
+_SYSTEM_EN = (
     "You are a video relevance expert. "
     "Explore three reasoning branches before concluding. "
-    "Return ONLY strictly valid JSON. Temperature: 0.3."
+    "Return ONLY strictly valid JSON. Temperature: 0.3. "
+    "All text fields (verdict, rationale, reasoning) must be in English."
+)
+_SYSTEM_FR = (
+    "Tu es un expert en pertinence vidéo. "
+    "Explore trois branches de raisonnement avant de conclure. "
+    "Retourne UNIQUEMENT du JSON strictement valide. Température : 0.3. "
+    "Tous les champs texte (verdict, rationale, reasoning) doivent être en français."
 )
 
-_FALLBACK_TOPIC = {
+_FALLBACK_TOPIC_FR = {
     "pertinence_score": 50.0,
     "verdict":          "Évaluation indisponible — pertinence thématique non évaluée.",
     "tot_branches":     {},
     "sc_runs":          [],
     "sc_consensus":     True,
     "low_consensus":    False,
+}
+_FALLBACK_TOPIC_EN = {
+    "pertinence_score": 50.0,
+    "verdict":          "Evaluation unavailable — topic relevance could not be assessed.",
+    "tot_branches":     {},
+    "sc_runs":          [],
+    "sc_consensus":     True,
+    "low_consensus":    False,
+}
+
+_NO_TOPIC_VERDICT = {
+    "fr": "Aucune thématique fournie — score basé sur la qualité globale.",
+    "en": "No topic provided — score based on overall quality.",
 }
 
 
@@ -79,8 +99,15 @@ def _build_prompt(
     hq_comments: str,
     similarity_score: float,
     key_topics: list[str],
+    lang: str = "fr",
 ) -> str:
+    lang_instruction = (
+        "Réponds UNIQUEMENT en français. Le champ 'verdict' doit être en français."
+        if lang == "fr"
+        else "Reply ONLY in English. The 'verdict' field must be in English."
+    )
     default_prompt = (
+        '{{lang_instruction}}\n\n'
         'A user is researching "{{topic}}". Evaluate video relevance.\n\n'
         "Tool measurements:\n"
         "- Semantic similarity: {{similarity_score}}\n"
@@ -94,6 +121,7 @@ def _build_prompt(
     template = load_prompt("prompts/topic_matcher_v1.txt", default_prompt)
     return (
         template
+        .replace("{{lang_instruction}}", lang_instruction)
         .replace("{{topic}}", topic)
         .replace("{{high_quality_comments}}", hq_comments)
         .replace("{{similarity_score}}", f"{similarity_score:.4f}")
@@ -101,18 +129,19 @@ def _build_prompt(
     )
 
 
-def _single_run(messages: list) -> tuple[dict, dict]:
+def _single_run(messages: list, fallback: dict | None = None) -> tuple[dict, dict]:
     """Exécute un seul run ToT via safe_llm_call."""
     return safe_llm_call(
         messages=messages,
         validator=TopicValidator(),
-        fallback=_FALLBACK_TOPIC,
+        fallback=fallback or _FALLBACK_TOPIC_FR,
         agent_name="A7",
     )
 
 
 def _self_consistency(
     messages: list,
+    fallback: dict | None = None,
 ) -> tuple[dict, list[dict], bool]:
     """
     Exécute _SC_RUNS runs indépendants, agrège par vote majoritaire (label)
@@ -124,7 +153,7 @@ def _self_consistency(
     tot_branches_list = []
 
     for i in range(_SC_RUNS):
-        run_result, run_meta = _single_run(messages)
+        run_result, run_meta = _single_run(messages, fallback=fallback)
         score   = run_result.get("pertinence_score", 50.0)
         verdict = run_result.get("verdict", "")
 
@@ -184,6 +213,7 @@ def a7_topic_matcher(state: PipelineState) -> dict[str, Any]:
 
     topic        = (state.get("topic") or "").strip()
     score_global = float(state.get("score_global") or 0.0)
+    lang         = (state.get("lang") or "fr").lower()
 
     # ── Pas de thématique → score_final = score_global ────────────────────────
     if not topic:
@@ -191,7 +221,7 @@ def a7_topic_matcher(state: PipelineState) -> dict[str, Any]:
         result = {
             "score_pertinence": 50.0,
             "score_final":      round(score_global, 2),
-            "topic_verdict":    "Aucune thématique fournie — score basé sur la qualité globale.",
+            "topic_verdict":    _NO_TOPIC_VERDICT.get(lang, _NO_TOPIC_VERDICT["fr"]),
         }
         save_checkpoint("a7_topic_matcher", result)
         return result
@@ -222,20 +252,27 @@ def a7_topic_matcher(state: PipelineState) -> dict[str, Any]:
         logger.warning("a7_topic_matcher: LLM indisponible — fallback similarité")
         score_pertinence = round(sim_score * 100, 2)
         score_final      = round(W_GLOBAL * score_global + W_PERTINENCE * score_pertinence, 2)
+        fallback_verdict = (
+            f"LLM indisponible — pertinence basée sur similarité sémantique ({sim_score:.2f})."
+            if lang == "fr"
+            else f"LLM unavailable — relevance based on semantic similarity ({sim_score:.2f})."
+        )
         result = {
             "score_pertinence": score_pertinence,
             "score_final":      score_final,
-            "topic_verdict":    f"LLM indisponible — pertinence basée sur similarité sémantique ({sim_score:.2f}).",
+            "topic_verdict":    fallback_verdict,
         }
         save_checkpoint("a7_topic_matcher", result)
         return result
 
     # ── Étape 3 : Construction du prompt ToT ──────────────────────────────────
-    user_msg  = _build_prompt(topic, hq_comments, sim_score, key_topics)
-    messages  = [SystemMessage(content=_SYSTEM), HumanMessage(content=user_msg)]
+    system_msg = _SYSTEM_FR if lang == "fr" else _SYSTEM_EN
+    user_msg   = _build_prompt(topic, hq_comments, sim_score, key_topics, lang=lang)
+    messages   = [SystemMessage(content=system_msg), HumanMessage(content=user_msg)]
 
     # ── Étape 4 : Self-Consistency (3 runs) ───────────────────────────────────
-    sc_result, sc_runs, consensus = _self_consistency(messages)
+    fallback = _FALLBACK_TOPIC_FR if lang == "fr" else _FALLBACK_TOPIC_EN
+    sc_result, sc_runs, consensus = _self_consistency(messages, fallback=fallback)
 
     score_pertinence = sc_result.get("pertinence_score", 50.0)
     score_final      = round(W_GLOBAL * score_global + W_PERTINENCE * score_pertinence, 2)

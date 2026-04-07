@@ -1,0 +1,70 @@
+{
+  "agent": "a4_discourse",
+  "pipeline_id": "1775588023",
+  "data": {
+    "informativeness": 50.0,
+    "argumentation": 80.0,
+    "constructiveness": 40.0,
+    "discourse_score": 50.0,
+    "high_quality_indices": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      20
+    ],
+    "rationale": "The comments reflect a moderate level of engagement with the content, but the overall discourse lacks depth and nuanced interaction.",
+    "reasoning": "The analysis reveals that while there is some depth in content discussion, the overall quality of the discussion is limited by the presence of isolated comments and a lack of nuanced back-and-forth, leading to a moderate epistemic value.",
+    "tot_branches": {
+      "branch_1": {
+        "name": "Content Depth",
+        "score": 0.6,
+        "rationale": "Commenters engage with the content by expressing admiration and respect for the artist, indicating a deeper connection to the material."
+      },
+      "branch_2": {
+        "name": "Discussion Quality",
+        "score": 0.4,
+        "rationale": "The comments largely consist of isolated reactions with minimal back-and-forth, limiting the depth of discussion."
+      },
+      "branch_3": {
+        "name": "Epistemic Value",
+        "score": 0.5,
+        "rationale": "While some comments provide personal insights and reflections, they do not offer substantial information that would be useful for viewers before watching."
+      }
+    },
+    "tot_used": true,
+    "text_stats": {
+      "word_count": 703,
+      "char_count": 3879,
+      "sentence_count": 19,
+      "avg_word_length": 4.44,
+      "question_count": 0,
+      "unique_word_ratio": 0.4993,
+      "caps_ratio": 0.0
+    },
+    "arg_markers": {
+      "total_markers": 9,
+      "categories": {
+        "causality": [
+          "car",
+          "comme"
+        ],
+        "contrast": [
+          "mais",
+          "mais",
+          "mais"
+        ],
+        "example": [
+          "comme",
+          "like"
+        ],
+        "conclusion": [
+          "donc"
+        ]
+      },
+      "argumentation_score": 0.8,
+      "is_argumentative": true
+    }
+  }
+}

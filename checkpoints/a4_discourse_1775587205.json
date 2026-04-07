@@ -1,0 +1,30 @@
+{
+  "agent": "a4_discourse",
+  "pipeline_id": "1775587205",
+  "data": {
+    "informativeness": 0.0,
+    "argumentation": 0.0,
+    "constructiveness": 0.0,
+    "discourse_score": 0.0,
+    "high_quality_indices": [],
+    "rationale": "There are no comments to evaluate, leading to a complete lack of discourse quality.",
+    "reasoning": "The comments provided have no content, resulting in a word count, character count, and sentence count of zero. Consequently, there is no informativeness, argumentation, or constructiveness present. Without any comments to evaluate, all scores must be zero, and there are no indices to list for high-quality comments.",
+    "tot_branches": {},
+    "tot_used": false,
+    "text_stats": {
+      "word_count": 0,
+      "char_count": 0,
+      "sentence_count": 0,
+      "avg_word_length": 0.0,
+      "question_count": 0,
+      "unique_word_ratio": 0.0,
+      "caps_ratio": 0.0
+    },
+    "arg_markers": {
+      "total_markers": 0,
+      "categories": {},
+      "argumentation_score": 0.0,
+      "is_argumentative": false
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "agent": "a5_noise",
+  "pipeline_id": "1775588023",
+  "data": {
+    "spam_ratio": 0.0,
+    "offtopic_ratio": 0.0,
+    "reaction_ratio": 20.0,
+    "toxic_ratio": 0.0,
+    "bot_ratio": 10.0,
+    "noise_ratio": 30.0,
+    "noise_score": 70.0,
+    "rationale": "The comments primarily express admiration and personal reflections, but a portion consists of empty reactions and some repetitive phrases indicative of bot-like behavior.",
+    "reasoning": "",
+    "svm_used": true
+  }
+}

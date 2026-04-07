@@ -1,0 +1,64 @@
+{
+  "agent": "a7_topic_matcher",
+  "pipeline_id": "1775570456",
+  "data": {
+    "score_pertinence": 33.33,
+    "score_final": 47.43,
+    "topic_verdict": "Le contenu de la vidéo semble pertinent pour ceux qui cherchent des encouragements spirituels, mais il n'est pas directement lié au sujet de recherche initial.",
+    "tot_branches": {
+      "branch_1": {
+        "name": "Content alignment",
+        "score": 0.1,
+        "rationale": "The comments discuss themes of faith and personal experiences related to Jesus, but do not directly reference the video content."
+      },
+      "branch_2": {
+        "name": "Audience level",
+        "score": 0.7,
+        "rationale": "The comments suggest a beginner audience seeking spiritual support and encouragement."
+      },
+      "branch_3": {
+        "name": "Pedagogical value",
+        "score": 0.2,
+        "rationale": "The comments do not provide clarity or depth relevant to learning about the video topic."
+      }
+    },
+    "sc_runs": [
+      {
+        "run": 1,
+        "pertinence_score": 33.33,
+        "label": "non_pertinent",
+        "verdict": "Le contenu de la vidéo semble pertinent pour ceux qui cherchent des encouragements spirituels, mais il n'est pas directement lié au sujet de recherche initial.",
+        "fallback_used": false
+      },
+      {
+        "run": 2,
+        "pertinence_score": 33.33,
+        "label": "non_pertinent",
+        "verdict": "Le contenu de la vidéo semble moins pertinent pour une recherche directe sur 'Faveur Mukoko - Rémunérateur', bien qu'il puisse toucher des personnes en quête de réconfort spirituel.",
+        "fallback_used": false
+      },
+      {
+        "run": 3,
+        "pertinence_score": 33.33,
+        "label": "non_pertinent",
+        "verdict": "Bien que la vidéo soit liée à des thèmes de foi, elle ne semble pas directement pertinente pour ceux qui recherchent spécifiquement 'Faveur Mukoko - Rémunérateur'. Les commentaires sont plus des témoignages personnels que des analyses éducatives.",
+        "fallback_used": false
+      }
+    ],
+    "sc_consensus": true,
+    "low_consensus": false,
+    "similarity_score": 0.0,
+    "key_topics": [
+      "rémunérateur",
+      "cette",
+      "jésus",
+      "christ",
+      "jamais",
+      "amen",
+      "rendu",
+      "suis",
+      "reçois",
+      "jesus"
+    ]
+  }
+}

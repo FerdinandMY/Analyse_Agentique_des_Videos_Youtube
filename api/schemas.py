@@ -21,9 +21,18 @@ class CommentItem(BaseModel):
 class AnalyzeRequest(BaseModel):
     video_id: str = Field(..., description="YouTube video identifier or URL")
     topic: str = Field(default="", description="User thematic query for personalised scoring")
+    lang: str = Field(
+        default="fr",
+        description="Langue des textes générés par le LLM : 'fr' (français) ou 'en' (anglais)",
+        pattern="^(fr|en)$",
+    )
     comments: Optional[list[CommentItem]] = Field(
         default=None,
-        description="Pre-collected comments (optional — A0 collecte si absent)",
+        description=(
+            "Commentaires pré-collectés (optionnel, usage avancé uniquement). "
+            "Laisser VIDE — A0 collecte automatiquement depuis YouTube. "
+            "Si fournis, doivent contenir au moins 5 éléments sinon ignorés."
+        ),
     )
     force_refresh: bool = Field(
         default=False,
@@ -65,6 +74,11 @@ class AnalyzeResponse(BaseModel):
     low_consensus: Optional[bool] = Field(
         default=None,
         description="True si le consensus A7 est inférieur à 2/3 (résultat moins fiable)",
+    )
+    # ── Langue de sortie ──────────────────────────────────────────────────────
+    lang: Optional[str] = Field(
+        default="fr",
+        description="Langue des textes générés : 'fr' ou 'en'",
     )
     # ── v1.1 A0 Collector fields ──────────────────────────────────────────────
     source: Optional[str] = Field(

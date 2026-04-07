@@ -9,17 +9,17 @@
       "branch_1": {
         "name": "Content alignment",
         "score": 0.0,
-        "rationale": "The semantic similarity score is 0.0000, indicating no alignment with the topic."
+        "rationale": "The semantic similarity score of 0.0000 indicates no alignment with the topic 'gospel'."
       },
       "branch_2": {
         "name": "Audience level",
         "score": 0.0,
-        "rationale": "Comments do not suggest any audience level that would be researching 'gospel'."
+        "rationale": "There are no comments suggesting a specific audience level related to 'gospel'."
       },
       "branch_3": {
         "name": "Pedagogical value",
         "score": 0.0,
-        "rationale": "There are no comments praising clarity, depth, or learning value relevant to 'gospel'."
+        "rationale": "No comments indicate clarity, depth, or learning value relevant to 'gospel'."
       }
     },
     "sc_runs": [
@@ -41,7 +41,7 @@
         "run": 3,
         "pertinence_score": 0.0,
         "label": "non_pertinent",
-        "verdict": "Este video no es relevante para aquellos que investigan el tema del 'gospel', ya que no hay contenido ni comentarios relacionados.",
+        "verdict": "This video is not relevant to your research on 'gospel' as it lacks any related content or audience engagement.",
         "fallback_used": false
       }
     ],

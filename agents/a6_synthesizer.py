@@ -28,9 +28,12 @@ W_SENTIMENT = 0.35
 W_DISCOURSE = 0.40
 W_NOISE = 0.25
 
-_SYSTEM = "You are a video quality analyst. Write concise, factual summaries."
+_SYSTEM_EN = "You are a video quality analyst. Write concise, factual summaries in English."
+_SYSTEM_FR = "Tu es un analyste de qualité vidéo. Rédige des résumés concis et factuels en français."
 
 _DEFAULT_SUMMARY_PROMPT = """\
+{{lang_instruction}}
+
 Based on the analysis of YouTube comments, write a 2–3 sentence summary explaining
 the overall quality of the video as reflected by its comment section.
 
@@ -45,6 +48,11 @@ Discourse rationale:  {{discourse_rationale}}
 Noise rationale:      {{noise_rationale}}
 
 Summary:"""
+
+_LANG_INSTRUCTION = {
+    "fr": "Réponds UNIQUEMENT en français.",
+    "en": "Reply ONLY in English.",
+}
 
 QualityLabel = Literal["Faible", "Moyen", "Bon", "Excellent"]
 
@@ -64,6 +72,7 @@ def a6_synthesizer(state: PipelineState) -> dict[str, Any]:
     sentiment = state.get("sentiment") or {}
     discourse = state.get("discourse") or {}
     noise = state.get("noise") or {}
+    lang = (state.get("lang") or "fr").lower()
 
     s = float(sentiment.get("sentiment_score", 50.0))
     d = float(discourse.get("discourse_score", 50.0))
@@ -76,9 +85,12 @@ def a6_synthesizer(state: PipelineState) -> dict[str, Any]:
     summary = ""
     llm = get_llm()
     if llm is not None:
+        system_msg = _SYSTEM_FR if lang == "fr" else _SYSTEM_EN
+        lang_instruction = _LANG_INSTRUCTION.get(lang, _LANG_INSTRUCTION["fr"])
         template = load_prompt("prompts/synthesis_v1.txt", _DEFAULT_SUMMARY_PROMPT)
         user_msg = (
             template
+            .replace("{{lang_instruction}}", lang_instruction)
             .replace("{{sentiment_score}}", str(s))
             .replace("{{discourse_score}}", str(d))
             .replace("{{noise_score}}", str(n))
@@ -88,7 +100,7 @@ def a6_synthesizer(state: PipelineState) -> dict[str, Any]:
             .replace("{{noise_rationale}}", noise.get("rationale", ""))
         )
         try:
-            resp = llm.invoke([SystemMessage(content=_SYSTEM), HumanMessage(content=user_msg)])
+            resp = llm.invoke([SystemMessage(content=system_msg), HumanMessage(content=user_msg)])
             summary = resp.content.strip()
         except Exception as exc:
             logger.error("a6_synthesizer: summary LLM error — %s", exc)
