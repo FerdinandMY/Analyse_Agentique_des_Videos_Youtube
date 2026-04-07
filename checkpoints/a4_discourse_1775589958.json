@@ -1,0 +1,69 @@
+{
+  "agent": "a4_discourse",
+  "pipeline_id": "1775589958",
+  "data": {
+    "informativeness": 40.0,
+    "argumentation": 100.0,
+    "constructiveness": 30.0,
+    "discourse_score": 33.33,
+    "high_quality_indices": [],
+    "rationale": "Overall, the comments reflect personal faith and experiences but lack depth, interaction, and informative value.",
+    "reasoning": "The analysis reveals that while the comments express personal experiences and affirmations, they lack depth in discussing the video's content, show limited back-and-forth interaction, and do not provide substantial information for viewers before watching.",
+    "tot_branches": {
+      "branch_1": {
+        "name": "Content Depth",
+        "score": 0.4,
+        "rationale": "Commenters primarily share personal testimonies rather than engaging deeply with the video's themes."
+      },
+      "branch_2": {
+        "name": "Discussion Quality",
+        "score": 0.3,
+        "rationale": "The comments are largely isolated affirmations with minimal nuanced discussion or interaction."
+      },
+      "branch_3": {
+        "name": "Epistemic Value",
+        "score": 0.2,
+        "rationale": "The comments do not provide useful information or recommendations that would benefit viewers prior to watching."
+      }
+    },
+    "tot_used": true,
+    "text_stats": {
+      "word_count": 531,
+      "char_count": 3017,
+      "sentence_count": 30,
+      "avg_word_length": 4.6,
+      "question_count": 0,
+      "unique_word_ratio": 0.5179,
+      "caps_ratio": 0.0
+    },
+    "arg_markers": {
+      "total_markers": 14,
+      "categories": {
+        "causality": [
+          "comme",
+          "car",
+          "comme"
+        ],
+        "contrast": [
+          "mais",
+          "pourtant",
+          "mais"
+        ],
+        "example": [
+          "comme",
+          "comme",
+          "comme"
+        ],
+        "conclusion": [
+          "ainsi",
+          "ainsi"
+        ],
+        "nuance": [
+          "même si"
+        ]
+      },
+      "argumentation_score": 1.0,
+      "is_argumentative": true
+    }
+  }
+}

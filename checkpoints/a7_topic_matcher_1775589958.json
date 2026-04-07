@@ -1,0 +1,64 @@
+{
+  "agent": "a7_topic_matcher",
+  "pipeline_id": "1775589958",
+  "data": {
+    "score_pertinence": 52.22,
+    "score_final": 59.19,
+    "topic_verdict": "Cette vidéo semble aborder des thèmes de foi, mais elle ne fournit pas de contenu directement pertinent sur le sujet. Les commentaires indiquent une audience engagée, mais sans valeur pédagogique claire.",
+    "tot_branches": {
+      "branch_1": {
+        "name": "Content alignment",
+        "score": 0.2,
+        "rationale": "Bien que les commentaires parlent de Dieu et de la foi, le score de similarité sémantique est très faible, indiquant un manque de contenu direct sur le sujet."
+      },
+      "branch_2": {
+        "name": "Audience level",
+        "score": 0.6,
+        "rationale": "Les commentaires montrent que l'audience a une compréhension intermédiaire de la foi, avec des références personnelles et des prières."
+      },
+      "branch_3": {
+        "name": "Pedagogical value",
+        "score": 0.3,
+        "rationale": "Il n'y a pas de commentaires qui mettent en avant la clarté ou la profondeur d'apprentissage sur le sujet de la foi."
+      }
+    },
+    "sc_runs": [
+      {
+        "run": 1,
+        "pertinence_score": 36.67,
+        "label": "moyennement_pertinent",
+        "verdict": "Cette vidéo semble aborder des thèmes de foi, mais elle ne fournit pas de contenu directement pertinent sur le sujet. Les commentaires indiquent une audience engagée, mais sans valeur pédagogique claire.",
+        "fallback_used": false
+      },
+      {
+        "run": 2,
+        "pertinence_score": 66.67,
+        "label": "pertinent",
+        "verdict": "Cette vidéo semble pertinente pour ceux qui s'intéressent à la foi, bien que le contenu ne soit pas directement aligné avec des recherches académiques sur le sujet.",
+        "fallback_used": false
+      },
+      {
+        "run": 3,
+        "pertinence_score": 53.33,
+        "label": "moyennement_pertinent",
+        "verdict": "Cette vidéo aborde des thèmes de foi, mais son contenu pourrait ne pas être suffisamment approfondi pour ceux qui recherchent des informations plus détaillées sur le sujet.",
+        "fallback_used": false
+      }
+    ],
+    "sc_consensus": true,
+    "low_consensus": false,
+    "similarity_score": 0.0,
+    "key_topics": [
+      "dieu",
+      "amen",
+      "seigneur",
+      "christ",
+      "suis",
+      "jesus",
+      "chaque",
+      "jamais",
+      "gloire",
+      "cette"
+    ]
+  }
+}

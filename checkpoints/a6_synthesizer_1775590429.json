@@ -1,0 +1,12 @@
+{
+  "agent": "a6_synthesizer",
+  "pipeline_id": "1775590429",
+  "data": {
+    "score_global": 63.83,
+    "quality_label": "Bon",
+    "sentiment_score": 80.0,
+    "discourse_score": 33.33,
+    "noise_score": 90.0,
+    "summary": "La qualité globale des commentaires sur la vidéo est modérée, avec un score de 63,83. Bien que le sentiment soit majoritairement positif, les échanges manquent de profondeur et d'interaction, ce qui indique une discussion peu substantielle. En raison de la clarté des commentaires et de l'absence de bruit significatif, la vidéo semble valoir le coup d'œil, surtout pour ceux qui recherchent des expériences personnelles et des affirmations."
+  }
+}

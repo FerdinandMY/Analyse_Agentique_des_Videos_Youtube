@@ -4,35 +4,50 @@
   "data": {
     "informativeness": 50.0,
     "argumentation": 100.0,
-    "constructiveness": 60.0,
-    "discourse_score": 70.0,
+    "constructiveness": 30.0,
+    "discourse_score": 40.0,
     "high_quality_indices": [
-      0
+      14,
+      18
     ],
-    "rationale": "Comment 0 stands out for its depth and structured narrative, contributing significantly to the overall discourse quality.",
-    "reasoning": "The comments primarily express personal experiences and emotional responses related to faith and divine intervention, with comment 0 providing a detailed narrative that adds context and personal insight. However, the overall informativeness is limited as many comments are affirmations or expressions of gratitude without substantial new information. The argumentation score is high due to the presence of various argumentative markers, particularly in comment 0, which supports its claims with personal reasoning. The constructiveness is moderate; while many comments are positive and supportive, they lack depth and engagement, with a low question count indicating limited dialogue. High-quality comments are primarily those that provide personal narratives or insights, particularly comment 0, which stands out for its depth and structure.",
-    "tot_branches": {},
-    "tot_used": false,
+    "rationale": "The comments show some informative content but lack depth and constructive dialogue, resulting in a moderate discourse score.",
+    "reasoning": "The analysis reveals that while there are some deeper discussions, the overall engagement is largely superficial with isolated comments, leading to a moderate discourse score.",
+    "tot_branches": {
+      "branch_1": {
+        "name": "Content Depth",
+        "score": 0.4,
+        "rationale": "Commenters occasionally reference the video's themes, but most comments are brief reactions rather than in-depth discussions."
+      },
+      "branch_2": {
+        "name": "Discussion Quality",
+        "score": 0.3,
+        "rationale": "The presence of isolated one-liners and limited use of contrast or nuance markers indicates a lack of nuanced discussion."
+      },
+      "branch_3": {
+        "name": "Epistemic Value",
+        "score": 0.5,
+        "rationale": "Some comments provide cultural context and opinions that could be useful to viewers, but overall informativeness is limited."
+      }
+    },
+    "tot_used": true,
     "text_stats": {
-      "word_count": 531,
-      "char_count": 3017,
-      "sentence_count": 30,
-      "avg_word_length": 4.6,
-      "question_count": 0,
-      "unique_word_ratio": 0.5179,
+      "word_count": 284,
+      "char_count": 1634,
+      "sentence_count": 20,
+      "avg_word_length": 4.62,
+      "question_count": 1,
+      "unique_word_ratio": 0.581,
       "caps_ratio": 0.0
     },
     "arg_markers": {
-      "total_markers": 14,
+      "total_markers": 15,
       "categories": {
         "causality": [
           "comme",
-          "car",
+          "comme",
           "comme"
         ],
         "contrast": [
-          "mais",
-          "pourtant",
           "mais"
         ],
         "example": [
@@ -41,8 +56,7 @@
           "comme"
         ],
         "conclusion": [
-          "ainsi",
-          "ainsi"
+          "donc"
         ],
         "nuance": [
           "même si"

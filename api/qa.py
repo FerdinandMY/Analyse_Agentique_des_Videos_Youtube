@@ -309,7 +309,13 @@ def extract_top_comments(
     max_comments: int = _MAX_TOP_COMMENTS,
 ) -> list[dict]:
     """
-    Extrait les commentaires dont le score A4 >= threshold (PRD v1.1 §4.4).
+    Extrait les commentaires de haute qualité pour le contexte Q&A.
+
+    Stratégie en deux passes (PRD v1.1 §4.4) :
+    1. Passe principale  : indices high_quality_indices retournés par A4
+    2. Fallback          : si A4 n'en a sélectionné aucun, on prend les
+                           max_comments commentaires avec le plus de likes,
+                           en filtrant les textes trop courts (< 10 chars).
 
     Args:
         cleaned_comments : Liste de commentaires nettoyés par A2.
@@ -321,18 +327,40 @@ def extract_top_comments(
         Liste de {comment_id, text, score_a4}.
     """
     hq_indices = discourse_result.get("high_quality_indices") or []
-    if not hq_indices:
-        return []
 
+    # ── Passe 1 : indices A4 ──────────────────────────────────────────────────
+    if hq_indices:
+        results = []
+        for idx in hq_indices[:max_comments]:
+            if isinstance(idx, int) and 0 <= idx < len(cleaned_comments):
+                c    = cleaned_comments[idx]
+                text = c.get("cleaned_text") or c.get("text") or ""
+                if text.strip():
+                    results.append({
+                        "comment_id": c.get("comment_id", f"idx_{idx}"),
+                        "text":       text[:500],
+                        "score_a4":   threshold,
+                    })
+        if results:
+            return results
+
+    # ── Passe 2 : fallback sur les commentaires les plus likés ────────────────
+    candidates = [
+        c for c in cleaned_comments
+        if isinstance(c, dict)
+        and len((c.get("cleaned_text") or c.get("text") or "").strip()) >= 10
+    ]
+    candidates.sort(
+        key=lambda c: int(c.get("author_likes") or 0),
+        reverse=True,
+    )
     results = []
-    for idx in hq_indices[:max_comments]:
-        if isinstance(idx, int) and 0 <= idx < len(cleaned_comments):
-            c = cleaned_comments[idx]
-            text = c.get("text") or c.get("cleaned_text") or ""
-            results.append({
-                "comment_id": c.get("comment_id", f"idx_{idx}"),
-                "text":       text[:500],
-                "score_a4":   threshold,  # valeur minimale garantie
-            })
+    for c in candidates[:max_comments]:
+        text = c.get("cleaned_text") or c.get("text") or ""
+        results.append({
+            "comment_id": c.get("comment_id", ""),
+            "text":       text[:500],
+            "score_a4":   0.0,   # sélectionné par popularité, pas par A4
+        })
 
     return results

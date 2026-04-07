@@ -2,11 +2,11 @@
   "agent": "a6_synthesizer",
   "pipeline_id": "1775588456",
   "data": {
-    "score_global": 78.5,
-    "quality_label": "Excellent",
-    "sentiment_score": 80.0,
-    "discourse_score": 70.0,
-    "noise_score": 90.0,
-    "summary": "La qualité globale des commentaires sur la vidéo est élevée, avec un score composite de 78,5, indiquant une réponse émotionnelle positive et une discussion substantielle. Les commentaires se caractérisent par une forte gratitude et des expériences personnelles, bien que la majorité soit axée sur des sentiments religieux, ce qui limite la profondeur des échanges. En raison de la qualité des interactions et de la positivité des retours, la vidéo semble valoir le détour."
+    "score_global": 53.0,
+    "quality_label": "Bon",
+    "sentiment_score": 70.0,
+    "discourse_score": 40.0,
+    "noise_score": 50.0,
+    "summary": "La qualité globale des commentaires sur la vidéo est modérée, avec un score composite de 53. Bien que la majorité des réactions soient positives, reflétant un sentiment favorable, la discussion manque de profondeur et est entachée par un certain niveau de bruit, avec des échanges parfois hors sujet. En raison de ces éléments, la vidéo semble valoir le coup d'œil, mais avec des attentes mesurées concernant la richesse des échanges."
   }
 }

@@ -3,12 +3,12 @@
   "pipeline_id": "1775588456",
   "data": {
     "sentiment_label": "positive",
-    "sentiment_score": 80.0,
+    "sentiment_score": 70.0,
     "confidence": 0.9,
-    "rationale": "The comments reflect a strong sense of gratitude and faith, indicating a positive sentiment overall.",
-    "reasoning": "The VADER sentiment analysis indicates a neutral baseline sentiment with a compound score of 0.0, suggesting no strong emotional charge in the comments. However, the sarcasm detection indicates the presence of sarcasm with a confidence of 0.75, but no contradictions were detected, meaning the overall sentiment should not be inverted. The comments predominantly express gratitude, faith, and positive experiences related to divine intervention, which leans towards a positive emotional tone despite the neutral baseline. Therefore, the overall sentiment is classified as positive.",
+    "rationale": "Despite the presence of sarcasm, the majority of comments reflect a positive sentiment towards the video and its content.",
+    "reasoning": "The VADER sentiment score indicates a positive sentiment with a compound score of 0.3, suggesting appreciation and enjoyment. Although sarcasm is detected in some comments, the overall tone remains positive as the sarcastic comments do not significantly invert the general sentiment expressed in the other comments. Therefore, the overall emotional tone is positive.",
     "sarcasm_detected": true,
-    "vader_signal": "neutral",
+    "vader_signal": "positive",
     "sarcasm_signal": true
   }
 }

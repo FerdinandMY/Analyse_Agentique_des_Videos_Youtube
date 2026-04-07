@@ -3,13 +3,13 @@
   "pipeline_id": "1775588456",
   "data": {
     "spam_ratio": 0.0,
-    "offtopic_ratio": 0.0,
-    "reaction_ratio": 10.0,
+    "offtopic_ratio": 10.0,
+    "reaction_ratio": 30.0,
     "toxic_ratio": 0.0,
-    "bot_ratio": 0.0,
-    "noise_ratio": 10.0,
-    "noise_score": 90.0,
-    "rationale": "The comments primarily express personal experiences and religious sentiments, with a small portion being simple reactions or affirmations.",
+    "bot_ratio": 10.0,
+    "noise_ratio": 50.0,
+    "noise_score": 50.0,
+    "rationale": "The comments contain a mix of reactions, some off-topic discussions, and a few instances of repetitive phrases, leading to a moderate overall noise level.",
     "reasoning": "",
     "svm_used": true
   }

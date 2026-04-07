@@ -46,6 +46,7 @@ def _assemble_report(state: PipelineState) -> dict[str, Any]:
             "noise":     state.get("noise"),
         },
         "comment_count":       len(state.get("cleaned_comments") or []),
+        "cleaned_comments":    state.get("cleaned_comments") or [],
         "errors":              state.get("errors") or [],
         # ── v3.0 anti-hallucination (bug fix : ces champs étaient absents) ──────
         "hallucination_flags": state.get("hallucination_flags") or [],

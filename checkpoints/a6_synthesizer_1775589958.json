@@ -1,0 +1,12 @@
+{
+  "agent": "a6_synthesizer",
+  "pipeline_id": "1775589958",
+  "data": {
+    "score_global": 63.83,
+    "quality_label": "Bon",
+    "sentiment_score": 80.0,
+    "discourse_score": 33.33,
+    "noise_score": 90.0,
+    "summary": "La qualité globale des commentaires sur la vidéo est modérée, avec un score composite de 63,83. Bien que les sentiments exprimés soient majoritairement positifs, reflétant gratitude et foi, la discussion manque de profondeur et d'interaction, ce qui indique une prédominance de réactions personnelles et de bruit. En raison de la forte positivité des sentiments, la vidéo semble valoir le coup d'œil, mais les attentes en matière de contenu substantiel devraient être limitées."
+  }
+}

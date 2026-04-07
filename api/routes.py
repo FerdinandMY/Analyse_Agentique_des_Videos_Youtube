@@ -337,6 +337,24 @@ def clear_cache() -> dict[str, str]:
     return {"status": "ok", "message": "Cache vidé."}
 
 
+@router.get(
+    "/debug/qa_context/{video_id}",
+    summary="[DEBUG] Inspecter le qa_context en cache pour une vidéo",
+    tags=["admin"],
+)
+def debug_qa_context(video_id: str) -> Any:
+    ctx = cache.get_qa_context(video_id)
+    if ctx is None:
+        return {"qa_context": None, "message": "Absent du cache"}
+    return {
+        "transcript_available": ctx.get("transcript_available"),
+        "transcript_segments":  len(ctx.get("transcript") or []),
+        "top_comments_count":   len(ctx.get("top_comments") or []),
+        "top_comments_preview": [c.get("text", "")[:80] for c in (ctx.get("top_comments") or [])[:5]],
+        "video_title":          ctx.get("video_title"),
+    }
+
+
 @router.delete(
     "/cache/{video_id}",
     summary="Vider le cache pour une vidéo spécifique",
