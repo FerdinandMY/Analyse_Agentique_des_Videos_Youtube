@@ -1,0 +1,64 @@
+{
+  "agent": "a7_topic_matcher",
+  "pipeline_id": "1775604882",
+  "data": {
+    "score_pertinence": 24.45,
+    "score_final": 50.48,
+    "topic_verdict": "Cette vidéo semble moins pertinente pour une recherche sur le gospel, car elle se concentre davantage sur des expériences personnelles de foi que sur le sujet lui-même.",
+    "tot_branches": {
+      "branch_1": {
+        "name": "Content alignment",
+        "score": 0.1,
+        "rationale": "Les commentaires parlent de Dieu et de la foi, mais ne traitent pas spécifiquement du gospel."
+      },
+      "branch_2": {
+        "name": "Audience level",
+        "score": 0.5,
+        "rationale": "Les commentaires indiquent une audience croyante, mais ne montrent pas de recherche approfondie sur le gospel."
+      },
+      "branch_3": {
+        "name": "Pedagogical value",
+        "score": 0.2,
+        "rationale": "Les commentaires expriment des expériences personnelles, mais manquent de clarté ou de profondeur pédagogique sur le gospel."
+      }
+    },
+    "sc_runs": [
+      {
+        "run": 1,
+        "pertinence_score": 26.67,
+        "label": "non_pertinent",
+        "verdict": "Cette vidéo semble moins pertinente pour une recherche sur le gospel, car elle se concentre davantage sur des expériences personnelles de foi que sur le sujet lui-même.",
+        "fallback_used": false
+      },
+      {
+        "run": 2,
+        "pertinence_score": 26.67,
+        "label": "non_pertinent",
+        "verdict": "Cette vidéo semble moins pertinente pour une recherche sur le gospel, car elle se concentre davantage sur des expériences personnelles de foi que sur le sujet lui-même.",
+        "fallback_used": false
+      },
+      {
+        "run": 3,
+        "pertinence_score": 20.0,
+        "label": "non_pertinent",
+        "verdict": "Cette vidéo semble moins pertinente pour une recherche sur le gospel, car elle se concentre davantage sur des témoignages personnels de foi que sur le sujet lui-même.",
+        "fallback_used": false
+      }
+    ],
+    "sc_consensus": true,
+    "low_consensus": false,
+    "similarity_score": 0.0,
+    "key_topics": [
+      "dieu",
+      "amen",
+      "seigneur",
+      "christ",
+      "suis",
+      "jesus",
+      "chaque",
+      "jamais",
+      "gloire",
+      "cette"
+    ]
+  }
+}

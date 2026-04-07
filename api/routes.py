@@ -73,6 +73,8 @@ def analyze(request: AnalyzeRequest) -> Any:
     collected_at:         str | None  = None
     transcript:           list | None = None
     transcript_available: bool | None = None
+    video_title:          str | None  = None
+    video_description:    str | None  = None
     raw_comments: list[dict] | None   = None
 
     _MIN_COMMENTS_THRESHOLD = 5  # En dessous, on ignore les comments fournis et on appelle A0
@@ -122,6 +124,8 @@ def analyze(request: AnalyzeRequest) -> Any:
             collected_at         = a0_state.get("collected_at")
             transcript           = a0_state.get("transcript")
             transcript_available = a0_state.get("transcript_available")
+            video_title          = a0_state.get("video_title", "")
+            video_description    = a0_state.get("video_description", "")
 
             # Récupérer le video_id normalisé retourné par A0
             if a0_state.get("video_id"):
@@ -154,6 +158,8 @@ def analyze(request: AnalyzeRequest) -> Any:
             collected_at=collected_at,
             transcript=transcript,
             transcript_available=transcript_available,
+            video_title=video_title,
+            video_description=video_description,
         )
     except Exception as exc:
         logger.error("analyze: pipeline error — %s", exc)
@@ -203,7 +209,8 @@ def analyze(request: AnalyzeRequest) -> Any:
         "transcript":           transcript or [],
         "transcript_available": transcript_available if transcript_available is not None else False,
         "top_comments":         top_comments,
-        "video_title":          (report.get("details") or {}).get("video_title", ""),
+        "video_title":          report.get("video_title") or video_title or "",
+        "video_description":    report.get("video_description") or video_description or "",
     }
     cache.set_qa_context(video_id, qa_ctx)
     logger.info(

@@ -81,6 +81,12 @@ class PipelineState(TypedDict, total=False):
     transcript_available: Optional[bool]
     # False si youtube-transcript-api lève une exception (FR-85)
 
+    video_title: Optional[str]
+    # Titre de la vidéo YouTube (depuis videos.list snippet.title)
+
+    video_description: Optional[str]
+    # Description de la vidéo YouTube (snippet.description, tronquée à 2000 chars)
+
     qa_context: Optional[dict]
     # {transcript, transcript_available, top_comments, video_title} — stocké en cache (FR-86)
 

@@ -138,6 +138,7 @@ def _fetch_video_metadata(service, video_id: str) -> dict[str, Any]:
     return {
         "video_id":        video_id,
         "title":           snippet.get("title", ""),
+        "description":     snippet.get("description", "")[:2000],  # tronqué à 2000 chars
         "channel_name":    snippet.get("channelTitle", ""),
         "channel_id":      snippet.get("channelId", ""),
         "published_at":    snippet.get("publishedAt", ""),
@@ -233,22 +234,79 @@ def _fetch_transcript(video_id: str) -> tuple[list[dict], bool]:
     Récupère la transcription via youtube-transcript-api (FR-84).
     Ne consomme aucune unité de quota.
 
+    Stratégie en 3 passes (couvre ~95% des vidéos) :
+      1. Sous-titres manuels dans _TRANSCRIPT_LANGS (créateur les a activés)
+      2. Sous-titres auto-générés par YouTube dans _TRANSCRIPT_LANGS
+      3. N'importe quelle langue disponible, traduite en français via l'API
+
     Returns:
         (transcript_segments, available)
         transcript_segments : [{text, start, duration}]
-        available           : False si sous-titres indisponibles
+        available           : False si aucune source disponible
     """
     try:
         from youtube_transcript_api import YouTubeTranscriptApi  # type: ignore
-        # v1.x : API d'instance avec .fetch() — v0.x utilisait .get_transcript() statique
+
         api = YouTubeTranscriptApi()
-        fetched = api.fetch(video_id, languages=_TRANSCRIPT_LANGS)
-        # FetchedTranscript est itérable ; chaque élément est un FetchedTranscriptSnippet
+
+        # Lister toutes les transcriptions disponibles pour cette vidéo
+        try:
+            transcript_list = api.list(video_id)
+        except Exception as exc:
+            logger.warning("a0_collector: list transcripts indisponible %s — %s", video_id, exc)
+            return [], False
+
+        fetched = None
+
+        # Passe 1 — sous-titres manuels (meilleure qualité)
+        try:
+            fetched = transcript_list.find_manually_created_transcript(_TRANSCRIPT_LANGS)
+            logger.info("a0_collector: transcription manuelle trouvee pour %s", video_id)
+        except Exception:
+            pass
+
+        # Passe 2 — auto-captions YouTube (génères automatiquement)
+        if fetched is None:
+            try:
+                fetched = transcript_list.find_generated_transcript(_TRANSCRIPT_LANGS)
+                logger.info("a0_collector: auto-caption trouvee pour %s", video_id)
+            except Exception:
+                pass
+
+        # Passe 3 — n'importe quelle langue disponible, traduite en français
+        if fetched is None:
+            try:
+                available = list(transcript_list)
+                if available:
+                    # Prendre le premier disponible et traduire en français
+                    candidate = available[0]
+                    if candidate.is_translatable:
+                        fetched = candidate.translate("fr")
+                        logger.info(
+                            "a0_collector: transcription %s traduite en fr pour %s",
+                            candidate.language_code, video_id,
+                        )
+                    else:
+                        fetched = candidate
+                        logger.info(
+                            "a0_collector: transcription %s (sans traduction) pour %s",
+                            candidate.language_code, video_id,
+                        )
+            except Exception:
+                pass
+
+        if fetched is None:
+            logger.warning("a0_collector: aucune transcription disponible pour %s", video_id)
+            return [], False
+
+        # Récupérer les segments horodatés
+        data = fetched.fetch()
         segments = [
             {"text": s.text, "start": s.start, "duration": s.duration}
-            for s in fetched
+            for s in data
         ]
         return segments, True
+
     except Exception as exc:
         logger.warning("a0_collector: transcription indisponible pour %s — %s", video_id, exc)
         return [], False
@@ -421,5 +479,7 @@ def a0_collector(state: dict) -> dict[str, Any]:
         "collected_at":         collected_at,
         "transcript":           transcript,
         "transcript_available": transcript_available,
+        "video_title":          metadata.get("title", ""),
+        "video_description":    metadata.get("description", ""),
         "errors":               errors,
     }

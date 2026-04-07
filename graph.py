@@ -57,6 +57,8 @@ def _assemble_report(state: PipelineState) -> dict[str, Any]:
         "source":              state.get("source"),
         "quota_used":          state.get("quota_used"),
         "collected_at":        state.get("collected_at"),
+        "video_title":         state.get("video_title", ""),
+        "video_description":   state.get("video_description", ""),
     }
     return {"report": report}
 
@@ -125,6 +127,8 @@ def run_pipeline(
     collected_at:        Optional[str] = None,
     transcript:          Optional[list] = None,
     transcript_available: Optional[bool] = None,
+    video_title:         Optional[str] = None,
+    video_description:   Optional[str] = None,
 ) -> dict[str, Any]:
     """
     Convenience function: build graph, run pipeline, return report.
@@ -164,6 +168,8 @@ def run_pipeline(
     if collected_at        is not None: initial_state["collected_at"]         = collected_at         # type: ignore[assignment]
     if transcript          is not None: initial_state["transcript"]           = transcript           # type: ignore[assignment]
     if transcript_available is not None: initial_state["transcript_available"] = transcript_available # type: ignore[assignment]
+    if video_title         is not None: initial_state["video_title"]          = video_title          # type: ignore[assignment]
+    if video_description   is not None: initial_state["video_description"]    = video_description    # type: ignore[assignment]
 
     config      = {"configurable": {"thread_id": thread_id}}
     final_state = app.invoke(initial_state, config=config)

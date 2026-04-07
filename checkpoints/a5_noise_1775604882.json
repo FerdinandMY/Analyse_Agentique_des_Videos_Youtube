@@ -1,0 +1,16 @@
+{
+  "agent": "a5_noise",
+  "pipeline_id": "1775604882",
+  "data": {
+    "spam_ratio": 0.0,
+    "offtopic_ratio": 0.0,
+    "reaction_ratio": 10.0,
+    "toxic_ratio": 0.0,
+    "bot_ratio": 0.0,
+    "noise_ratio": 10.0,
+    "noise_score": 90.0,
+    "rationale": "The comments primarily express personal experiences and religious sentiments, with a small portion being simple reactions or emojis.",
+    "reasoning": "",
+    "svm_used": true
+  }
+}

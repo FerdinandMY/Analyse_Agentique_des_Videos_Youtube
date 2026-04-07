@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 evaluation/compute_metrics.py --gold data/gold_standard/gold_standard.jsonl --preds data/predictions/pipeline_predictions.jsonl --output evaluation/results/metrics_report.json)"
+    ]
+  }
+}

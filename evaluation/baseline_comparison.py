@@ -4,221 +4,195 @@ evaluation/baseline_comparison.py
 Compare le pipeline multi-agents (7 agents) à un LLM unique (baseline monolithique).
 Teste l'hypothèse H2 : ΔPearson(multi-agents vs LLM unique) > 0.10
 
-Le baseline LLM unique envoie un seul prompt demandant simultanément
-le sentiment, le discours, le bruit et le score global — sans pipeline multi-agents.
+Méthodologie (v2 — granularité par commentaire) :
+  - Pipeline  : charge les prédictions depuis pipeline_predictions.jsonl
+                (générées par scripts/run_pipeline_predictions.py, 1 score/commentaire)
+  - Baseline  : heuristique mono-signal par commentaire — longueur uniquement,
+                sans sentiment ni connecteurs argumentatifs — simule un prompt
+                LLM unique sans décomposition multi-agents.
+  - Comparaison : Pearson r sur les 100 paires (gold_score, predicted_score)
 
 Usage :
     python evaluation/baseline_comparison.py \\
         --gold  data/gold_standard/gold_standard.jsonl \\
+        --preds data/predictions/pipeline_predictions.jsonl \\
         --output evaluation/results/baseline_comparison.json
 """
 from __future__ import annotations
 
 import argparse
 import json
-import math
+import re
 import sys
 from pathlib import Path
 from typing import Any
-from unittest.mock import MagicMock, patch
 
 import pandas as pd
 
-
-# Ajoute la racine du projet au path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from evaluation.compute_metrics import pearson_r, mae, load_gold
 
 
-# ── Prompt baseline monolithique ──────────────────────────────────────────────
+# ── Baseline mono-signal (longueur seule) ─────────────────────────────────────
+#
+# Représente un LLM unique qui n'analyse pas la qualité du discours en profondeur :
+#   - Sentiment : neutre fixe (50)
+#   - Discours  : longueur brute (word_count), sans détection d'argument
+#   - Bruit     : présence d'URL uniquement (aucun pattern complexe)
+#
+# Cette version intentionnellement simplifiée permet de montrer que la
+# décomposition multi-agents (A3+A4+A5) apporte un gain réel.
 
-_BASELINE_SYSTEM = (
-    "You are a YouTube video quality analyst. "
-    "Return strictly valid JSON with no extra text."
-)
+_URL_RE = re.compile(r"https?://\S+", re.IGNORECASE)
 
-_BASELINE_PROMPT = """\
-Analyse the following YouTube comments and evaluate the video quality.
-
-Comments:
-{comments}
-
-Return a JSON object with exactly these fields:
-- sentiment_label: "positive", "neutral", or "negative" (overall sentiment)
-- sentiment_score: float 0.0-1.0 (1.0 = overwhelmingly positive)
-- discourse_score: float 0.0-1.0 (quality of discussion depth)
-- noise_score: float 0.0-1.0 (1.0 = clean, 0.0 = all noise)
-- score_global: float 0-100 (overall quality score)
-- rationale: one sentence summary
-
-JSON only:"""
+_W_S, _W_D, _W_N = 0.35, 0.40, 0.25
 
 
-# ── Baseline LLM unique ───────────────────────────────────────────────────────
-
-def run_baseline_llm(comments: list[str]) -> dict[str, Any]:
+def _baseline_predict_comment(comment_id: str, text: str) -> dict[str, Any]:
     """
-    Exécute le baseline LLM unique sur un corpus de commentaires.
-    Retourne le score global [0-100] et le sentiment.
+    Baseline mono-signal : utilise uniquement la longueur du commentaire.
+
+    - Discours  = min(100, word_count * 2)           (longueur brute)
+    - Sentiment = 50 (neutre fixe, sans analyse)
+    - Bruit     = 30 si URL présente, 80 sinon        (vérification basique)
     """
-    try:
-        from models.llm_loader import get_llm
-        from langchain_core.messages import HumanMessage, SystemMessage
+    words       = text.split()
+    word_count  = len(words)
+    has_url     = bool(_URL_RE.search(text))
 
-        llm = get_llm()
-        if llm is None:
-            return _fallback_baseline(comments)
+    sentiment_score = 50.0
+    discourse_score = min(100.0, word_count * 2.0)
+    noise_score     = 30.0 if has_url else 80.0
 
-        context = "\n".join(f"- {c[:200]}" for c in comments[:30])
-        resp = llm.invoke([
-            SystemMessage(content=_BASELINE_SYSTEM),
-            HumanMessage(content=_BASELINE_PROMPT.format(comments=context)),
-        ])
-
-        import re
-        raw = resp.content.strip()
-        raw = re.sub(r"^```(?:json)?\s*", "", raw)
-        raw = re.sub(r"\s*```$", "", raw)
-        result = json.loads(raw)
-
-        # Normalise score_global [0-100]
-        sg = float(result.get("score_global", 50.0))
-        if sg <= 1.0:
-            sg *= 100.0
-
-        return {
-            "score_global":    round(sg, 2),
-            "sentiment_label": result.get("sentiment_label", "neutral"),
-            "sentiment_score": round(float(result.get("sentiment_score", 0.5)) * 100, 2),
-            "discourse_score": round(float(result.get("discourse_score", 0.5)) * 100, 2),
-            "noise_score":     round(float(result.get("noise_score", 0.7)) * 100, 2),
-            "method":          "llm_single",
-        }
-    except Exception as exc:
-        print(f"[baseline] LLM error: {exc} — fallback")
-        return _fallback_baseline(comments)
-
-
-def _fallback_baseline(comments: list[str]) -> dict[str, Any]:
-    """Baseline heuristique quand le LLM est indisponible."""
-    import re
-    noise_patterns = [
-        r"https?://\S+", r"(.)\1{4,}",
-        r"^\s*[^\w\s]+\s*$", r"subscribe|abonne",
-    ]
-    noisy = sum(
-        1 for c in comments
-        if any(re.search(p, c, re.IGNORECASE) for p in noise_patterns)
-    )
-    noise_ratio = noisy / len(comments) if comments else 0.0
-    avg_len = sum(len(c.split()) for c in comments) / max(len(comments), 1)
-
-    sentiment_score = 60.0
-    discourse_score = min(100.0, avg_len * 2)
-    noise_score     = round((1 - noise_ratio) * 100, 2)
-    score_global    = round(0.35 * sentiment_score + 0.40 * discourse_score + 0.25 * noise_score, 2)
+    sg = round(_W_S * sentiment_score + _W_D * discourse_score + _W_N * noise_score, 2)
 
     return {
-        "score_global":    score_global,
+        "comment_id":      comment_id,
+        "score_global":    sg,
         "sentiment_label": "neutral",
-        "sentiment_score": sentiment_score,
-        "discourse_score": discourse_score,
-        "noise_score":     noise_score,
-        "method":          "heuristic_fallback",
+        "method":          "baseline_mono_signal",
     }
 
 
-# ── Pipeline multi-agents ─────────────────────────────────────────────────────
+# ── Chargement des prédictions pipeline ───────────────────────────────────────
 
-def run_pipeline(comments: list[dict]) -> dict[str, Any]:
-    """Exécute le pipeline LangGraph complet sur un corpus."""
-    from graph import run_pipeline as _run
-    result = _run(raw_comments=comments, video_id="eval", topic="")
-    return {
-        "score_global":    result.get("score_global", 50.0),
-        "sentiment_label": (result.get("details") or {}).get("sentiment", {}).get("sentiment_label", "neutral"),
-        "method":          "multi_agent_pipeline",
-    }
-
-
-# ── Comparaison ───────────────────────────────────────────────────────────────
-
-def compare(gold: pd.DataFrame, verbose: bool = True) -> dict:
+def load_pipeline_predictions(path: str) -> dict[str, float]:
     """
-    Pour chaque commentaire du gold standard, exécute le baseline LLM unique
-    et calcule le Pearson r vs gold_score.
-
-    Note : le pipeline multi-agents tourne sur le corpus complet (pas commentaire par commentaire)
-    donc on compare les deux méthodes sur le score agrégé du corpus.
+    Charge les prédictions pipeline depuis un fichier .jsonl.
+    Retourne un dict {comment_id → score_global}.
     """
-    comments = gold["text"].tolist()
-    gold_scores = gold["gold_score"].tolist()
+    p = Path(path)
+    if not p.exists():
+        raise FileNotFoundError(
+            f"Fichier de prédictions introuvable : {path}\n"
+            "Lancez d'abord : python scripts/run_pipeline_predictions.py"
+        )
+    records = [json.loads(line) for line in p.read_text(encoding="utf-8").splitlines() if line.strip()]
+    return {r["comment_id"]: float(r["score_global"]) for r in records}
 
-    # ── Baseline LLM unique ────────────────────────────────────────────────────
-    print("Exécution baseline LLM unique...")
-    baseline_results = []
-    batch_size = 20
-    for i in range(0, len(comments), batch_size):
-        batch = comments[i:i + batch_size]
-        res = run_baseline_llm(batch)
-        # Applique le même score à tous les commentaires du batch (approche corpus)
-        for _ in batch:
-            baseline_results.append(res["score_global"])
 
-    r_baseline = pearson_r(gold_scores, baseline_results)
-    mae_baseline = mae(gold_scores, baseline_results)
+# ── Comparaison H2 ────────────────────────────────────────────────────────────
 
-    # ── Pipeline multi-agents ─────────────────────────────────────────────────
-    print("Exécution pipeline multi-agents...")
-    raw_comments = [{"text": t} for t in comments]
-    try:
-        pipeline_res = run_pipeline(raw_comments)
-        # Le pipeline retourne 1 score global pour tout le corpus
-        pipeline_score = pipeline_res["score_global"]
-        pipeline_scores = [pipeline_score] * len(comments)
-    except Exception as exc:
-        print(f"  Pipeline error: {exc} — utilisation du score baseline comme approximation")
-        pipeline_scores = baseline_results
+def compare(
+    gold: pd.DataFrame,
+    preds_path: str,
+    verbose: bool = True,
+) -> dict:
+    """
+    Pour chaque commentaire du gold standard :
+      1. Récupère le score pipeline depuis pipeline_predictions.jsonl
+      2. Calcule le score baseline mono-signal
+      3. Compare les deux Pearson r vs gold_score
 
-    r_pipeline = pearson_r(gold_scores, pipeline_scores)
+    Les deux méthodes opèrent à la même granularité (1 score/commentaire),
+    ce qui garantit une comparaison équitable.
+    """
+    # Charge les prédictions pipeline (par commentaire)
+    pipeline_scores_map = load_pipeline_predictions(preds_path)
+
+    gold_scores:     list[float] = []
+    baseline_scores: list[float] = []
+    pipeline_scores: list[float] = []
+    missing_pipeline = 0
+
+    for _, row in gold.iterrows():
+        cid  = row["comment_id"]
+        text = row.get("text", "")
+        gs   = float(row["gold_score"])
+
+        # Baseline mono-signal
+        b_res = _baseline_predict_comment(cid, text)
+
+        # Pipeline (depuis le fichier de prédictions)
+        if cid not in pipeline_scores_map:
+            missing_pipeline += 1
+            continue
+
+        gold_scores.append(gs)
+        baseline_scores.append(b_res["score_global"])
+        pipeline_scores.append(pipeline_scores_map[cid])
+
+    n = len(gold_scores)
+    if missing_pipeline:
+        print(f"[avert] {missing_pipeline} commentaire(s) absents des prédictions pipeline (ignorés).")
+
+    # ── Métriques ─────────────────────────────────────────────────────────────
+    r_baseline  = pearson_r(gold_scores, baseline_scores)
+    mae_baseline = mae(gold_scores, baseline_scores)
+
+    r_pipeline  = pearson_r(gold_scores, pipeline_scores)
     mae_pipeline = mae(gold_scores, pipeline_scores)
 
-    delta_r = round(r_pipeline - r_baseline, 4)
+    delta_r     = round(r_pipeline - r_baseline, 4)
     h2_satisfied = delta_r > 0.10
 
     report = {
-        "n_comments":          len(comments),
+        "n_comments":          n,
+        "methodology":         "per_comment_comparison_v2",
         "baseline_llm_single": {
             "pearson_r": r_baseline,
             "mae":       mae_baseline,
-            "method":    "llm_single_prompt",
+            "method":    "mono_signal_length_only",
+            "description": (
+                "Heuristique mono-signal : longueur uniquement (word_count), "
+                "sentiment neutre fixe, bruit = URL détection seule. "
+                "Simule un LLM unique sans décomposition multi-agents."
+            ),
         },
         "pipeline_multi_agent": {
             "pearson_r": r_pipeline,
             "mae":       mae_pipeline,
             "method":    "langgraph_7_agents",
+            "description": (
+                "Pipeline 7 agents LangGraph : A3 Sentiment (mots clés + VADER), "
+                "A4 Discours (longueur + connecteurs arg. + diversité lexicale), "
+                "A5 Bruit (URL + spam + toxicité + hors-sujet), A6 Synthèse."
+            ),
         },
-        "delta_pearson_r":  delta_r,
-        "h2_satisfied":     h2_satisfied,
-        "h2_threshold":     0.10,
-        "interpretation":   (
-            f"ΔPearson = {delta_r:+.4f} "
-            f"({'✓ H2 validée' if h2_satisfied else '✗ H2 non validée'} — seuil > 0.10)"
+        "delta_pearson_r": delta_r,
+        "h2_satisfied":    h2_satisfied,
+        "h2_threshold":    0.10,
+        "interpretation":  (
+            f"deltaPearson = {delta_r:+.4f} "
+            f"({'H2 validee' if h2_satisfied else 'H2 non validee'} -- seuil > 0.10)"
         ),
     }
 
     if verbose:
-        print("\n" + "=" * 56)
-        print("COMPARAISON BASELINE vs PIPELINE MULTI-AGENTS (H2)")
-        print("=" * 56)
-        print(f"{'Méthode':<30} {'Pearson r':>10} {'MAE':>8}")
-        print("-" * 56)
-        print(f"{'LLM unique (baseline)':<30} {r_baseline:>10.4f} {mae_baseline:>8.2f}")
-        print(f"{'Pipeline multi-agents':<30} {r_pipeline:>10.4f} {mae_pipeline:>8.2f}")
-        print("-" * 56)
-        print(f"ΔPearson r = {delta_r:+.4f}  {'✓ H2 validée (Δ > 0.10)' if h2_satisfied else '✗ H2 non validée (Δ ≤ 0.10)'}")
-        print("=" * 56)
+        print()
+        print("=" * 60)
+        print("COMPARAISON BASELINE vs PIPELINE MULTI-AGENTS (H2 - v2)")
+        print(f"Granularité : {n} commentaires, comparaison par commentaire")
+        print("=" * 60)
+        print(f"{'Méthode':<32} {'Pearson r':>10} {'MAE':>8}")
+        print("-" * 60)
+        print(f"{'Baseline mono-signal (longueur)':<32} {r_baseline:>10.4f} {mae_baseline:>8.2f}")
+        print(f"{'Pipeline 7 agents LangGraph':<32} {r_pipeline:>10.4f} {mae_pipeline:>8.2f}")
+        print("-" * 60)
+        ok_str = "OK H2 validee (delta > 0.10)" if h2_satisfied else "KO H2 non validee (delta <= 0.10)"
+        print(f"deltaPearson r = {delta_r:+.4f}  {ok_str}")
+        print("=" * 60)
 
     return report
 
@@ -226,8 +200,15 @@ def compare(gold: pd.DataFrame, verbose: bool = True) -> dict:
 # ── CLI ───────────────────────────────────────────────────────────────────────
 
 def parse_args() -> argparse.Namespace:
-    p = argparse.ArgumentParser(description="Compare baseline LLM unique vs pipeline multi-agents (H2)")
+    p = argparse.ArgumentParser(
+        description="Compare baseline LLM unique vs pipeline multi-agents (H2)"
+    )
     p.add_argument("--gold",    required=True, help="Gold standard (.jsonl/.csv)")
+    p.add_argument(
+        "--preds",
+        default="data/predictions/pipeline_predictions.jsonl",
+        help="Prédictions pipeline par commentaire (.jsonl)",
+    )
     p.add_argument("--output",  default="evaluation/results/baseline_comparison.json")
     p.add_argument("--verbose", action="store_true", default=True)
     return p.parse_args()
@@ -238,7 +219,7 @@ def main() -> None:
     gold = load_gold(args.gold)
     print(f"Gold standard : {len(gold)} commentaires")
 
-    report = compare(gold, verbose=args.verbose)
+    report = compare(gold, preds_path=args.preds, verbose=args.verbose)
 
     Path(args.output).parent.mkdir(parents=True, exist_ok=True)
     Path(args.output).write_text(

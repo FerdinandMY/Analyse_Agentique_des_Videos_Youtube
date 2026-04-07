@@ -24,6 +24,7 @@ logger = get_logger("qa_module")
 # ── Constantes ────────────────────────────────────────────────────────────────
 
 _MAX_TRANSCRIPT_TOKENS = 4_000   # Limite tokens transcription (PRD §6.4)
+_MAX_DESCRIPTION_CHARS = 1_000   # Limite description vidéo injectée dans le prompt
 _MAX_TOP_COMMENTS      = 50      # Limite commentaires top A4 (PRD §4.4)
 _MAX_HISTORY_TURNS     = 5       # Limite historique conversation (FR-90)
 _QA_TEMPERATURE        = 0.2     # Température LLM Q&A (PRD §6.4)
@@ -65,6 +66,23 @@ _REFUSAL_EXTERNAL_KNOWLEDGE = (
 
 
 # ── Construction du contexte ──────────────────────────────────────────────────
+
+def _build_description_context(description: str, max_chars: int = _MAX_DESCRIPTION_CHARS) -> str:
+    """
+    Construit le bloc description vidéo pour le prompt.
+    Tronque proprement à max_chars en coupant sur un mot entier.
+    """
+    if not description or not description.strip():
+        return ""
+    text = description.strip()
+    if len(text) <= max_chars:
+        return text
+    truncated = text[:max_chars]
+    last_space = truncated.rfind(" ")
+    if last_space > max_chars // 2:
+        truncated = truncated[:last_space]
+    return truncated + " [...]"
+
 
 def _build_transcript_context(transcript: list[dict], max_tokens: int = _MAX_TRANSCRIPT_TOKENS) -> str:
     """
@@ -130,24 +148,29 @@ def _build_prompt(
     history_ctx: str,
     video_title: str,
     transcript_available: bool,
+    description_ctx: str = "",
 ) -> str:
     """Assemble le prompt complet avec toutes les sections de contexte."""
     parts = []
 
     if video_title:
-        parts.append(f"VIDÉO : {video_title}\n")
+        parts.append(f"VIDEO : {video_title}\n")
+
+    # Description — toujours utile même sans transcription
+    if description_ctx:
+        parts.append(f"CONTEXTE — DESCRIPTION DE LA VIDEO :\n{description_ctx}\n")
 
     if transcript_available and transcript_ctx:
         parts.append(f"CONTEXTE — TRANSCRIPTION :\n{transcript_ctx}\n")
     else:
-        parts.append("CONTEXTE — TRANSCRIPTION : Non disponible pour cette vidéo.\n")
+        parts.append("CONTEXTE — TRANSCRIPTION : Non disponible pour cette video.\n")
 
     if comments_ctx:
         parts.append(
-            f"CONTEXTE — COMMENTAIRES (sélection qualité A4 >= 0.7) :\n{comments_ctx}\n"
+            f"CONTEXTE — COMMENTAIRES (selection qualite A4 >= 0.7) :\n{comments_ctx}\n"
         )
     else:
-        parts.append("CONTEXTE — COMMENTAIRES : Aucun commentaire de haute qualité disponible.\n")
+        parts.append("CONTEXTE — COMMENTAIRES : Aucun commentaire de haute qualite disponible.\n")
 
     if history_ctx:
         parts.append(f"HISTORIQUE DE CONVERSATION :\n{history_ctx}\n")
@@ -234,16 +257,18 @@ def answer_question(
             "fallback_used":  False,
         }
 
-    transcript          = qa_context.get("transcript") or []
+    transcript           = qa_context.get("transcript") or []
     transcript_available = qa_context.get("transcript_available", False)
-    top_comments        = qa_context.get("top_comments") or []
-    video_title         = qa_context.get("video_title", "")
-    history             = history or []
+    top_comments         = qa_context.get("top_comments") or []
+    video_title          = qa_context.get("video_title", "")
+    video_description    = qa_context.get("video_description", "")
+    history              = history or []
 
     # Construire les blocs de contexte
-    transcript_ctx = _build_transcript_context(transcript)
-    comments_ctx   = _build_comments_context(top_comments)
-    history_ctx    = _build_history_context(history)
+    transcript_ctx  = _build_transcript_context(transcript)
+    description_ctx = _build_description_context(video_description)
+    comments_ctx    = _build_comments_context(top_comments)
+    history_ctx     = _build_history_context(history)
 
     user_prompt = _build_prompt(
         question=question,
@@ -252,6 +277,7 @@ def answer_question(
         history_ctx=history_ctx,
         video_title=video_title,
         transcript_available=transcript_available,
+        description_ctx=description_ctx,
     )
 
     # ── Appel LLM ─────────────────────────────────────────────────────────────

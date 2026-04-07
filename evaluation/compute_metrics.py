@@ -5,7 +5,7 @@ Calcule les métriques d'évaluation du pipeline YouTube Quality Analyzer
 par rapport au gold standard annoté (Phase 2).
 
 Métriques calculées :
-  - Pearson r entre Score_Global et quality_score humain (H1 : r ≥ 0.60)
+  - Pearson r entre Score_Global et quality_score humain (H1 : r >= 0.60)
   - MAE / RMSE entre Score_Global et gold standard
   - Accuracy / F1-macro sur sentiment_label (3 classes)
   - Cohen's kappa entre prédictions pipeline et gold standard
@@ -28,7 +28,7 @@ import numpy as np
 import pandas as pd
 
 
-# ── Métriques numériques ──────────────────────────────────────────────────────
+# -- Métriques numériques ------------------------------------------------------
 
 def pearson_r(x: list[float], y: list[float]) -> float:
     """Coefficient de corrélation de Pearson."""
@@ -85,7 +85,7 @@ def fallback_rate(pred_conditions: list[str], fallback_marker: str = "fallback")
     return round(n_fallback / len(pred_conditions), 4)
 
 
-# ── Métriques de classification ───────────────────────────────────────────────
+# -- Métriques de classification ----------------------------------------------─
 
 def confusion_matrix(y_true: list[str], y_pred: list[str]) -> dict:
     labels = sorted(set(y_true) | set(y_pred))
@@ -130,7 +130,7 @@ def cohen_kappa(labels_a: list, labels_b: list) -> float:
     return round((po - pe) / (1 - pe), 4) if pe < 1.0 else 1.0
 
 
-# ── Chargement des données ────────────────────────────────────────────────────
+# -- Chargement des données ----------------------------------------------------
 
 def load_gold(path: str) -> pd.DataFrame:
     """
@@ -152,7 +152,7 @@ def load_gold(path: str) -> pd.DataFrame:
         first = df["annotator"].unique()[0]
         df = df[df["annotator"] == first].copy()
 
-    # quality_score [1-5] → gold_score [0-100] pour comparaison avec Score_Global
+    # quality_score [1-5] -> gold_score [0-100] pour comparaison avec Score_Global
     if "quality_score" in df.columns:
         df["gold_score"] = (df["quality_score"] - 1) / 4 * 100
 
@@ -171,7 +171,7 @@ def load_predictions(path: str) -> pd.DataFrame:
     return pd.DataFrame(records)
 
 
-# ── Rapport principal ─────────────────────────────────────────────────────────
+# -- Rapport principal --------------------------------------------------------─
 
 def compute_all_metrics(gold: pd.DataFrame, preds: pd.DataFrame) -> dict:
     """
@@ -187,7 +187,7 @@ def compute_all_metrics(gold: pd.DataFrame, preds: pd.DataFrame) -> dict:
 
     report: dict = {"n_evaluated": n}
 
-    # ── H1 : Corrélation Pearson + Spearman (Score_Global vs gold_score) ───────
+    # -- H1 : Corrélation Pearson + Spearman (Score_Global vs gold_score) ------─
     if "gold_score" in merged.columns and "score_global" in merged.columns:
         gs = merged["gold_score"].tolist()
         sg = merged["score_global"].tolist()
@@ -199,21 +199,21 @@ def compute_all_metrics(gold: pd.DataFrame, preds: pd.DataFrame) -> dict:
         report["h1_spearman_ok"]    = rho >= 0.55
         report["mae_score_global"]  = mae(gs, sg)
         report["rmse_score_global"] = rmse(gs, sg)
-        print(f"\n── H1 : Corrélation Score_Global vs Gold ──")
+        print(f"\n-- H1 : Correlation Score_Global vs Gold --")
         print(f"  Pearson r  = {r:.4f}  {'H1 validee (r >= 0.60)' if r >= 0.60 else 'H1 non validee (r < 0.60)'}")
         print(f"  Spearman r = {rho:.4f}  {'ok (>= 0.55)' if rho >= 0.55 else 'ko (< 0.55)'}")
         print(f"  MAE        = {report['mae_score_global']:.2f}")
         print(f"  RMSE       = {report['rmse_score_global']:.2f}")
 
-    # ── Taux de fallback ──────────────────────────────────────────────────────
+    # -- Taux de fallback ------------------------------------------------------
     if "condition" in merged.columns:
         rate = fallback_rate(merged["condition"].tolist())
         report["fallback_rate"]    = rate
         report["fallback_rate_ok"] = rate < 0.05
-        print(f"\n── Taux de fallback ──")
+        print(f"\n-- Taux de fallback --")
         print(f"  {rate:.1%}  {'ok (< 5%)' if rate < 0.05 else 'KO (>= 5%)'}")
 
-    # ── Sentiment classification ──────────────────────────────────────────────
+    # -- Sentiment classification ----------------------------------------------
     gold_sent_col = "sentiment_label_gold" if "sentiment_label_gold" in merged.columns else "sentiment_label"
     pred_sent_col = "sentiment_label_pred" if "sentiment_label_pred" in merged.columns else "sentiment_pred"
 
@@ -226,7 +226,7 @@ def compute_all_metrics(gold: pd.DataFrame, preds: pd.DataFrame) -> dict:
         report["sentiment_accuracy"] = acc
         report["sentiment_f1_macro"] = f1
         report["sentiment_kappa"]    = kap
-        print(f"\n── Sentiment (3 classes) ──")
+        print(f"\n-- Sentiment (3 classes) --")
         print(f"  Accuracy  = {acc:.4f}")
         print(f"  F1-macro  = {f1:.4f}")
         print(f"  Kappa     = {kap:.4f}")
@@ -234,7 +234,7 @@ def compute_all_metrics(gold: pd.DataFrame, preds: pd.DataFrame) -> dict:
     return report
 
 
-# ── CLI ───────────────────────────────────────────────────────────────────────
+# -- CLI ----------------------------------------------------------------------─
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description="Calcule les métriques d'évaluation du pipeline")
