@@ -1,0 +1,14 @@
+{
+  "agent": "a4_discourse",
+  "pipeline_id": "1775530381",
+  "data": {
+    "informativeness": 30.0,
+    "argumentation": 0.0,
+    "constructiveness": 70.0,
+    "discourse_score": 33.0,
+    "high_quality_indices": [],
+    "rationale": "LLM unavailable — fallback heuristique",
+    "reasoning": "",
+    "tot_used": false
+  }
+}

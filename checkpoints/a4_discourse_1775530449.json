@@ -1,0 +1,35 @@
+{
+  "agent": "a4_discourse",
+  "pipeline_id": "1775530449",
+  "data": {
+    "informativeness": 50.0,
+    "argumentation": 50.0,
+    "constructiveness": 50.0,
+    "discourse_score": 50.0,
+    "high_quality_indices": [],
+    "rationale": "LLM unavailable — fallback heuristique",
+    "reasoning": "",
+    "tot_used": false,
+    "method": "fallback_used",
+    "retries": 3,
+    "hallucination_flags": [
+      "all_retries_failed: Aucun JSON valide trouvé dans la réponse : '{{invalid'"
+    ],
+    "fallback_used": true,
+    "text_stats": {
+      "word_count": 6,
+      "char_count": 29,
+      "sentence_count": 1,
+      "avg_word_length": 4.0,
+      "question_count": 0,
+      "unique_word_ratio": 0.6667,
+      "caps_ratio": 0.0
+    },
+    "arg_markers": {
+      "total_markers": 0,
+      "categories": {},
+      "argumentation_score": 0.0,
+      "is_argumentative": false
+    }
+  }
+}

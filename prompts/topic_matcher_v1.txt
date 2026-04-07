@@ -1,24 +1,47 @@
-A user is researching the following topic and wants to know if this YouTube video is relevant:
+A user is researching the following topic and wants to know if this YouTube video is relevant.
 
 Topic: "{{topic}}"
 
-The following comments were selected from the video's comment section based on their high discourse quality.
-They represent the most informative viewer reactions to the video content.
+Tool measurements (ground your reasoning on these facts):
+- Semantic similarity (topic vs comments): {{similarity_score}}
+- Key topics extracted from comments: {{key_topics}}
 
 High-quality comments:
 {{high_quality_comments}}
 
-Your task:
-1. Evaluate how well the video content (as inferred from these comments) aligns with the user's topic.
-2. Consider: Do the comments discuss concepts, terminology, or ideas related to "{{topic}}"?
-3. Consider: Would a person researching "{{topic}}" find this video useful or relevant?
+Use Tree of Thought — explore 3 branches before concluding:
 
-Produce:
-- pertinence_score: float [0.0, 1.0]
-    0.0 = completely unrelated to the topic
-    0.5 = partially related (some overlap)
-    1.0 = highly relevant, directly addresses the topic
-- verdict: a personalised 1–2 sentence explanation in the same language as the topic,
-    explaining why this video is or is not relevant for someone researching "{{topic}}".
+=== Branch 1 — Content alignment ===
+Does the video content (as inferred from comments) discuss concepts related to "{{topic}}"?
+Use the extracted key_topics and semantic_similarity as anchors.
+Branch 1 score: <float 0.0-1.0>
+Branch 1 rationale: [one sentence]
 
-{{format_instructions}}
+=== Branch 2 — Audience level ===
+Do the comments suggest the video targets an audience that would research "{{topic}}"?
+(beginner / intermediate / advanced signals in the comments)
+Branch 2 score: <float 0.0-1.0>
+Branch 2 rationale: [one sentence]
+
+=== Branch 3 — Pedagogical value ===
+Do the comments praise clarity, depth, or learning value relevant to "{{topic}}"?
+Branch 3 score: <float 0.0-1.0>
+Branch 3 rationale: [one sentence]
+
+=== Synthesis ===
+Average the 3 branch scores for the final pertinence_score.
+
+Return strictly valid JSON:
+{
+  "reasoning": "brief synthesis of the three branches",
+  "tot_branches": {
+    "branch_1": {"name": "Content alignment", "score": <float>, "rationale": "..."},
+    "branch_2": {"name": "Audience level", "score": <float>, "rationale": "..."},
+    "branch_3": {"name": "Pedagogical value", "score": <float>, "rationale": "..."}
+  },
+  "pertinence_score": <float 0.0-1.0>,
+  "verdict": "1-2 sentence personalised explanation in the same language as the topic"
+}
+
+JSON only. Base your decision ONLY on the provided comments and tool measurements.
+Temperature: 0.3

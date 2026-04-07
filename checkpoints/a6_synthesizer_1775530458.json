@@ -1,0 +1,12 @@
+{
+  "agent": "a6_synthesizer",
+  "pipeline_id": "1775530458",
+  "data": {
+    "score_global": 46.8,
+    "quality_label": "Moyen",
+    "sentiment_score": 50.0,
+    "discourse_score": 17.0,
+    "noise_score": 90.0,
+    "summary": ""
+  }
+}

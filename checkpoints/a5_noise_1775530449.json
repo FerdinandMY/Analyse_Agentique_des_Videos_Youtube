@@ -1,0 +1,22 @@
+{
+  "agent": "a5_noise",
+  "pipeline_id": "1775530449",
+  "data": {
+    "spam_ratio": 0.0,
+    "offtopic_ratio": 0.0,
+    "reaction_ratio": 0.0,
+    "toxic_ratio": 0.0,
+    "bot_ratio": 0.0,
+    "noise_ratio": 30.0,
+    "noise_score": 70.0,
+    "rationale": "LLM unavailable — fallback heuristique",
+    "reasoning": "",
+    "svm_used": true,
+    "method": "fallback_used",
+    "retries": 3,
+    "hallucination_flags": [
+      "all_retries_failed: Aucun JSON valide trouvé dans la réponse : 'not json'"
+    ],
+    "fallback_used": true
+  }
+}
