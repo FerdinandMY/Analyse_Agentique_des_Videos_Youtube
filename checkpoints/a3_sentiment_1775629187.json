@@ -3,10 +3,10 @@
   "pipeline_id": "1775629187",
   "data": {
     "sentiment_label": "positive",
-    "sentiment_score": 80.0,
-    "confidence": 0.95,
-    "rationale": "Despite the presence of sarcasm, the overwhelming positive sentiment in the comments leads to a classification of overall positivity.",
-    "reasoning": "The VADER sentiment score indicates a positive sentiment with a compound score of 0.3, suggesting appreciation and enjoyment. Although there are sarcasm markers present, they do not contradict the overall positive sentiment expressed in the comments. The comments reflect a strong emotional connection to the music, with many viewers expressing love, nostalgia, and admiration for the artist and the song.",
+    "sentiment_score": 70.0,
+    "confidence": 0.9,
+    "rationale": "The positive sentiment from the majority of comments outweighs the sarcastic remarks, leading to an overall positive classification.",
+    "reasoning": "The VADER sentiment score indicates a positive sentiment with a compound score of 0.3, suggesting appreciation and enjoyment. Although there are sarcasm markers present, they do not contradict the overall positive sentiment expressed in the majority of comments, which highlight admiration for the teacher's explanations and the learning experience. Therefore, the overall emotional tone remains positive despite the sarcastic comments.",
     "sarcasm_detected": true,
     "vader_signal": "positive",
     "sarcasm_signal": true

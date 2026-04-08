@@ -3,71 +3,71 @@
   "pipeline_id": "1775629187",
   "data": {
     "score_pertinence": 47.78,
-    "score_final": 59.21,
-    "topic_verdict": "Cette vidéo semble pertinente pour ceux qui s'intéressent à la chanson 'LOCKO SAWA ROMANCE', bien que le lien direct avec le sujet de recherche soit faible.",
+    "score_final": 55.56,
+    "topic_verdict": "Cette vidéo ne semble pas pertinente pour le sujet des suites numériques, bien qu'elle soit appréciée pour son enseignement général. Les commentaires indiquent un bon niveau pédagogique, mais sans lien direct avec le thème recherché.",
     "tot_branches": {
       "branch_1": {
         "name": "Content alignment",
-        "score": 0.1,
-        "rationale": "Les commentaires parlent de la chanson et de son rythme, mais la similarité sémantique est très faible."
+        "score": 0.0,
+        "rationale": "Les commentaires ne mentionnent pas directement les concepts de 'Suite Numérique'."
       },
       "branch_2": {
         "name": "Audience level",
-        "score": 0.8,
-        "rationale": "Les commentaires montrent un engagement passionné, indiquant que l'audience est bien ciblée pour ce type de contenu."
+        "score": 0.7,
+        "rationale": "Les commentaires indiquent que l'audience est probablement des débutants cherchant des explications simples."
       },
       "branch_3": {
         "name": "Pedagogical value",
-        "score": 0.5,
-        "rationale": "Bien que les commentaires expriment des émotions et des réflexions sur la chanson, ils ne fournissent pas de valeur pédagogique claire."
+        "score": 0.6,
+        "rationale": "Les commentaires louent la clarté et la valeur d'apprentissage, mais sans lien spécifique avec les suites numériques."
       }
     },
     "sc_runs": [
       {
         "run": 1,
-        "pertinence_score": 46.67,
+        "pertinence_score": 43.33,
         "label": "moyennement_pertinent",
-        "verdict": "Cette vidéo semble pertinente pour ceux qui s'intéressent à la chanson 'LOCKO SAWA ROMANCE', bien que le lien direct avec le sujet de recherche soit faible.",
+        "verdict": "Cette vidéo ne semble pas pertinente pour le sujet des suites numériques, bien qu'elle soit appréciée pour son enseignement général. Les commentaires indiquent un bon niveau pédagogique, mais sans lien direct avec le thème recherché.",
         "fallback_used": false,
         "tot_branches": {
           "branch_1": {
             "name": "Content alignment",
-            "score": 0.1,
-            "rationale": "Les commentaires parlent de la chanson et de son rythme, mais la similarité sémantique est très faible."
+            "score": 0.0,
+            "rationale": "Les commentaires ne mentionnent pas directement les concepts de 'Suite Numérique'."
           },
           "branch_2": {
             "name": "Audience level",
-            "score": 0.8,
-            "rationale": "Les commentaires montrent un engagement passionné, indiquant que l'audience est bien ciblée pour ce type de contenu."
+            "score": 0.7,
+            "rationale": "Les commentaires indiquent que l'audience est probablement des débutants cherchant des explications simples."
           },
           "branch_3": {
             "name": "Pedagogical value",
-            "score": 0.5,
-            "rationale": "Bien que les commentaires expriment des émotions et des réflexions sur la chanson, ils ne fournissent pas de valeur pédagogique claire."
+            "score": 0.6,
+            "rationale": "Les commentaires louent la clarté et la valeur d'apprentissage, mais sans lien spécifique avec les suites numériques."
           }
         }
       },
       {
         "run": 2,
-        "pertinence_score": 46.67,
+        "pertinence_score": 50.0,
         "label": "moyennement_pertinent",
-        "verdict": "Cette vidéo semble pertinente pour ceux qui s'intéressent à la chanson et à la culture qu'elle représente, bien que le lien direct avec le sujet de recherche soit faible.",
+        "verdict": "Bien que la vidéo soit appréciée pour son enseignement, elle ne semble pas directement pertinente pour le sujet des suites numériques. Il serait préférable de chercher une vidéo spécifiquement axée sur ce thème.",
         "fallback_used": false,
         "tot_branches": {
           "branch_1": {
             "name": "Content alignment",
-            "score": 0.1,
-            "rationale": "Les commentaires parlent de la chanson et de son rythme, mais ne se connectent pas directement au titre de la vidéo."
+            "score": 0.0,
+            "rationale": "Les commentaires ne mentionnent pas directement les concepts de 'Suite Numérique'."
           },
           "branch_2": {
             "name": "Audience level",
-            "score": 0.8,
-            "rationale": "Les commentaires montrent un engagement passionné, indiquant que l'audience est bien ciblée pour ceux qui recherchent cette vidéo."
+            "score": 0.7,
+            "rationale": "Les commentaires indiquent que l'audience est probablement des débutants cherchant des explications simples."
           },
           "branch_3": {
             "name": "Pedagogical value",
-            "score": 0.5,
-            "rationale": "Les commentaires expriment des réflexions sur la culture et la musique, mais manquent de profondeur pédagogique."
+            "score": 0.8,
+            "rationale": "Les commentaires louent la clarté et la valeur d'apprentissage, même si ce n'est pas spécifiquement sur les suites numériques."
           }
         }
       },
@@ -75,23 +75,23 @@
         "run": 3,
         "pertinence_score": 50.0,
         "label": "moyennement_pertinent",
-        "verdict": "Cette vidéo semble pertinente pour ceux qui s'intéressent à la chanson 'LOCKO SAWA ROMANCE', bien que le lien direct avec le sujet de recherche soit faible.",
+        "verdict": "Bien que la vidéo soit appréciée pour son enseignement, elle ne semble pas directement pertinente pour le sujet des suites numériques. Il serait préférable de chercher une vidéo spécifiquement axée sur ce thème.",
         "fallback_used": false,
         "tot_branches": {
           "branch_1": {
             "name": "Content alignment",
-            "score": 0.2,
-            "rationale": "Les commentaires parlent de la chanson et de son rythme, mais la similarité sémantique est très faible."
+            "score": 0.0,
+            "rationale": "Les commentaires ne mentionnent pas directement les concepts de 'Suite Numérique'."
           },
           "branch_2": {
             "name": "Audience level",
-            "score": 0.8,
-            "rationale": "Les commentaires montrent un engagement passionné, indiquant que l'audience est bien ciblée pour ce type de contenu."
+            "score": 0.7,
+            "rationale": "Les commentaires indiquent que l'audience est probablement des débutants cherchant des explications simples."
           },
           "branch_3": {
             "name": "Pedagogical value",
-            "score": 0.5,
-            "rationale": "Bien que les commentaires expriment des émotions et des réflexions, ils ne fournissent pas de clarté ou de profondeur pédagogique significative."
+            "score": 0.8,
+            "rationale": "Les commentaires louent la clarté et la valeur d'apprentissage, même si ce n'est pas spécifiquement sur les suites numériques."
           }
         }
       }
@@ -100,16 +100,16 @@
     "low_consensus": false,
     "similarity_score": 0.0,
     "key_topics": [
-      "suis",
-      "cette",
-      "locko",
-      "makossa",
-      "chanson",
-      "merci",
-      "pointer",
-      "viens",
-      "video",
-      "comme"
+      "vous",
+      "vraiment",
+      "comprends",
+      "votre",
+      "plus",
+      "meilleur",
+      "tout",
+      "êtes",
+      "travail",
+      "grâce"
     ]
   }
 }

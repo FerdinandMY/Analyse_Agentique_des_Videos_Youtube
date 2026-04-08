@@ -4,12 +4,12 @@
   "data": {
     "spam_ratio": 0.0,
     "offtopic_ratio": 0.0,
-    "reaction_ratio": 20.0,
-    "toxic_ratio": 10.0,
-    "bot_ratio": 0.0,
-    "noise_ratio": 30.0,
-    "noise_score": 70.0,
-    "rationale": "The comments primarily express personal feelings and experiences related to the music, with some empty reactions and a minor presence of toxic language.",
+    "reaction_ratio": 25.0,
+    "toxic_ratio": 0.0,
+    "bot_ratio": 10.0,
+    "noise_ratio": 35.0,
+    "noise_score": 65.0,
+    "rationale": "The comments primarily express appreciation and requests for more content, with a notable presence of reactions and some generic praise.",
     "reasoning": "",
     "svm_used": true
   }

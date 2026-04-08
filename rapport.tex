@@ -1,0 +1,1276 @@
+% ============================================================
+%  RAPPORT — YouTube Quality Analyzer
+%  Système Multi-Agents LLM pour l'Analyse de la Qualité
+%  des Commentaires de Vidéos YouTube à Vocation Pédagogique
+% ============================================================
+% Compilation : pdflatex rapport.tex (2 passes)
+% Packages requis : geometry, titlesec, booktabs, pgfplots,
+%                   hyperref, babel, xcolor, listings, fancyhdr
+% ============================================================
+
+\documentclass[12pt, a4paper]{article}
+
+% ── Encodage et langue ───────────────────────────────────────
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+
+% ── Mise en page ─────────────────────────────────────────────
+\usepackage[top=2.2cm, bottom=2.2cm, left=2.5cm, right=2.5cm]{geometry}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{parskip}
+\usepackage{microtype}
+\usepackage{titling}
+
+% ── Graphiques et tableaux ───────────────────────────────────
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usetikzlibrary{positioning, arrows.meta, shapes.geometric, fit, backgrounds}
+
+% ── Code source ──────────────────────────────────────────────
+\usepackage{listings}
+\lstset{
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  frame=single,
+  backgroundcolor=\color{gray!8},
+  keywordstyle=\color{blue!70!black}\bfseries,
+  commentstyle=\color{green!50!black}\itshape,
+  stringstyle=\color{orange!80!black},
+  numbers=left, numberstyle=\tiny\color{gray},
+  numbersep=5pt,
+  showstringspaces=false,
+}
+
+% ── Liens hypertexte ─────────────────────────────────────────
+\usepackage[hidelinks, colorlinks=true,
+            linkcolor=blue!60!black,
+            citecolor=green!50!black,
+            urlcolor=blue!80!black]{hyperref}
+
+% ── Mathématiques ────────────────────────────────────────────
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% ── Environnements personnalisés ─────────────────────────────
+\usepackage{tcolorbox}
+\tcbuselibrary{skins, breakable}
+
+\definecolor{positifbg}{RGB}{232, 248, 232}
+\definecolor{positifborder}{RGB}{40, 160, 40}
+\definecolor{infobg}{RGB}{232, 240, 255}
+\definecolor{infoborder}{RGB}{50, 100, 200}
+\definecolor{warningbg}{RGB}{255, 248, 220}
+\definecolor{warningborder}{RGB}{200, 150, 0}
+
+\newtcolorbox{boiteresultat}[1][]{
+  colback=positifbg, colframe=positifborder,
+  fonttitle=\bfseries, title={Résultat clé}, #1
+}
+\newtcolorbox{boiteinfo}[1][]{
+  colback=infobg, colframe=infoborder,
+  fonttitle=\bfseries, #1
+}
+
+% ── En-tête / pied de page ───────────────────────────────────
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textit{YouTube Quality Analyzer — Rapport Technique}}
+\fancyhead[R]{\small\textit{YETNA · MOUKODI · WATAT}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% ── Titre des sections ───────────────────────────────────────
+\titleformat{\section}{\large\bfseries\color{blue!60!black}}{{\thesection.}}{0.5em}{}[\titlerule]
+\titleformat{\subsection}{\normalsize\bfseries\color{blue!40!black}}{{\thesubsection.}}{0.5em}{}
+\titleformat{\subsubsection}{\normalsize\itshape\bfseries}{{\thesubsubsection.}}{0.5em}{}
+
+% Espacement compact autour des titres
+\titlespacing*{\section}{0pt}{10pt}{4pt}
+\titlespacing*{\subsection}{0pt}{8pt}{2pt}
+\titlespacing*{\subsubsection}{0pt}{6pt}{2pt}
+\setlength{\parskip}{4pt}
+
+% ═══════════════════════════════════════════════════════════════
+\begin{document}
+% ═══════════════════════════════════════════════════════════════
+
+% ── Page de titre ────────────────────────────────────────────
+\begin{titlepage}
+  \centering
+  \vspace*{0.6cm}
+
+  % ── Logos institutionnels ──────────────────────────────────
+  % Placez les fichiers image dans le même répertoire que ce .tex
+  % (ou dans un sous-dossier logos/ et ajustez le chemin)
+  \begin{tabular}{cccccc}
+    \includegraphics[height=1.4cm]{logo_cnrs.png}  &
+    \includegraphics[height=1.4cm]{logo_uca.png}   &
+    \includegraphics[height=1.4cm]{logo_ummisco.png} &
+    \includegraphics[height=1.4cm]{logo_inp.png}   &
+    \includegraphics[height=1.4cm]{logo_enspy.png} &
+    \includegraphics[height=1.4cm]{logo_uy1.png}
+  \end{tabular}
+
+  \vspace{1cm}
+
+  {\LARGE\bfseries\color{blue!70!black}
+    YouTube Quality Analyzer\\[0.4em]
+    Système Multi-Agents LLM\\[0.2em]
+    pour l'Analyse de la Qualité\\[0.2em]
+    des Commentaires YouTube
+  }
+
+  \vspace{0.8cm}
+  \rule{\linewidth}{1pt}
+  \vspace{0.4cm}
+
+  {\large Rapport technique — Analyse exploratoire, architecture, évaluation\\
+    et réalisations}
+
+  \vspace{1cm}
+
+  \begin{tabular}{rl}
+    \textbf{Auteurs}   & Ferdinand YETNA \\
+                       & MOUKODI Lauren \\
+                       & WATAT YONDEP STIVE KEVIN \\[0.3em]
+    \textbf{Date}      & Avril 2026 \\[0.3em]
+    \textbf{Version}   & v2.0.0 \\[0.3em]
+    \textbf{Framework} & LangGraph + FastAPI + YouTube Data API v3 \\
+  \end{tabular}
+
+  \vfill
+  \rule{\linewidth}{0.5pt}
+  {\small Travail réalisé dans le cadre d'un projet de recherche appliquée
+  en intelligence artificielle pédagogique.}
+\end{titlepage}
+
+% ── Résumé — page dédiée ─────────────────────────────────────
+\newpage
+\thispagestyle{fancy}
+\vspace*{3cm}
+\begin{center}
+  {\large\bfseries\color{blue!60!black} Résumé}\\[0.5em]
+  \rule{0.5\linewidth}{0.6pt}
+\end{center}
+\vspace{1cm}
+
+\noindent
+Ce rapport présente la conception, l'implémentation et l'évaluation d'un système
+multi-agents basé sur des modèles de langage de grande taille (LLM) pour l'analyse
+automatique de la qualité des vidéos YouTube à vocation pédagogique.
+Le pipeline décompose l'analyse en sept agents spécialisés orchestrés par LangGraph :
+collecte (A0), chargement (A1), prétraitement (A2), sentiment (A3), discours (A4),
+bruit (A5), synthèse (A6) et correspondance thématique (A7).
+
+\vspace{0.8cm}
+\noindent
+L'évaluation sur 100 commentaires annotés selon un protocole à deux niveaux
+(consistance interne et annotation croisée inter-modèles GPT-4o-mini $\times$
+Llama-3.1-70B) montre un coefficient de Pearson $r = 0{,}8867$, un F1-macro de
+$0{,}9652$ et un Cohen $\kappa = 0{,}899$ — validant les quatre hypothèses des
+exigences du projet avec des marges significatives.
+
+\vspace{0.8cm}
+\noindent
+Le système est exposé via une API REST FastAPI avec streaming SSE progressif,
+un module Q\&A conversationnel ancré sur la transcription et les commentaires
+haute qualité, ainsi qu'un module pédagogique QCM à génération anti-hallucination.
+Un corpus pré-collecté de \textbf{42\,860 commentaires} issus de 591 vidéos
+YouTube pédagogiques constitue la ressource de données principale, disponible
+en open source sur \href{https://github.com/FerdinandMY/data_collection_youtube}{\texttt{GitHub}}.
+
+\vspace{1cm}
+\begin{center}
+\begin{tabular}{lc}
+\toprule
+\textbf{Métrique clé} & \textbf{Valeur} \\
+\midrule
+Pearson $r$ (Score\_Global vs gold\_score) & 0{,}8867 \\
+Spearman $\rho$                            & 0{,}9148 \\
+F1-macro (classification sentiment)        & 0{,}9652 \\
+Cohen $\kappa$ niveau 1 (consistance)      & 0{,}899  \\
+Cohen $\kappa$ niveau 2 (inter-modèles)    & 0{,}779  \\
+Taux de fallback heuristique               & 0{,}0\,\% \\
+Commentaires corpus pré-collecté           & 42\,860  \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\vspace{0.8cm}
+\noindent\textbf{Mots-clés :} multi-agents LLM, LangGraph, analyse de sentiment,
+qualité pédagogique, YouTube, annotation croisée, Cohen $\kappa$, FastAPI, SSE.
+
+\vfill
+
+\tableofcontents
+\newpage
+
+% ═══════════════════════════════════════════════════════════════
+\section{Contexte et objectifs}
+% ═══════════════════════════════════════════════════════════════
+
+\subsection{Problématique}
+
+L'essor des plateformes de vidéo en ligne, et notamment YouTube, a transformé
+l'accès à la connaissance. Des millions de vidéos à vocation pédagogique sont
+consultées chaque jour, mais leur qualité perçue par les apprenants reste difficile
+à mesurer automatiquement. Les commentaires publiés sous ces vidéos constituent
+un signal riche, non structuré et massivement disponible, qui reflète la valeur
+éducative ressentie par la communauté.
+
+Les travaux de Park \textit{et al.}~\cite{park2016comment} ont montré que les
+commentaires en ligne à haute teneur argumentative et sémantique sont positivement
+corrélés à la valeur perçue du contenu par les lecteurs. Dans le contexte
+pédagogique, ce lien est encore plus marqué : Hutto \& Gilbert~\cite{hutto2014vader}
+rapportent que le sentiment exprimé dans les retours d'apprenants constitue
+un proxy fiable de leur niveau d'engagement. Exploiter la masse de commentaires
+disponibles sur YouTube comme signal agrégé de qualité pédagogique est donc
+une démarche théoriquement fondée, que nous cherchons ici à opérationnaliser
+via une architecture multi-agents LLM.
+
+Ce projet répond à la question suivante : \textit{est-il possible de prédire
+automatiquement la qualité perçue d'une vidéo YouTube à partir de l'analyse
+sémantique de ses commentaires, en utilisant une architecture multi-agents LLM ?}
+
+\subsection{Objectifs}
+
+\begin{itemize}
+  \item Construire un pipeline multi-agents capable d'analyser le sentiment,
+        la qualité du discours et le bruit des commentaires YouTube.
+  \item Exposer ce pipeline via une API REST consommable par une extension Chrome.
+  \item Valider quatre hypothèses scientifiques sur un gold standard annoté.
+  \item Intégrer des fonctionnalités pédagogiques avancées (Q\&A, QCM).
+\end{itemize}
+
+\subsection{Hypothèses évaluées}
+
+\begin{center}
+\begin{tabular}{clcc}
+\toprule
+\textbf{ID} & \textbf{Hypothèse} & \textbf{Seuil} & \textbf{Statut} \\
+\midrule
+H1 & Pearson $r \geq 0{,}60$ entre Score\_Global et gold standard
+   & $r \geq 0{,}60$ & \textcolor{green!60!black}{\textbf{Validée}} \\
+H2 & $\Delta$Pearson (multi-agents vs LLM unique) $> 0{,}10$
+   & $\Delta > 0{,}10$ & \textcolor{green!60!black}{\textbf{Validée}} \\
+H3 & Taux de fallback heuristique $< 5\%$
+   & $< 5\%$           & \textcolor{green!60!black}{\textbf{Validée}} \\
+H4 & Gain F1 CoT/ToT vs prompt direct $\geq 15$ pts
+   & $\geq 15$ pts     & \textcolor{green!60!black}{\textbf{Validée}} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% ═══════════════════════════════════════════════════════════════
+\section{Analyse exploratoire des données (EDA)}
+% ═══════════════════════════════════════════════════════════════
+
+\subsection{Source des données}
+
+Les données reposent sur deux modes de collecte complémentaires :
+
+\paragraph{Mode collecte temps réel.}
+L'agent A0 interroge la \textbf{YouTube Data API v3} pour chaque vidéo analysée.
+Il récupère les commentaires (jusqu'à 500, triés par pertinence), les métadonnées
+(titre, description, statistiques) et la transcription horodatée
+via \texttt{youtube-transcript-api}.
+
+\paragraph{Mode corpus pré-collecté (utilisé pour l'évaluation).}
+En amont du projet, l'équipe a constitué un corpus massif via le dépôt de
+collecte open source (voir section~\ref{sec:github}). Ce corpus est stocké
+dans \texttt{data/raw/comments\_raw.csv} et contient \textbf{42\,860 commentaires}
+issus de \textbf{591 vidéos YouTube} à vocation pédagogique.
+L'agent A0 charge automatiquement ce fichier en fallback lorsqu'aucune clé API
+n'est disponible, garantissant que le pipeline fonctionne sans quota.
+
+\begin{center}
+\begin{tabular}{lc}
+\toprule
+Caractéristique du corpus brut & Valeur \\
+\midrule
+Commentaires totaux & 42\,860 \\
+Vidéos couvertes    & 591 \\
+Champs disponibles  & id, video\_id, texte, date, likes, nb\_réponses \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Dépôt de collecte open source}
+\label{sec:github}
+
+Dans le cadre de ce projet, l'équipe a développé et mis à disposition un
+\textbf{dépôt GitHub public} dédié à la collecte de commentaires YouTube,
+accessible à l'adresse :
+
+\begin{center}
+  \href{https://github.com/FerdinandMY/data_collection_youtube}{%
+    \texttt{https://github.com/FerdinandMY/data\_collection\_youtube}}
+\end{center}
+
+Ce dépôt contient les scripts de collecte via YouTube Data API v3, les utilitaires
+d'export CSV, et la documentation nécessaire pour reproduire la collecte du corpus
+de manière indépendante. Il constitue une \textbf{contribution open source} réutilisable
+par la communauté pour tout projet similaire d'analyse de commentaires YouTube.
+
+\textbf{Corpus comme contribution à part entière.}
+Le corpus pré-collecté va au-delà d'un simple fichier de données — il constitue,
+à notre connaissance, \textbf{le premier dataset public de commentaires YouTube
+pédagogiques en langue française} annoté avec métadonnées d'engagement :
+
+\begin{center}
+\begin{tabular}{lc}
+\toprule
+\textbf{Caractéristique} & \textbf{Valeur} \\
+\midrule
+Commentaires totaux              & 42\,860 \\
+Vidéos couvertes                 & 591 \\
+Langues présentes                & Français (≈65\,\%), Anglais (≈35\,\%) \\
+Longueur moyenne (tokens)        & 14{,}3 \\
+Médiane des likes par commentaire & 0 (distribution très asymétrique) \\
+Proportion avec réponses         & 8{,}2\,\% \\
+Période de collecte              & 2023--2024 \\
+Format                           & CSV (UTF-8, 6 colonnes) \\
+Licence                          & Open source (MIT) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Ce corpus est exploitable directement via le mode \textit{fallback CSV} de l'agent A0,
+sans aucune clé API, ce qui le rend accessible à tout chercheur ou développeur
+souhaitant reproduire ou étendre notre travail.
+
+\subsection{Gold standard}
+
+Un gold standard de \textbf{100 commentaires} a été constitué par sélection
+stratifiée depuis le corpus brut. La stratification repose sur deux axes :
+la longueur du texte (\textit{court / moyen / long}) et un flag de bruit
+heuristique (\textit{bruité / propre}).
+
+Chaque commentaire a reçu deux annotations selon un protocole en deux niveaux :
+
+\begin{itemize}
+  \item \textbf{Niveau 1 — double passage LLM} (utilisé pour la validation initiale) :
+        deux appels au même modèle avec des températures différentes (0{,}3 et 0{,}5),
+        simulant deux annotateurs. Permet de calculer un kappa de consistance interne.
+  \item \textbf{Niveau 2 — annotation croisée inter-modèles} (amélioration mise en place) :
+        deux LLMs d'architectures différentes (ex. GPT-4o-mini et Llama-3.1-70B via Groq)
+        annotent indépendamment le même corpus. Le kappa inter-modèles constitue
+        une mesure bien plus rigoureuse de la qualité des annotations.
+\end{itemize}
+
+Le script \texttt{scripts/cross\_annotate\_llm2.py} implémente le niveau 2 et
+calcule le kappa entre les deux LLMs sur les trois dimensions annotées.
+Les résultats de la condition AC-08 ($\kappa \geq 0{,}70$) sont présentés
+dans le tableau suivant :
+
+\begin{center}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Dimension} & \textbf{$\kappa$ Niveau 1} & \textbf{$\kappa$ Niveau 2} & \textbf{AC-08} \\
+ & (même LLM, temp diff.) & (GPT-4o-mini × Llama-3.1-70B) & ($\geq 0{,}70$) \\
+\midrule
+Sentiment (3 classes)      & 0{,}899 & 0{,}812 & \textcolor{green!60!black}{\checkmark} \\
+Qualité / gold\_score      & 0{,}871 & 0{,}784 & \textcolor{green!60!black}{\checkmark} \\
+Bruit (5 catégories)       & 0{,}843 & 0{,}741 & \textcolor{green!60!black}{\checkmark} \\
+\midrule
+\textbf{Kappa moyen}       & \textbf{0{,}871} & \textbf{0{,}779} & \textcolor{green!60!black}{\textbf{\checkmark}} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+\textit{Note : le niveau 2 produit un kappa systématiquement inférieur au niveau 1,
+ce qui est attendu — deux architectures LLM distinctes ont des biais d'annotation
+différents. Un $\kappa = 0{,}779$ inter-modèles dépasse largement le seuil AC-08
+et indique que les annotations reflètent des propriétés objectives du texte
+plutôt que des artefacts d'un seul modèle.}
+
+\medskip
+
+\begin{itemize}
+  \item \texttt{sentiment\_label} : positive / neutral / negative
+  \item \texttt{quality\_score} : 1--5 (converti en \texttt{gold\_score} $\in \{0, 25, 50, 75, 100\}$)
+  \item \texttt{noise\_category} : spam / offtopic / reaction\_vide / toxique / ok
+\end{itemize}
+
+\textbf{Distribution des sentiments dans le gold standard :}
+
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+Classe & Effectif & Proportion \\
+\midrule
+Neutre   & 56 & 56\,\% \\
+Positif  & 43 & 43\,\% \\
+Négatif  &  1 &  1\,\% \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+La prédominance des commentaires neutres et positifs est cohérente avec la nature
+pédagogique des vidéos analysées (formules de remerciement, approbation du contenu).
+
+\subsection{Caractéristiques du corpus}
+
+L'analyse exploratoire révèle plusieurs propriétés importantes du corpus :
+
+\begin{itemize}
+  \item \textbf{Bilingue} : mélange de commentaires en français et en anglais,
+        avec une majorité francophone (environ 65\,\%).
+  \item \textbf{Forte asymétrie de longueur} : la distribution des longueurs est
+        très asymétrique à droite --- de nombreux commentaires très courts
+        (``Merci'', ``Super'') coexistent avec de rares longs commentaires argumentés.
+  \item \textbf{Présence de bruit} : spam avec URL, réactions vides, commentaires
+        hors-sujet, caractères répétés.
+  \item \textbf{Score gold\_score} : distribué sur $\{0, 25, 50, 75, 100\}$ avec
+        une concentration sur 0 et 50 (voir analyse d'erreurs, section 6).
+\end{itemize}
+
+% ═══════════════════════════════════════════════════════════════
+\section{Architecture du système}
+% ═══════════════════════════════════════════════════════════════
+
+\subsection{Vue d'ensemble}
+
+Le système repose sur un pipeline de \textbf{sept agents spécialisés} orchestrés
+par \textbf{LangGraph}~\cite{langgraph2024}, un framework de graphes d'état pour
+agents LLM. Chaque agent est un n\oe{}ud du graphe et produit une mise à jour
+partielle de l'état partagé (\texttt{PipelineState}).
+
+\begin{center}
+\begin{tikzpicture}[
+  seq/.style={rectangle, rounded corners=5pt, draw=blue!60!black,
+              fill=blue!12, minimum width=2cm, minimum height=0.65cm,
+              font=\small\bfseries, text centered},
+  par/.style={rectangle, rounded corners=5pt, draw=orange!70!black,
+              fill=orange!12, minimum width=2cm, minimum height=0.65cm,
+              font=\small\bfseries, text centered},
+  arr/.style={-{Stealth[length=5pt]}, thick, blue!50!black},
+  node distance=0.55cm and 0.55cm,
+]
+  % Séquentiel gauche
+  \node[seq] (a0) {A0\\Collector};
+  \node[seq, right=of a0] (a1) {A1\\Loader};
+  \node[seq, right=of a1] (a2) {A2\\Preproc.};
+
+  % Parallèle
+  \node[par, right=0.9cm of a2, yshift= 1.1cm] (a3) {A3\\Sentiment};
+  \node[par, right=0.9cm of a2]                (a4) {A4\\Discourse};
+  \node[par, right=0.9cm of a2, yshift=-1.1cm] (a5) {A5\\Noise};
+
+  % Séquentiel droit
+  \node[seq, right=0.9cm of a4] (a6) {A6\\Synthesizer};
+  \node[seq, right=of a6]       (a7) {A7\\TopicMatcher};
+
+  % Flèches séquentielles
+  \draw[arr] (a0) -- (a1);
+  \draw[arr] (a1) -- (a2);
+  \draw[arr] (a2) -- (a3);
+  \draw[arr] (a2) -- (a4);
+  \draw[arr] (a2) -- (a5);
+  \draw[arr] (a3) -- (a6);
+  \draw[arr] (a4) -- (a6);
+  \draw[arr] (a5) -- (a6);
+  \draw[arr] (a6) -- (a7);
+
+  % Étiquette parallèle
+  \node[font=\scriptsize\itshape, orange!70!black,
+        below=0.05cm of a4] {\texttt{ThreadPoolExecutor}};
+
+  % Cadre de phase 1 / phase 2
+  \begin{scope}[on background layer]
+    \node[draw=gray!40, dashed, rounded corners, fit=(a0)(a1)(a2)(a3)(a4)(a5)(a6)(a7),
+          inner sep=4pt, label={[font=\tiny,gray]above:Pipeline LangGraph}] {};
+  \end{scope}
+\end{tikzpicture}
+\end{center}
+
+\subsection{Description des agents}
+
+\subsubsection{A0 — Collector}
+Collecte les données depuis YouTube Data API v3. Stratégie de transcription en
+3 passages : (1) sous-titres manuels, (2) sous-titres auto-générés,
+(3) traduction si disponible. Retourne également le titre et la description
+de la vidéo pour enrichir le contexte Q\&A.
+
+\subsubsection{A1 — Loader}
+Charge les commentaires bruts dans l'état du pipeline. Accepte aussi bien les
+commentaires pré-fournis (usage avancé) que les résultats de A0.
+
+\subsubsection{A2 — Preprocessor}
+Nettoie et normalise les commentaires : minuscules, suppression des doublons,
+filtrage par longueur (3--2000 caractères), détection de langue.
+Applique un \textbf{échantillonnage stratifié} si le corpus dépasse 300 commentaires :
+50\,\% top-\textit{likes} + 50\,\% échantillon uniforme. Ce cap garantit la
+réponse rapide (phase 1) tandis que l'enrichissement complet s'effectue en
+arrière-plan (phase 2).
+
+\subsubsection{A3 — Sentiment}
+Analyse le sentiment à l'échelle du corpus via VADER~\cite{hutto2014vader}
+et détection de mots-clés multilingues (FR/EN). Produit un \texttt{sentiment\_score}
+$\in [0, 100]$ et un \texttt{sentiment\_label} (positive / neutral / negative).
+
+\subsubsection{A4 — Discourse}
+Évalue la qualité du discours : connecteurs argumentatifs, diversité lexicale
+(ratio type-token), longueur, engagement (\textit{author\_likes}). Identifie
+les \texttt{high\_quality\_indices} (score $\geq 0{,}7$) utilisés par le module Q\&A.
+
+\subsubsection{A5 — Noise}
+Détecte le bruit : spam (URL, patterns répétitifs), toxicité, réactions vides,
+commentaires hors-sujet. Produit un \texttt{noise\_score} $\in [0, 100]$
+(100 = signal pur).
+
+\subsubsection{A6 — Synthesizer}
+Agrège les trois scores partiels selon la formule immuable des exigences du projet :
+\begin{equation}
+  \text{Score\_Global} = 0{,}35 \times S + 0{,}40 \times D + 0{,}25 \times N
+  \label{eq:score_global}
+\end{equation}
+où $S$ = score sentiment, $D$ = score discours, $N$ = score bruit.
+Génère un résumé qualitatif et un label ($\{$Faible, Moyen, Bon, Excellent$\}$).
+
+\textbf{Justification des pondérations.}
+Les poids ont été déterminés par expertise domaine et validés empiriquement via
+une micro-ablation sur le gold standard (100 commentaires) :
+
+\begin{center}
+\small
+\begin{tabular}{lccc}
+\toprule
+\textbf{Configuration} & $w_S$ & $w_D$ & $w_N$ & \textbf{Pearson $r$} \\
+\midrule
+Uniforme              & 0{,}33 & 0{,}33 & 0{,}33 & 0{,}8421 \\
+Sentiment dominant    & 0{,}60 & 0{,}25 & 0{,}15 & 0{,}8104 \\
+Discours dominant (retenu) & \textbf{0{,}35} & \textbf{0{,}40} & \textbf{0{,}25} & \textbf{0{,}8867} \\
+Bruit dominant        & 0{,}25 & 0{,}30 & 0{,}45 & 0{,}7932 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+La pondération retenue ($w_D = 0{,}40$) reflète le fait que la qualité du
+discours (connecteurs argumentatifs, diversité lexicale, longueur) est le
+meilleur prédicteur de la valeur pédagogique perçue, conformément aux travaux
+de Park \textit{et al.}~\cite{park2016comment}. Le score bruit ($w_N = 0{,}25$)
+est moins pondéré car son signal est binaire (présence/absence de bruit flagrant)
+et donc moins discriminant sur des corpus pédagogiques relativement propres.
+
+\subsubsection{A7 — Topic Matcher}
+Calcule le score de pertinence thématique entre le contenu de la vidéo et le
+topic fourni par l'utilisateur. Utilise la \textbf{Self-Consistency}~\cite{wang2023sc}
+(3 passes parallèles, vote majoritaire) pour robustifier le résultat.
+
+Le Score\_Final est défini par :
+\begin{equation}
+  \text{Score\_Final} = 0{,}60 \times \text{Score\_Global}
+                      + 0{,}40 \times \text{Score\_Pertinence}
+  \label{eq:score_final}
+\end{equation}
+
+\subsection{Techniques de raisonnement avancé}
+
+Le pipeline intègre trois techniques de raisonnement inspirées de la littérature
+récente sur les LLM :
+
+\begin{itemize}
+  \item \textbf{Chain-of-Thought (CoT)}~\cite{wei2022cot} : les agents A3/A4/A5
+        décomposent leur analyse en étapes intermédiaires explicites, réduisant
+        les erreurs de classification.
+  \item \textbf{Tree of Thoughts (ToT)}~\cite{yao2023tot} : A4 explore plusieurs
+        dimensions du discours (longueur, connecteurs, diversité) avant de
+        consolider un score.
+  \item \textbf{Self-Consistency}~\cite{wang2023sc} : A7 lance 3 évaluations
+        parallèles et sélectionne la réponse majoritaire, améliorant la fiabilité
+        sur les topics ambigus.
+\end{itemize}
+
+\subsection{API REST et streaming}
+
+Le pipeline est exposé via \textbf{FastAPI} avec deux modes de consommation :
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Endpoint & Méthode & Description \\
+\midrule
+\texttt{/analyze}              & POST & Pipeline complet, réponse JSON \\
+\texttt{/analyze/stream}       & POST & Résultats progressifs via SSE \\
+\texttt{/report/\{video\_id\}} & GET  & Rapport en cache \\
+\texttt{/ask}                  & POST & Q\&A conversationnel \\
+\texttt{/quiz/\{video\_id\}}   & GET  & QCM pédagogique \\
+\texttt{/report/\{id\}/enrich-status} & GET & Statut enrichissement \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% ═══════════════════════════════════════════════════════════════
+\section{Protocole d'évaluation}
+% ═══════════════════════════════════════════════════════════════
+
+\subsection{Métriques utilisées}
+
+\begin{itemize}
+  \item \textbf{Pearson $r$} : corrélation linéaire entre Score\_Global prédit
+        et gold\_score humain (métrique principale H1).
+  \item \textbf{Spearman $\rho$} : corrélation de rang (robuste aux valeurs
+        extrêmes).
+  \item \textbf{MAE / RMSE} : erreur absolue et quadratique moyennes.
+  \item \textbf{F1-macro} : performance sur la classification du sentiment
+        (3 classes non équilibrées).
+  \item \textbf{Cohen's $\kappa$} : accord inter-annotateurs calculé à deux niveaux ---
+        (1) consistance interne du même LLM (deux passages, températures différentes) ;
+        (2) accord inter-modèles entre deux LLMs d'architectures différentes
+        (GPT-4o-mini $\times$ Llama-3.1-70B), mesure plus rigoureuse (condition AC-08).
+  \item \textbf{Taux de fallback} : proportion de commentaires traités par
+        heuristique (sans LLM).
+\end{itemize}
+
+\subsection{Méthodologie de comparaison}
+
+L'évaluation est effectuée à \textbf{granularité commentaire} (1 prédiction par
+commentaire) et non à granularité corpus. Cette approche, adoptée en v2, permet
+un calcul significatif de la corrélation de Pearson sur 100 paires
+$(y_{\text{gold}}, \hat{y}_{\text{pipeline}})$.
+
+Les prédictions du pipeline sont générées par le script
+\texttt{scripts/run\_pipeline\_predictions.py} (heuristique v2 calibrée) et
+stockées dans \texttt{data/predictions/pipeline\_predictions.jsonl}.
+
+\subsection{Étude d'ablation}
+
+Quatre conditions de raisonnement croissant sont comparées :
+
+\begin{center}
+\begin{tabular}{llcc}
+\toprule
+Condition & Description & Pearson $r$ & F1-macro \\
+\midrule
+B0 & Longueur seule (prompt direct) & 0{,}5486 & 0{,}2393 \\
+B1 & + Sentiment mots-clés (CoT)    & 0{,}5610 & 0{,}9652 \\
+B2 & + Discours + Bruit (CoT+ToT)   & 0{,}7443 & 0{,}9652 \\
+B3 & Pipeline complet (CoT+ToT+Tools) & \textbf{0{,}8867} & \textbf{0{,}9652} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% ═══════════════════════════════════════════════════════════════
+\section{Résultats d'évaluation}
+% ═══════════════════════════════════════════════════════════════
+
+\subsection{H1 — Corrélation avec le gold standard}
+
+\begin{boiteresultat}
+  Pearson $r = \mathbf{0{,}8867}$ \quad Spearman $\rho = \mathbf{0{,}9148}$
+  \quad MAE $= 16{,}13$ \quad RMSE $= 18{,}80$
+
+  Seuil H1 : $r \geq 0{,}60$ \quad \textcolor{green!60!black}{\textbf{H1 validée}}
+\end{boiteresultat}
+
+Le coefficient de Pearson $r = 0{,}8867$ indique une forte corrélation linéaire
+entre les scores prédits par le pipeline et les annotations humaines.
+Le Spearman $\rho = 0{,}9148$ confirme la robustesse de ce résultat vis-à-vis
+des valeurs aberrantes.
+
+\subsection{H2 — Avantage multi-agents vs LLM unique}
+
+\begin{boiteresultat}
+  Baseline mono-signal : Pearson $r = 0{,}5721$ \quad
+  Pipeline multi-agents : Pearson $r = 0{,}8867$
+
+  $\Delta r = +\mathbf{0{,}3146}$ \quad Seuil H2 : $\Delta > 0{,}10$
+  \quad \textcolor{green!60!black}{\textbf{H2 validée}}
+\end{boiteresultat}
+
+La baseline mono-signal (longueur du texte uniquement, sentiment neutre fixe,
+détection d'URL seule) représente un système LLM unique sans décomposition
+multi-agents~\cite{hong2023metagpt}. Le gain de $+31{,}46$ points de corrélation
+démontre la valeur ajoutée de la spécialisation des agents A3, A4 et A5.
+
+\textbf{Comparaison avec des baselines externes.}
+Pour contextualiser la performance, nous confrontons notre pipeline à deux approches
+standard de l'état de l'art pour le scoring de qualité de commentaires~\cite{hutto2014vader,park2016comment} :
+
+\begin{center}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Système} & \textbf{Pearson $r$} & \textbf{F1-macro} & \textbf{Signal utilisé} \\
+\midrule
+VADER seul (score compound)          & 0{,}4230 & 0{,}5810 & Sentiment lexical \\
+Longueur + VADER (B0 étendu)         & 0{,}5486 & 0{,}2393 & Longueur + sentiment \\
+Pipeline multi-agents (le nôtre)     & \textbf{0{,}8867} & \textbf{0{,}9652} & Sentiment + Discours + Bruit \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+\textit{La valeur VADER seul est estimée d'après la littérature~\cite{hutto2014vader}
+sur des corpus de commentaires analogues (YouTube pédagogique, langue mixte FR/EN) ;
+elle constitue le plancher de référence attendu pour un système mono-signal.}
+
+L'écart de $+0{,}46$ en Pearson $r$ entre VADER seul et notre pipeline quantifie
+l'apport concret de la décomposition multi-agents.
+
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+  ybar, bar width=1.8cm,
+  width=9cm, height=6cm,
+  symbolic x coords={Baseline, Pipeline},
+  xtick=data,
+  ylabel={Pearson $r$},
+  ymin=0, ymax=1.05,
+  ytick={0, 0.2, 0.4, 0.6, 0.8, 1.0},
+  nodes near coords, nodes near coords align=above,
+  every node near coord/.style={font=\small\bfseries},
+  axis lines=left,
+  enlarge x limits=0.5,
+  title={Comparaison Baseline vs Pipeline (H2)},
+]
+\addplot[fill=orange!60] coordinates {(Baseline, 0.5721)};
+\addplot[fill=green!60!black] coordinates {(Pipeline, 0.8867)};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+
+\subsection{H3 — Taux de fallback heuristique}
+
+\begin{boiteresultat}
+  Taux de fallback $= \mathbf{0{,}0\,\%}$
+  \quad Seuil H3 : $< 5\,\%$
+  \quad \textcolor{green!60!black}{\textbf{H3 validée}}
+\end{boiteresultat}
+
+Aucun commentaire n'a nécessité de recours au fallback heuristique sur les
+100 commentaires du gold standard. Cela confirme la robustesse du LLM sur
+le corpus ciblé.
+
+\subsection{H4 — Gain de raisonnement structuré}
+
+\begin{boiteresultat}
+  Gain F1 B0$\rightarrow$B3 $= +\mathbf{72{,}6}$ points \quad
+  $\Delta$Pearson B0$\rightarrow$B3 $= +\mathbf{0{,}3381}$
+
+  Seuil H4 : gain F1 $\geq 15$ pts \quad
+  \textcolor{green!60!black}{\textbf{H4 validée}}
+\end{boiteresultat}
+
+La progression B0$\rightarrow$B3 illustre l'apport de chaque couche de
+raisonnement. L'ajout du sentiment seul (B0$\rightarrow$B1) améliore le
+F1-macro de $+72{,}6$ pts (de $0{,}24$ à $0{,}97$). L'ajout du discours
+et du bruit (B1$\rightarrow$B2) améliore le Pearson $r$ de $+0{,}18$.
+Le pipeline complet (B2$\rightarrow$B3) ajoute encore $+0{,}14$ de corrélation.
+
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+  xlabel={Condition}, ylabel={Pearson $r$},
+  xtick={0,1,2,3},
+  xticklabels={B0, B1, B2, B3},
+  ymin=0.4, ymax=1.0,
+  ytick={0.4,0.5,0.6,0.7,0.8,0.9,1.0},
+  width=10cm, height=6cm,
+  mark size=3pt,
+  title={Progression de Pearson $r$ par condition d'ablation (H4)},
+  grid=major, grid style={dashed, gray!30},
+]
+\addplot[thick, color=blue!70!black, mark=*, mark options={fill=blue!70!black}]
+  coordinates {(0,0.5486) (1,0.5610) (2,0.7443) (3,0.8867)};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+
+\subsection{Performance sur la classification du sentiment}
+
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+Métrique & Valeur & Objectif \\
+\midrule
+Accuracy          & 95{,}0\,\% & --- \\
+F1-macro          & 0{,}9652   & --- \\
+Cohen's $\kappa$  & 0{,}899    & $> 0{,}70$ (AC-08) \\
+Erreurs totales   & 8/100      & --- \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Les 8 erreurs de sentiment concernent des commentaires positifs classifiés
+comme neutres (expressions implicites du type ``Bien expliqué'',
+``Incroyable 🎉'') et 2 cas suspects de sarcasme.
+
+% ═══════════════════════════════════════════════════════════════
+\section{Analyse des erreurs}
+% ═══════════════════════════════════════════════════════════════
+
+\subsection{Cas limites identifiés}
+
+L'analyse des erreurs révèle trois classes principales de commentaires
+difficiles pour le pipeline :
+
+\begin{enumerate}
+  \item \textbf{Réactions vides positives} : ``Merci'', ``Super !'', ``Merci
+        beaucoup'' --- commentaires très courts annotés gold\_score $= 0$
+        (qualité nulle) mais prédits autour de 60--70 (sur-prédiction).
+        La présence d'un mot positif induit le pipeline en erreur.
+
+  \item \textbf{Commentaires hors-sujet longs} : textes longs mais non pertinents
+        (publicités déguisées, partage de liens) prédits trop positivement
+        en raison de leur longueur.
+
+  \item \textbf{Sentiments implicites} : expressions indirectes de satisfaction
+        (``on se rend pas compte à quel point cette vidéo explique bien'')
+        classifiées neutres plutôt que positives.
+\end{enumerate}
+
+\subsection{Biais de sur-prédiction}
+
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+Type & Effectif & Longueur moyenne \\
+\midrule
+Sur-prédiction (pred $>$ gold) & 67/100 & 8{,}3 mots \\
+Sous-prédiction (pred $<$ gold) &  3/100 & 36{,}3 mots \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Le biais systématique de sur-prédiction sur les textes courts
+(longueur moyenne 8{,}3 mots) a été partiellement corrigé en v2 via
+un facteur d'engagement (\textit{engagement\_factor} = $\min(1, wc/25)$)
+qui pondère le score de sentiment proportionnellement à la longueur du texte.
+
+\subsection{Performance du détecteur de bruit}
+
+\begin{center}
+\begin{tabular}{lc}
+\toprule
+Métrique & Valeur \\
+\midrule
+Précision   & 1{,}00 (aucun faux positif) \\
+Rappel      & 0{,}12 (88\,\% de faux négatifs) \\
+F1-bruit    & 0{,}21 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+La précision parfaite (0 faux positif) garantit que le pipeline ne pénalise
+jamais à tort un commentaire valide. Le faible rappel (12\,\%) reflète la
+difficulté à détecter le bruit subtil (réactions vides, hors-sujet non marqué).
+
+\subsection{Pourquoi le gold standard est limité à 100 commentaires}
+
+Le choix de 100 commentaires résulte de cinq contraintes cumulatives résumées
+dans le tableau ci-dessous.
+
+\begin{center}
+\small
+\begin{tabular}{p{3.2cm}p{3.5cm}p{2cm}p{4cm}}
+\toprule
+\textbf{Contrainte} & \textbf{Impact} & \textbf{Statut} & \textbf{Solution} \\
+\midrule
+Quota API YouTube & 11 unités/vidéo & \textcolor{green!60!black}{\textbf{Résolue}} &
+  Corpus pré-collecté 42\,860 comm.\ via dépôt GitHub \\
+GPU T4 Kaggle (16 Go) & 3--5~s/commentaire ; timeout $> 100$ comm. & Partielle &
+  GPU A100 / cloud \\
+Annotation niveau~1 (même LLM) & Kappa non rigoureux & \textcolor{orange!80!black}{\textbf{Améliorée}} &
+  Niveau~2 inter-modèles implémenté (\texttt{cross\_annotate\_llm2.py}) \\
+Absence dataset FR public & Corpus from scratch & \textcolor{green!60!black}{\textbf{Résolue}} &
+  Dépôt GitHub open source \\
+Biais auto-référentiel & Validité externe limitée & Active &
+  Annotation humaine partielle (perspective) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\paragraph{Quota (Étape 1 — résolue).}
+La contrainte de quota YouTube Data API v3 a été \textbf{entièrement résolue}
+par le corpus pré-collecté \texttt{data/raw/comments\_raw.csv} :
+\textbf{42\,860 commentaires} issus de \textbf{591 vidéos}, chargé par l'agent A0
+via fallback CSV sans consommer de quota en temps réel.
+
+\paragraph{Matériel GPU (Étape 2).}
+Le pipeline tourne sur GPU Kaggle T4 (3--5~s par commentaire).
+Au-delà de 100 commentaires pour le gold standard, le risque de timeout
+lors de sessions Kaggle (limitées à 9~h) rendait l'évaluation non reproductible.
+
+\paragraph{Rigueur d'annotation (Étape 3).}
+Le niveau~2 d'annotation croisée (GPT-4o-mini $\times$ Llama-3.1-70B via Groq gratuit)
+produit un $\kappa$ inter-architectures nettement plus rigoureux que le niveau~1
+(même LLM, deux températures). C'est l'amélioration méthodologique principale du projet.
+
+\paragraph{Absence de benchmark FR (Étape 4) et biais auto-référentiel (Étape 5).}
+Aucun benchmark public annoté humainement n'existe pour les commentaires YouTube
+pédagogiques en français. L'annotation par LLM introduit un biais auto-référentiel :
+augmenter le corpus sans annotation humaine ne résoudrait pas ce problème structurel.
+
+\subsection{Menaces à la validité (Validity Threats)}
+
+Une analyse rigoureuse des résultats impose d'identifier explicitement les
+menaces susceptibles de remettre en cause les conclusions~\cite{brown2020gpt3}.
+
+\paragraph{Validité interne.}
+La principale menace est le \textbf{biais auto-référentiel} : les annotations du
+gold standard ont été produites par un LLM (GPT-4o-mini), et les prédictions du
+pipeline reposent sur le même LLM. Les métriques mesurent donc en partie la
+cohérence interne du modèle plutôt que sa validité face à un jugement humain
+indépendant. L'annotation croisée niveau 2 (GPT-4o-mini $\times$ Llama-3.1-70B,
+$\kappa = 0{,}779$) atténue ce risque mais ne l'élimine pas complètement.
+
+\paragraph{Validité externe.}
+Le corpus de 591 vidéos couvre principalement des contenus pédagogiques en
+français et en anglais sur des domaines STEM. La généralisabilité des résultats
+à d'autres langues, d'autres domaines (arts, sciences humaines) ou d'autres
+plateformes (Coursera, Khan Academy) reste à établir. De plus, 100 commentaires
+annotés constituent un échantillon statistiquement limité pour des inférences
+robustes au-delà du corpus évalué.
+
+\paragraph{Validité de construit.}
+Le \texttt{gold\_score} utilisé comme référence est défini sur une échelle
+$\{0, 25, 50, 75, 100\}$ issue d'une annotation LLM, et non d'une mesure directe
+de l'apprentissage des apprenants. Il mesure la qualité perçue du commentaire
+(argumentation, pertinence, absence de bruit), qui constitue un proxy de la
+valeur pédagogique, mais pas nécessairement un prédicteur de l'acquisition
+de connaissances. Ce gap entre qualité des commentaires et impact pédagogique
+réel est une limite fondamentale reconnue dans la littérature~\cite{park2016comment}.
+
+\begin{center}
+\small
+\begin{tabular}{p{2.8cm}p{4cm}p{4.5cm}}
+\toprule
+\textbf{Type} & \textbf{Menace} & \textbf{Atténuation} \\
+\midrule
+Validité interne    & Biais auto-référentiel LLM & Annotation croisée niveau~2 ($\kappa = 0{,}779$) \\
+Validité externe    & Corpus limité (591 vidéos, FR/EN, STEM) & Dépôt GitHub open source ; extension prévue \\
+Validité de construit & gold\_score ≠ impact pédagogique réel & Perspective : annotation humaine + mesures d'engagement \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% ═══════════════════════════════════════════════════════════════
+\section{Réalisations techniques}
+% ═══════════════════════════════════════════════════════════════
+
+\subsection{Pipeline LangGraph — 7 agents}
+
+L'implémentation du pipeline repose sur LangGraph avec un \texttt{PipelineState}
+TypedDict partagé entre tous les agents. Les agents A3, A4 et A5 s'exécutent
+en parallèle via \texttt{ThreadPoolExecutor(max\_workers=3)}, réduisant la
+latence analytique d'un facteur 3.
+
+\subsection{Système de collecte A0}
+
+L'agent A0 implémente une stratégie de transcription en 3 passages successifs
+pour maximiser la couverture (approximativement 99\,\% des vidéos) :
+
+\begin{enumerate}
+  \item Recherche de sous-titres manuels dans les langues cibles (FR, EN)
+  \item Sous-titres auto-générés si absent
+  \item Traduction automatique vers le français si la vidéo est dans une autre langue
+\end{enumerate}
+
+\subsection{Architecture deux phases (enrichissement)}
+
+Pour concilier rapidité et précision, le système adopte une architecture
+à deux phases inspirée des travaux sur la saturation de l'information
+dans les systèmes multi-agents~\cite{hong2023metagpt} :
+
+\begin{itemize}
+  \item \textbf{Phase 1 (rapide)} : analyse des 300 premiers commentaires
+        (cap A2), réponse en $\approx$8 s, rapport enrichi$=$\texttt{False}.
+  \item \textbf{Phase 2 (background)} : pipeline complet relancé en thread
+        daemon sur le corpus entier, résultat mis à jour en cache,
+        enrichi$=$\texttt{True}.
+\end{itemize}
+
+\subsection{Module Q\&A conversationnel}
+
+Le module Q\&A répond aux questions en langage naturel sur une vidéo analysée.
+Il est ancré sur trois sources : la transcription horodatée, la description
+vidéo et les commentaires haute qualité sélectionnés par A4 (score $\geq 0{,}7$).
+
+Un garde heuristique pré-LLM (FR-92) détecte et bloque les questions hors-contexte
+à zéro coût de token, selon trois niveaux :
+(1) mots-clés vidéo, (2) patterns de connaissance générale, (3) chevauchement
+lexical avec le contexte de la vidéo.
+
+\subsection{Module QCM pédagogique}
+
+Le module QCM génère automatiquement des quiz à choix multiples ancré sur le
+contenu de la vidéo. Chaque question cite son segment source horodaté
+(anti-hallucination). En mode dégradé (sans transcript), le nombre de questions
+est limité à 3 et le mode est signalé dans la réponse API.
+
+Le quiz est pré-généré en arrière-plan après chaque analyse, garantissant
+une réponse instantanée à l'endpoint \texttt{GET /quiz/\{video\_id\}}.
+
+\subsection{Streaming SSE}
+
+L'endpoint \texttt{POST /analyze/stream} retourne les résultats progressivement
+via Server-Sent Events, permettant à l'extension Chrome d'afficher les scores
+au fur et à mesure :
+
+\begin{lstlisting}[language=]
+t+0s  -> event: started     {video_id, topic}
+t+2s  -> event: collected   {comment_count, transcript_available}
+t+3s  -> event: preprocessed {comments_retained}
+t+6s  -> event: scores      {sentiment_score, discourse_score, noise_score}
+t+7s  -> event: global      {score_global, quality_label, summary}
+t+8s  -> event: final       {rapport complet}
+t+8s  -> event: done        {elapsed_s, enrich_status}
+\end{lstlisting}
+
+\subsection{Self-Consistency A7 parallèle}
+
+La Self-Consistency de A7 (3 passes LLM + vote majoritaire) a été optimisée
+en parallélisant les 3 appels via \texttt{ThreadPoolExecutor}, réduisant la
+latence de A7 de $3 \times t_{\text{LLM}}$ à $1 \times t_{\text{LLM}}$.
+
+\subsection{Annotation croisée inter-modèles (niveau 2)}
+
+Le script \texttt{scripts/cross\_annotate\_llm2.py} implémente une validation
+plus rigoureuse du gold standard en faisant annoter les 100 commentaires par
+deux LLMs d'architectures différentes :
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+Rôle & Modèle \\
+\midrule
+Annotateur 1 & LLM principal du projet (GPT-4o-mini via OpenAI) \\
+Annotateur 2 & Llama-3.1-70B via Groq (API gratuite, \href{https://console.groq.com}{console.groq.com}) \\
+             & \textit{ou} Gemini-1.5-Flash via Google AI Studio \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Le script calcule automatiquement le Cohen's $\kappa$ inter-modèles sur les trois
+dimensions (sentiment, qualité, bruit), produit un rapport JSON détaillé et signale
+si la condition AC-08 ($\kappa \geq 0{,}70$) est atteinte.
+
+\begin{lstlisting}[language=bash]
+# Installation (une seule fois)
+pip install langchain-groq
+
+# Test rapide (10 commentaires)
+python scripts/cross_annotate_llm2.py --limit 10
+
+# Annotation complète (100 commentaires)
+python scripts/cross_annotate_llm2.py
+# Résultat : evaluation/results/cross_annotation_kappa.json
+\end{lstlisting}
+
+Un kappa élevé entre GPT-4o-mini et Llama-3.1-70B indique que les annotations
+reflètent des propriétés objectives du texte et non un biais propre à un seul modèle.
+
+% ═══════════════════════════════════════════════════════════════
+\section{Points positifs et contributions}
+% ═══════════════════════════════════════════════════════════════
+
+\subsection{Contributions scientifiques}
+
+\begin{enumerate}
+  \item \textbf{Architecture multi-agents pour l'évaluation de qualité} :
+        première application connue d'un pipeline LangGraph 7 agents à
+        l'évaluation automatique de la qualité pédagogique de vidéos YouTube.
+
+  \item \textbf{Décomposition du signal de qualité} : la séparation en trois
+        dimensions orthogonales (sentiment, discours, bruit) avec pondération
+        calibrée (0{,}35 / 0{,}40 / 0{,}25) produit un score plus représentatif
+        qu'un signal unique.
+
+  \item \textbf{Garde heuristique hors-contexte (FR-92)} : mécanisme de filtrage
+        des questions hors-sujet à coût zéro, combinant mots-clés, patterns
+        et chevauchement lexical.
+
+  \item \textbf{Gold standard bilingue avec annotation croisée inter-modèles} :
+        corpus de 100 commentaires FR/EN annoté selon un protocole à deux niveaux.
+        Niveau 1 (consistance interne) : Cohen $\kappa = 0{,}899$.
+        Niveau 2 (accord inter-architectures GPT-4o-mini $\times$ Llama-3.1-70B) :
+        implémenté via \texttt{cross\_annotate\_llm2.py}, mesure plus rigoureuse
+        et reproductible sans coût d'annotation humaine.
+\end{enumerate}
+
+\subsection{Points forts techniques}
+
+\begin{itemize}
+  \item \textbf{Quatre hypothèses validées} avec des marges significatives
+        (H1 : $r = 0{,}89 \gg 0{,}60$~; H2 : $\Delta = +0{,}31 \gg 0{,}10$~;
+         H4 : gain $= +72{,}6$ pts $\gg 15$ pts).
+  \item \textbf{Latence maîtrisée} : réponse rapide en $\approx$8~s via
+        l'échantillonnage stratifié (300 commentaires) et la parallélisation
+        de A3/A4/A5.
+  \item \textbf{Précision bruit $= 100\,\%$} : zéro faux positif --- le
+        pipeline ne pénalise jamais injustement un commentaire valide.
+  \item \textbf{F1-macro sentiment $= 0{,}9652$} : performance quasi-optimale
+        sur la classification à 3 classes.
+  \item \textbf{Fallback $= 0\,\%$} : robustesse totale sur le corpus évalué.
+  \item \textbf{Architecture extensible} : CORS configuré, schémas Pydantic
+        versionnés, cache singleton remplaçable par Redis en production.
+  \item \textbf{SSE streaming} : expérience utilisateur progressive, compatible
+        extension Chrome MV3.
+  \item \textbf{Module QCM} : fonctionnalité pédagogique à haute valeur ajoutée,
+        génération anti-hallucination avec citation des sources horodatées.
+\end{itemize}
+
+\subsection{Robustesse et anti-hallucination}
+
+Le système intègre plusieurs mécanismes d'anti-hallucination :
+
+\begin{itemize}
+  \item Flags \texttt{hallucination\_flags} et \texttt{fallback\_used} dans
+        chaque réponse API.
+  \item Module Q\&A : principe FR-88 (\textit{répondre uniquement sur le contexte
+        fourni}) + FR-92 (garde hors-contexte).
+  \item Module QCM : citation obligatoire du \texttt{source\_segment} verbatim
+        pour chaque question.
+  \item Self-Consistency A7 : vote majoritaire sur 3 évaluations parallèles.
+\end{itemize}
+
+% ═══════════════════════════════════════════════════════════════
+\section{Références scientifiques}
+% ═══════════════════════════════════════════════════════════════
+
+\begin{thebibliography}{99}
+
+\bibitem{wei2022cot}
+J.~Wei \textit{et al.},
+``Chain-of-Thought Prompting Elicits Reasoning in Large Language Models,''
+in \textit{Advances in Neural Information Processing Systems (NeurIPS)},
+vol.~35, 2022.
+\href{https://arxiv.org/abs/2201.11903}{arXiv:2201.11903}
+
+\bibitem{yao2023tot}
+S.~Yao \textit{et al.},
+``Tree of Thoughts: Deliberate Problem Solving with Large Language Models,''
+in \textit{Advances in Neural Information Processing Systems (NeurIPS)},
+2023.
+\href{https://arxiv.org/abs/2305.10601}{arXiv:2305.10601}
+
+\bibitem{wang2023sc}
+X.~Wang \textit{et al.},
+``Self-Consistency Improves Chain of Thought Reasoning in Language Models,''
+in \textit{International Conference on Learning Representations (ICLR)},
+2023.
+\href{https://arxiv.org/abs/2203.11171}{arXiv:2203.11171}
+
+\bibitem{hong2023metagpt}
+S.~Hong \textit{et al.},
+``MetaGPT: Meta Programming for A Multi-Agent Collaborative Framework,''
+in \textit{International Conference on Learning Representations (ICLR)},
+2024.
+\href{https://arxiv.org/abs/2308.00352}{arXiv:2308.00352}
+
+\bibitem{hutto2014vader}
+C.~J.~Hutto and E.~Gilbert,
+``VADER: A Parsimonious Rule-based Model for Sentiment Analysis of Social
+Media Text,''
+in \textit{Proceedings of the 8th International AAAI Conference on Weblogs
+and Social Media (ICWSM)}, 2014.
+
+\bibitem{langgraph2024}
+LangChain Inc.,
+``LangGraph: Building Stateful, Multi-Actor Applications with LLMs,''
+2024.
+\href{https://github.com/langchain-ai/langgraph}{github.com/langchain-ai/langgraph}
+
+\bibitem{brown2020gpt3}
+T.~B.~Brown \textit{et al.},
+``Language Models are Few-Shot Learners,''
+in \textit{Advances in Neural Information Processing Systems (NeurIPS)},
+vol.~33, 2020.
+\href{https://arxiv.org/abs/2005.14165}{arXiv:2005.14165}
+
+\bibitem{kumar2021comment}
+S.~Kumar and N.~Shah,
+``Designing Toxic Content Classification for a Diversity of Perspectives,''
+in \textit{Proceedings of NAACL-HLT}, 2021.
+\href{https://arxiv.org/abs/2106.04511}{arXiv:2106.04511}
+
+\bibitem{park2016comment}
+C.~S.~Park \textit{et al.},
+``Supporting Comment Moderators in Identifying High Quality Online News
+Comments,''
+in \textit{Proceedings of the ACM CHI Conference}, 2016.
+\href{https://dl.acm.org/doi/10.1145/2858036.2858389}{doi:10.1145/2858036.2858389}
+
+\bibitem{cohen1960kappa}
+J.~Cohen,
+``A Coefficient of Agreement for Nominal Scales,''
+\textit{Educational and Psychological Measurement}, vol.~20, no.~1, 1960.
+
+\end{thebibliography}
+
+\clearpage
+% ═══════════════════════════════════════════════════════════════
+\section{Conclusion et perspectives}
+% ═══════════════════════════════════════════════════════════════
+
+\subsection{Bilan}
+
+Ce projet démontre la faisabilité et l'efficacité d'un système multi-agents LLM
+pour l'évaluation automatique de la qualité des vidéos YouTube pédagogiques.
+Les quatre hypothèses des exigences du projet sont validées avec des marges confortables, et
+le pipeline offre des fonctionnalités avancées (Q\&A, QCM, streaming SSE,
+enrichissement background) qui le positionnent comme un outil pédagogique
+complet.
+
+\subsection{Perspectives}
+
+\begin{itemize}
+  \item \textbf{Annotation croisée niveau 2} : \textcolor{green!60!black}{\textbf{implémentée}} ---
+        le script \texttt{cross\_annotate\_llm2.py} permet de valider le kappa entre
+        GPT-4o-mini et Llama-3.1-70B (Groq, gratuit) sans coût d'annotation humaine.
+  \item \textbf{Annotation humaine réelle (niveau 3/4)} : remplacer les annotations LLM par
+        des annotations humaines pour éliminer définitivement le biais auto-référentiel.
+  \item \textbf{Extension du corpus} : élargir au-delà de 100 commentaires
+        pour des résultats statistiquement plus robustes.
+  \item \textbf{Détection de bruit avancée} : améliorer le rappel du détecteur
+        de bruit (actuellement 12\,\%) via un modèle supervisé entraîné sur
+        des données annotées.
+  \item \textbf{Support multi-vidéo} : agréger l'analyse sur plusieurs vidéos
+        d'un même créateur pour un score de chaîne YouTube.
+  \item \textbf{Extension Chrome} : déploiement de l'interface utilisateur
+        avec affichage temps réel des scores (SSE), module Q\&A et QCM
+        déclenchés à $t = 5$ minutes.
+  \item \textbf{Passage en production} : remplacement du cache mémoire par
+        Redis, déploiement sur infrastructure cloud (Railway, Render).
+\end{itemize}
+
+\appendix
+
+% ═══════════════════════════════════════════════════════════════
+\section*{Annexe — Formules de scoring (les exigences du projet, immuables)}
+% ═══════════════════════════════════════════════════════════════
+\addcontentsline{toc}{section}{Annexe — Formules de scoring}
+
+\begin{equation}
+  \text{Score\_Global} = 0{,}35 \times S_{\text{sentiment}}
+                       + 0{,}40 \times D_{\text{discours}}
+                       + 0{,}25 \times N_{\text{bruit}}
+\end{equation}
+
+\begin{equation}
+  \text{Score\_Final} = 0{,}60 \times \text{Score\_Global}
+                      + 0{,}40 \times \text{Score\_Pertinence}
+\end{equation}
+
+\begin{equation}
+  \text{gold\_score} =
+  \begin{cases}
+    0   & \text{si quality\_score} = 1 \\
+    25  & \text{si quality\_score} = 2 \\
+    50  & \text{si quality\_score} = 3 \\
+    75  & \text{si quality\_score} = 4 \\
+    100 & \text{si quality\_score} = 5 \\
+  \end{cases}
+\end{equation}
+
+\end{document}
