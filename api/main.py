@@ -20,6 +20,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from api.routes import router
+from api.stream import router_stream
 
 app = FastAPI(
     title="YouTube Quality Analyzer API",
@@ -40,6 +41,7 @@ app.add_middleware(
 )
 
 app.include_router(router)
+app.include_router(router_stream)
 
 
 @app.get("/health", tags=["meta"])

@@ -89,6 +89,23 @@ class AnalyzeResponse(BaseModel):
         default=None,
         description="Unités quota YouTube Data API v3 consommées par A0",
     )
+    # ── v1.2 Enrichissement background ───────────────────────────────────────
+    enriched: bool = Field(
+        default=False,
+        description=(
+            "True si le rapport a été enrichi avec le corpus complet (background). "
+            "False = rapport rapide (300 commentaires). "
+            "Faire un GET /report/{video_id} ultérieur pour récupérer la version enrichie."
+        ),
+    )
+    enrich_status: str = Field(
+        default="none",
+        description="Statut d'enrichissement background : 'none' | 'pending' | 'done'",
+    )
+    comment_count_full: Optional[int] = Field(
+        default=None,
+        description="Nombre total de commentaires du corpus complet (disponible après enrichissement)",
+    )
 
 
 class ReportNotFound(BaseModel):

@@ -16,6 +16,7 @@ from typing import Any
 from fastapi import APIRouter, HTTPException
 
 from api.cache import cache
+from api.background import enrich_in_background
 from api.qa import answer_question, extract_top_comments
 from api.schemas import (
     AnalyzeRequest,
@@ -185,10 +186,13 @@ def analyze(request: AnalyzeRequest) -> Any:
         low_consensus=report.get("low_consensus"),
         source=source or report.get("source"),
         quota_used=quota_used or report.get("quota_used"),
+        enriched=False,
+        enrich_status="pending" if (raw_comments and len(raw_comments) > 300) else "none",
     )
 
     # ── 6. Écriture cache rapport ─────────────────────────────────────────────
     cache.set(video_id, request.topic, response.model_dump())
+    cache.set_enrich_status(video_id, request.topic, "pending")
 
     # ── 7. Écriture cache Q&A context (FR-86) ────────────────────────────────
     # Extraire les top_comments A4 (score >= 0.7) pour le module Q&A
@@ -214,8 +218,21 @@ def analyze(request: AnalyzeRequest) -> Any:
     }
     cache.set_qa_context(video_id, qa_ctx)
     logger.info(
-        "analyze: qa_context écrit — transcript=%s top_comments=%d",
+        "analyze: qa_context ecrit — transcript=%s top_comments=%d",
         transcript_available, len(top_comments),
+    )
+
+    # ── 8. Enrichissement background si corpus > cap (v1.2) ──────────────────
+    enrich_in_background(
+        video_id=video_id,
+        topic=request.topic,
+        lang=request.lang,
+        raw_comments=raw_comments or [],
+        source=source,
+        transcript=transcript,
+        transcript_available=transcript_available,
+        video_title=video_title or "",
+        video_description=video_description or "",
     )
 
     return response
@@ -328,6 +345,31 @@ def ask(request: AskRequest) -> Any:
 
 
 # ── DELETE /cache ─────────────────────────────────────────────────────────────
+
+@router.get(
+    "/report/{video_id}/enrich-status",
+    summary="Statut de l'enrichissement background pour une vidéo",
+    tags=["enrichment"],
+)
+def enrich_status(video_id: str, topic: str = "") -> dict:
+    """
+    Retourne le statut de l'enrichissement background pour un video_id.
+
+    - **none**    : pas d'enrichissement lancé (corpus déjà complet ou petit)
+    - **pending** : enrichissement en cours — rappeler dans ~30s
+    - **done**    : rapport enrichi disponible via GET /report/{video_id}
+    """
+    status = cache.get_enrich_status(video_id, topic)
+    report = cache.get_latest(video_id)
+    return {
+        "video_id":        video_id,
+        "topic":           topic,
+        "enrich_status":   status,
+        "enriched":        bool(report and report.get("enriched", False)),
+        "comment_count":   report.get("comment_count") if report else None,
+        "comment_count_full": report.get("comment_count_full") if report else None,
+    }
+
 
 @router.delete(
     "/cache",

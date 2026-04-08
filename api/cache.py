@@ -7,17 +7,25 @@ the full pipeline for the same request.
 v1.1 : ajout de exists(), set_qa_context(), get_qa_context()
        pour supporter le module Q&A sans re-appel API (PRD v1.1 §4.3).
 
+v1.2 : statut d'enrichissement background (pending/done).
+       Quand un rapport "rapide" (300 commentaires) est servi, le pipeline
+       complet tourne en arrière-plan sur le corpus entier. Le cache stocke
+       le statut et remplace le rapport dès que l'enrichissement est terminé.
+
 Redis peut remplacer ce module en production (v2) — l'interface reste identique.
 """
 from __future__ import annotations
 
-from typing import Any, Optional
+from typing import Any, Literal, Optional
+
+EnrichStatus = Literal["none", "pending", "done"]
 
 
 class ReportCache:
     def __init__(self) -> None:
         self._store: dict[str, Any] = {}
         self._qa_store: dict[str, Any] = {}
+        self._enrich_status: dict[str, EnrichStatus] = {}  # key → statut enrichissement
 
     @staticmethod
     def _key(video_id: str, topic: str) -> str:
@@ -83,9 +91,28 @@ class ReportCache:
         self._qa_store.pop(video_id, None)
         return len(keys_to_del)
 
+    # ── Enrichissement background (v1.2) ──────────────────────────────────────
+
+    def get_enrich_status(self, video_id: str, topic: str) -> EnrichStatus:
+        """Retourne le statut d'enrichissement : 'none' | 'pending' | 'done'."""
+        return self._enrich_status.get(self._key(video_id, topic), "none")
+
+    def set_enrich_status(self, video_id: str, topic: str, status: EnrichStatus) -> None:
+        self._enrich_status[self._key(video_id, topic)] = status
+
+    def set_enriched(self, video_id: str, topic: str, report: dict[str, Any]) -> None:
+        """
+        Remplace le rapport rapide par le rapport enrichi (corpus complet).
+        Marque le statut 'done' et met à jour le flag dans le rapport.
+        """
+        report = {**report, "enriched": True}
+        self._store[self._key(video_id, topic)] = report
+        self._enrich_status[self._key(video_id, topic)] = "done"
+
     def clear(self) -> None:
         self._store.clear()
         self._qa_store.clear()
+        self._enrich_status.clear()
 
 
 # Module-level singleton partagé par toute l'application FastAPI

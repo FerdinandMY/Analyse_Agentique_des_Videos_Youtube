@@ -22,6 +22,14 @@ logger = get_logger("a2_preprocessor")
 MIN_CHARS = 3
 MAX_CHARS = 2000
 
+# Nombre maximum de commentaires transmis aux agents analytiques (A3/A4/A5).
+# Au-delà, un sampling stratifié est appliqué : les commentaires les plus
+# likés sont prioritaires, le reste est échantillonné uniformément.
+# Réduire si la latence est prioritaire sur la couverture (min conseillé : 100).
+MAX_COMMENTS_FOR_ANALYSIS = int(
+    __import__("os").environ.get("A2_MAX_COMMENTS", "300")
+)
+
 
 def _extract_text(item: Any) -> str | None:
     if isinstance(item, str):
@@ -68,7 +76,37 @@ def a2_preprocessor(state: PipelineState) -> dict[str, Any]:
         record["language"] = detect_language(text)
         cleaned.append(record)
 
-    logger.info("a2_preprocessor: %d → %d comments after preprocessing", len(raw), len(cleaned))
-    save_checkpoint("a2_preprocessor", {"input": len(raw), "output": len(cleaned)})
+    # ── Sampling stratifié si trop de commentaires ────────────────────────────
+    # On garde MAX_COMMENTS_FOR_ANALYSIS commentaires au maximum pour les agents
+    # analytiques. Stratégie : top-N par likes + échantillon uniforme du reste.
+    sampled = cleaned
+    if len(cleaned) > MAX_COMMENTS_FOR_ANALYSIS:
+        # Trier par author_likes décroissant pour prioriser les commentaires
+        # les plus engageants (signal qualité fort)
+        sorted_by_likes = sorted(
+            cleaned,
+            key=lambda c: int(c.get("author_likes") or 0),
+            reverse=True,
+        )
+        top_n     = MAX_COMMENTS_FOR_ANALYSIS // 2
+        top_liked = sorted_by_likes[:top_n]
 
-    return {"cleaned_comments": cleaned}
+        # Echantillonnage uniforme du reste (diversité)
+        rest       = sorted_by_likes[top_n:]
+        rest_quota = MAX_COMMENTS_FOR_ANALYSIS - top_n
+        step       = max(1, len(rest) // rest_quota)
+        rest_sample = rest[::step][:rest_quota]
+
+        sampled = top_liked + rest_sample
+        logger.info(
+            "a2_preprocessor: sampling %d → %d (top_likes=%d + uniform=%d)",
+            len(cleaned), len(sampled), len(top_liked), len(rest_sample),
+        )
+
+    logger.info(
+        "a2_preprocessor: %d → %d cleaned → %d sampled for analysis",
+        len(raw), len(cleaned), len(sampled),
+    )
+    save_checkpoint("a2_preprocessor", {"input": len(raw), "output": len(cleaned), "sampled": len(sampled)})
+
+    return {"cleaned_comments": sampled}

@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import statistics
 from collections import Counter
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Any
 
 from langchain_core.messages import HumanMessage, SystemMessage
@@ -144,45 +145,75 @@ def _self_consistency(
     fallback: dict | None = None,
 ) -> tuple[dict, list[dict], bool]:
     """
-    Exécute _SC_RUNS runs indépendants, agrège par vote majoritaire (label)
-    et moyenne (score). Retourne (result, runs, consensus_reached).
+    Exécute _SC_RUNS runs séquentiels (conservé pour compatibilité tests).
+    Préférer _self_consistency_parallel en production.
     """
-    runs       = []
-    scores     = []
-    verdicts   = []
-    tot_branches_list = []
+    return _self_consistency_parallel(messages, fallback=fallback)
 
-    for i in range(_SC_RUNS):
-        run_result, run_meta = _single_run(messages, fallback=fallback)
-        score   = run_result.get("pertinence_score", 50.0)
-        verdict = run_result.get("verdict", "")
 
-        # Label de pertinence dérivé du score
-        if score >= 65:
-            label = "pertinent"
-        elif score >= 35:
-            label = "moyennement_pertinent"
-        else:
-            label = "non_pertinent"
+def _run_one_sc(run_index: int, messages: list, fallback: dict) -> dict:
+    """Exécute un seul run SC et retourne le résultat enrichi du numéro de run."""
+    run_result, run_meta = _single_run(messages, fallback=fallback)
+    score   = run_result.get("pertinence_score", 50.0)
+    verdict = run_result.get("verdict", "")
+    if score >= 65:
+        label = "pertinent"
+    elif score >= 35:
+        label = "moyennement_pertinent"
+    else:
+        label = "non_pertinent"
+    logger.info("a7 SC run %d/%d — score=%.1f label=%s", run_index, _SC_RUNS, score, label)
+    return {
+        "run":              run_index,
+        "pertinence_score": score,
+        "label":            label,
+        "verdict":          verdict,
+        "fallback_used":    run_meta.get("fallback_used", False),
+        "tot_branches":     run_result.get("tot_branches"),
+    }
 
-        runs.append({
-            "run":             i + 1,
-            "pertinence_score": score,
-            "label":           label,
-            "verdict":         verdict,
-            "fallback_used":   run_meta.get("fallback_used", False),
-        })
-        scores.append(score)
-        verdicts.append(label)
-        if run_result.get("tot_branches"):
-            tot_branches_list.append(run_result["tot_branches"])
 
-        logger.info("a7 SC run %d/%d — score=%.1f label=%s", i + 1, _SC_RUNS, score, label)
+def _self_consistency_parallel(
+    messages: list,
+    fallback: dict | None = None,
+) -> tuple[dict, list[dict], bool]:
+    """
+    Exécute _SC_RUNS runs en parallèle (ThreadPoolExecutor).
+    Réduit la latence A7 de 3×LLM_latency → 1×LLM_latency.
+    Agrège par vote majoritaire (label) et moyenne (score).
+    """
+    _fallback = fallback or _FALLBACK_TOPIC_FR
+
+    # Lancement des 3 runs en parallèle
+    runs: list[dict] = [{}] * _SC_RUNS
+    with ThreadPoolExecutor(max_workers=_SC_RUNS) as pool:
+        futures = {
+            pool.submit(_run_one_sc, i + 1, messages, _fallback): i
+            for i in range(_SC_RUNS)
+        }
+        for future in as_completed(futures):
+            idx = futures[future]
+            try:
+                runs[idx] = future.result()
+            except Exception as exc:
+                logger.warning("a7 SC run %d échoué : %s — fallback", idx + 1, exc)
+                runs[idx] = {
+                    "run":              idx + 1,
+                    "pertinence_score": _fallback.get("pertinence_score", 50.0),
+                    "label":            "moyennement_pertinent",
+                    "verdict":          _fallback.get("verdict", ""),
+                    "fallback_used":    True,
+                    "tot_branches":     None,
+                }
+
+    scores    = [r["pertinence_score"] for r in runs]
+    verdicts  = [r["label"] for r in runs]
+    tot_list  = [r["tot_branches"] for r in runs if r.get("tot_branches")]
 
     # Vote majoritaire (PRD FR-59)
-    label_counts  = Counter(verdicts)
+    label_counts = Counter(verdicts)
     majority_label, majority_count = label_counts.most_common(1)[0]
-    consensus = majority_count >= _SC_CONSENSUS_THRESHOLD  # >= 2/3
+    consensus = majority_count >= _SC_CONSENSUS_THRESHOLD
 
     # Score final = moyenne arithmétique (PRD FR-58)
     final_score = round(statistics.mean(scores), 2)
@@ -192,15 +223,10 @@ def _self_consistency(
         (r for r in runs if r["label"] == majority_label and not r["fallback_used"]),
         runs[0],
     )
-    final_verdict = best_run["verdict"]
-
-    # Branches ToT : prendre celles du run majoritaire
-    final_branches = tot_branches_list[0] if tot_branches_list else {}
-
     result = {
         "pertinence_score": final_score,
-        "verdict":          final_verdict,
-        "tot_branches":     final_branches,
+        "verdict":          best_run["verdict"],
+        "tot_branches":     tot_list[0] if tot_list else {},
         "sc_runs":          runs,
         "sc_consensus":     consensus,
         "low_consensus":    not consensus,
@@ -270,9 +296,9 @@ def a7_topic_matcher(state: PipelineState) -> dict[str, Any]:
     user_msg   = _build_prompt(topic, hq_comments, sim_score, key_topics, lang=lang)
     messages   = [SystemMessage(content=system_msg), HumanMessage(content=user_msg)]
 
-    # ── Étape 4 : Self-Consistency (3 runs) ───────────────────────────────────
+    # ── Étape 4 : Self-Consistency (3 runs en parallèle) ─────────────────────
     fallback = _FALLBACK_TOPIC_FR if lang == "fr" else _FALLBACK_TOPIC_EN
-    sc_result, sc_runs, consensus = _self_consistency(messages, fallback=fallback)
+    sc_result, sc_runs, consensus = _self_consistency_parallel(messages, fallback=fallback)
 
     score_pertinence = sc_result.get("pertinence_score", 50.0)
     score_final      = round(W_GLOBAL * score_global + W_PERTINENCE * score_pertinence, 2)
