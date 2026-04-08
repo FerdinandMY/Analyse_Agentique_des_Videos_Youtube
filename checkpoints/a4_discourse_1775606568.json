@@ -1,0 +1,60 @@
+{
+  "agent": "a4_discourse",
+  "pipeline_id": "1775606568",
+  "data": {
+    "informativeness": 40.0,
+    "argumentation": 80.0,
+    "constructiveness": 30.0,
+    "discourse_score": 33.0,
+    "high_quality_indices": [],
+    "rationale": "Overall, the comments reflect personal sentiments but lack depth, discussion, and informative value.",
+    "reasoning": "The analysis reveals that while the comments show some depth in personal expression, they lack substantial discussion and informative content.",
+    "tot_branches": {
+      "branch_1": {
+        "name": "Content Depth",
+        "score": 0.4,
+        "rationale": "Commenters express personal feelings and experiences but do not engage deeply with the video's content."
+      },
+      "branch_2": {
+        "name": "Discussion Quality",
+        "score": 0.3,
+        "rationale": "The comments are largely isolated one-liners with minimal back-and-forth or nuanced discussion."
+      },
+      "branch_3": {
+        "name": "Epistemic Value",
+        "score": 0.2,
+        "rationale": "The comments provide little useful information or recommendations for viewers before watching."
+      }
+    },
+    "tot_used": true,
+    "text_stats": {
+      "word_count": 339,
+      "char_count": 1799,
+      "sentence_count": 8,
+      "avg_word_length": 4.27,
+      "question_count": 0,
+      "unique_word_ratio": 0.587,
+      "caps_ratio": 0.0
+    },
+    "arg_markers": {
+      "total_markers": 5,
+      "categories": {
+        "causality": [
+          "comme"
+        ],
+        "contrast": [
+          "mais",
+          "mais"
+        ],
+        "example": [
+          "comme"
+        ],
+        "nuance": [
+          "malgré"
+        ]
+      },
+      "argumentation_score": 0.8,
+      "is_argumentative": true
+    }
+  }
+}

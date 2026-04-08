@@ -1,0 +1,115 @@
+{
+  "agent": "a7_topic_matcher",
+  "pipeline_id": "1775606568",
+  "data": {
+    "score_pertinence": 24.44,
+    "score_final": 36.0,
+    "topic_verdict": "Cette vidéo semble peu pertinente pour le sujet 'Morijah - COMPILATION: LOUANGE À DIE', car bien qu'elle aborde des thèmes de louange, le manque de contenu aligné et de valeur pédagogique est notable.",
+    "tot_branches": {
+      "branch_1": {
+        "name": "Content alignment",
+        "score": 0.0,
+        "rationale": "Les commentaires parlent de louange et de spiritualité, mais la similarité sémantique est nulle."
+      },
+      "branch_2": {
+        "name": "Audience level",
+        "score": 0.5,
+        "rationale": "Les commentaires montrent un engagement spirituel, mais ne précisent pas un niveau d'expertise clair."
+      },
+      "branch_3": {
+        "name": "Pedagogical value",
+        "score": 0.2,
+        "rationale": "Les commentaires ne soulignent pas de clarté ou de profondeur pédagogique significative."
+      }
+    },
+    "sc_runs": [
+      {
+        "run": 1,
+        "pertinence_score": 23.33,
+        "label": "non_pertinent",
+        "verdict": "Cette vidéo semble peu pertinente pour le sujet 'Morijah - COMPILATION: LOUANGE À DIE', car bien qu'elle aborde des thèmes de louange, le manque de contenu aligné et de valeur pédagogique est notable.",
+        "fallback_used": false,
+        "tot_branches": {
+          "branch_1": {
+            "name": "Content alignment",
+            "score": 0.0,
+            "rationale": "Les commentaires parlent de louange et de spiritualité, mais la similarité sémantique est nulle."
+          },
+          "branch_2": {
+            "name": "Audience level",
+            "score": 0.5,
+            "rationale": "Les commentaires montrent un engagement spirituel, mais ne précisent pas un niveau d'expertise clair."
+          },
+          "branch_3": {
+            "name": "Pedagogical value",
+            "score": 0.2,
+            "rationale": "Les commentaires ne soulignent pas de clarté ou de profondeur pédagogique significative."
+          }
+        }
+      },
+      {
+        "run": 2,
+        "pertinence_score": 23.33,
+        "label": "non_pertinent",
+        "verdict": "Cette vidéo semble avoir un lien faible avec le sujet de la louange à Dieu, bien que les commentaires soient spirituels. Il pourrait être utile de chercher d'autres vidéos plus directement liées au thème.",
+        "fallback_used": false,
+        "tot_branches": {
+          "branch_1": {
+            "name": "Content alignment",
+            "score": 0.1,
+            "rationale": "Les commentaires parlent de louange et de spiritualité, mais la similarité sémantique est nulle."
+          },
+          "branch_2": {
+            "name": "Audience level",
+            "score": 0.4,
+            "rationale": "Les commentaires montrent une audience engagée, mais sans indication claire de niveau d'expertise."
+          },
+          "branch_3": {
+            "name": "Pedagogical value",
+            "score": 0.2,
+            "rationale": "Les commentaires ne soulignent pas de clarté ou de valeur d'apprentissage significative."
+          }
+        }
+      },
+      {
+        "run": 3,
+        "pertinence_score": 26.67,
+        "label": "non_pertinent",
+        "verdict": "Cette vidéo semble avoir un lien limité avec le sujet de la louange à Dieu, bien que les commentaires montrent un engagement spirituel. Il pourrait être utile de rechercher d'autres vidéos qui abordent plus directement le thème de Morijah.",
+        "fallback_used": false,
+        "tot_branches": {
+          "branch_1": {
+            "name": "Content alignment",
+            "score": 0.1,
+            "rationale": "Les commentaires parlent de louange et de spiritualité, mais la similarité sémantique est nulle."
+          },
+          "branch_2": {
+            "name": "Audience level",
+            "score": 0.5,
+            "rationale": "Les commentaires montrent une audience engagée dans des réflexions spirituelles, mais sans indication claire de niveau d'expertise."
+          },
+          "branch_3": {
+            "name": "Pedagogical value",
+            "score": 0.2,
+            "rationale": "Les commentaires ne soulignent pas de clarté ou de profondeur pédagogique significative."
+          }
+        }
+      }
+    ],
+    "sc_consensus": true,
+    "low_consensus": false,
+    "similarity_score": 0.0,
+    "key_topics": [
+      "seigneur",
+      "soit",
+      "dieu",
+      "amen",
+      "toujours",
+      "suis",
+      "nous",
+      "béni",
+      "laisser",
+      "jésus"
+    ]
+  }
+}

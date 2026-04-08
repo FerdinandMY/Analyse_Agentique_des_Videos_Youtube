@@ -1,0 +1,9 @@
+{
+  "agent": "a2_preprocessor",
+  "pipeline_id": "1775629187",
+  "data": {
+    "input": 500,
+    "output": 448,
+    "sampled": 300
+  }
+}

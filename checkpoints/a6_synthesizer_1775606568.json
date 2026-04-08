@@ -1,0 +1,12 @@
+{
+  "agent": "a6_synthesizer",
+  "pipeline_id": "1775606568",
+  "data": {
+    "score_global": 43.7,
+    "quality_label": "Moyen",
+    "sentiment_score": 30.0,
+    "discourse_score": 33.0,
+    "noise_score": 80.0,
+    "summary": "La qualité globale des commentaires sur la vidéo est modérée, avec un score composite de 43,7. Bien que les commentaires expriment une sentiment positif centré sur la foi et la gratitude, ils manquent de profondeur et de substance, ce qui indique une discussion peu enrichissante. En raison de la forte présence de réflexions personnelles et de répétitions, il est recommandé de visionner la vidéo avec prudence, car elle pourrait ne pas offrir un contenu substantiel."
+  }
+}
