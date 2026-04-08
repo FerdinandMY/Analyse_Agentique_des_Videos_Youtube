@@ -153,3 +153,10 @@ class AskResponse(BaseModel):
         default=False,
         description="True si le LLM est indisponible et une réponse de secours est retournée",
     )
+    out_of_scope: bool = Field(
+        default=False,
+        description=(
+            "True si la question ne concerne pas le contenu de la vidéo analysée (FR-92). "
+            "L'extension Chrome doit afficher un message d'avertissement spécifique."
+        ),
+    )

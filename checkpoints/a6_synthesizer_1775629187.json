@@ -2,11 +2,11 @@
   "agent": "a6_synthesizer",
   "pipeline_id": "1775629187",
   "data": {
-    "score_global": 61.25,
+    "score_global": 66.83,
     "quality_label": "Bon",
-    "sentiment_score": 75.0,
-    "discourse_score": 50.0,
-    "noise_score": 60.0,
-    "summary": "La qualité globale des commentaires sur la vidéo est modérée, avec un score composite de 61,25. Bien que le sentiment soit majoritairement positif, les échanges manquent de profondeur et sont souvent répétitifs, ce qui indique une certaine quantité de bruit dans les réactions. En raison de l'appréciation générale des spectateurs, la vidéo semble valoir le coup d'œil, mais les attentes en matière de discussion substantielle devraient être limitées."
+    "sentiment_score": 80.0,
+    "discourse_score": 53.33,
+    "noise_score": 70.0,
+    "summary": "La qualité globale des commentaires sur la vidéo est relativement positive, avec un score de sentiment de 80, indiquant une forte connexion émotionnelle des spectateurs. Cependant, le score de discours de 53,33 révèle un manque de profondeur dans les discussions, tandis que le score de bruit de 70 montre que les commentaires sont majoritairement centrés sur des expériences personnelles, avec quelques réactions superficielles. En raison de l'enthousiasme général, la vidéo semble valoir le coup d'œil, bien qu'elle ne fournisse pas d'informations substantielles pour les nouveaux auditeurs."
   }
 }

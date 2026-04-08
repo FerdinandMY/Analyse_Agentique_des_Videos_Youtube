@@ -3,45 +3,47 @@
   "pipeline_id": "1775629187",
   "data": {
     "informativeness": 50.0,
-    "argumentation": 80.0,
-    "constructiveness": 40.0,
-    "discourse_score": 50.0,
+    "argumentation": 60.0,
+    "constructiveness": 50.0,
+    "discourse_score": 53.33,
     "high_quality_indices": [
-      3,
+      2,
+      4,
       10,
-      28
+      13,
+      17
     ],
-    "rationale": "The comments show some depth in content but lack robust discussion and useful information for potential viewers.",
-    "reasoning": "The analysis reveals that while there is some depth in content discussion, the overall quality of discussion is limited, and the comments do not provide substantial epistemic value for viewers.",
+    "rationale": "Overall, the comments reflect a strong emotional connection to the song, but lack depth in providing useful information for new listeners.",
+    "reasoning": "The analysis reveals that while there is some depth in content and a moderate level of discussion quality, the comments lack significant epistemic value for potential viewers.",
     "tot_branches": {
       "branch_1": {
         "name": "Content Depth",
-        "score": 0.6,
-        "rationale": "Some comments engage with the content of the video, discussing artists and their contributions, but many are superficial expressions of support."
+        "score": 0.7,
+        "rationale": "Many comments express personal connections to the song and discuss its emotional impact, indicating a deeper engagement with the content."
       },
       "branch_2": {
         "name": "Discussion Quality",
-        "score": 0.4,
-        "rationale": "The comments largely consist of isolated one-liners with minimal back-and-forth or nuanced discussion."
+        "score": 0.5,
+        "rationale": "The comments are largely isolated reactions with limited back-and-forth, though some do include contrasting opinions."
       },
       "branch_3": {
         "name": "Epistemic Value",
-        "score": 0.5,
-        "rationale": "While some comments provide personal insights and reactions, they lack substantial information that would be useful for viewers before watching."
+        "score": 0.4,
+        "rationale": "The comments provide minimal useful information for new viewers, focusing more on personal feelings than on factual content."
       }
     },
     "tot_used": true,
     "text_stats": {
-      "word_count": 668,
-      "char_count": 3770,
-      "sentence_count": 37,
-      "avg_word_length": 4.53,
-      "question_count": 7,
-      "unique_word_ratio": 0.5898,
+      "word_count": 713,
+      "char_count": 4038,
+      "sentence_count": 53,
+      "avg_word_length": 4.54,
+      "question_count": 8,
+      "unique_word_ratio": 0.5456,
       "caps_ratio": 0.0
     },
     "arg_markers": {
-      "total_markers": 16,
+      "total_markers": 15,
       "categories": {
         "causality": [
           "comme",
@@ -57,12 +59,9 @@
           "comme",
           "comme",
           "comme"
-        ],
-        "conclusion": [
-          "bref"
         ]
       },
-      "argumentation_score": 0.8,
+      "argumentation_score": 0.6,
       "is_argumentative": true
     }
   }

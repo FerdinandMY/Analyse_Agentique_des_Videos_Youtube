@@ -2,96 +2,96 @@
   "agent": "a7_topic_matcher",
   "pipeline_id": "1775629187",
   "data": {
-    "score_pertinence": 33.33,
-    "score_final": 50.08,
-    "topic_verdict": "Cette vidéo semble avoir un intérêt limité pour ceux qui recherchent spécifiquement le clip officiel de 'CYSOUL - KIDNAPPE FEAT LADY PONCE'. Les commentaires sont plus axés sur l'engagement des fans que sur le contenu du clip.",
+    "score_pertinence": 47.78,
+    "score_final": 59.21,
+    "topic_verdict": "Cette vidéo semble pertinente pour ceux qui s'intéressent à la chanson 'LOCKO SAWA ROMANCE', bien que le lien direct avec le sujet de recherche soit faible.",
     "tot_branches": {
       "branch_1": {
         "name": "Content alignment",
         "score": 0.1,
-        "rationale": "Les commentaires parlent de la musique en général mais ne se concentrent pas spécifiquement sur le clip officiel."
+        "rationale": "Les commentaires parlent de la chanson et de son rythme, mais la similarité sémantique est très faible."
       },
       "branch_2": {
         "name": "Audience level",
-        "score": 0.7,
-        "rationale": "Les commentaires montrent que l'audience est composée de fans passionnés et engagés, suggérant un niveau intermédiaire."
+        "score": 0.8,
+        "rationale": "Les commentaires montrent un engagement passionné, indiquant que l'audience est bien ciblée pour ce type de contenu."
       },
       "branch_3": {
         "name": "Pedagogical value",
-        "score": 0.2,
-        "rationale": "Bien que certains commentaires soient élogieux, ils ne fournissent pas de clarté ou de profondeur pédagogique sur le sujet."
+        "score": 0.5,
+        "rationale": "Bien que les commentaires expriment des émotions et des réflexions sur la chanson, ils ne fournissent pas de valeur pédagogique claire."
       }
     },
     "sc_runs": [
       {
         "run": 1,
-        "pertinence_score": 33.33,
-        "label": "non_pertinent",
-        "verdict": "Cette vidéo semble avoir un intérêt limité pour ceux qui recherchent spécifiquement le clip officiel de 'CYSOUL - KIDNAPPE FEAT LADY PONCE'. Les commentaires sont plus axés sur l'engagement des fans que sur le contenu du clip.",
+        "pertinence_score": 46.67,
+        "label": "moyennement_pertinent",
+        "verdict": "Cette vidéo semble pertinente pour ceux qui s'intéressent à la chanson 'LOCKO SAWA ROMANCE', bien que le lien direct avec le sujet de recherche soit faible.",
         "fallback_used": false,
         "tot_branches": {
           "branch_1": {
             "name": "Content alignment",
             "score": 0.1,
-            "rationale": "Les commentaires parlent de la musique en général mais ne se concentrent pas spécifiquement sur le clip officiel."
+            "rationale": "Les commentaires parlent de la chanson et de son rythme, mais la similarité sémantique est très faible."
           },
           "branch_2": {
             "name": "Audience level",
-            "score": 0.7,
-            "rationale": "Les commentaires montrent que l'audience est composée de fans passionnés et engagés, suggérant un niveau intermédiaire."
+            "score": 0.8,
+            "rationale": "Les commentaires montrent un engagement passionné, indiquant que l'audience est bien ciblée pour ce type de contenu."
           },
           "branch_3": {
             "name": "Pedagogical value",
-            "score": 0.2,
-            "rationale": "Bien que certains commentaires soient élogieux, ils ne fournissent pas de clarté ou de profondeur pédagogique sur le sujet."
+            "score": 0.5,
+            "rationale": "Bien que les commentaires expriment des émotions et des réflexions sur la chanson, ils ne fournissent pas de valeur pédagogique claire."
           }
         }
       },
       {
         "run": 2,
-        "pertinence_score": 33.33,
-        "label": "non_pertinent",
-        "verdict": "Cette vidéo semble avoir un certain intérêt pour les fans de CYSOUL et Lady Ponce, mais elle ne répond pas directement à la recherche sur le clip officiel.",
+        "pertinence_score": 46.67,
+        "label": "moyennement_pertinent",
+        "verdict": "Cette vidéo semble pertinente pour ceux qui s'intéressent à la chanson et à la culture qu'elle représente, bien que le lien direct avec le sujet de recherche soit faible.",
         "fallback_used": false,
         "tot_branches": {
           "branch_1": {
             "name": "Content alignment",
             "score": 0.1,
-            "rationale": "Les commentaires parlent de la musique et des artistes, mais ne se réfèrent pas directement au clip officiel."
+            "rationale": "Les commentaires parlent de la chanson et de son rythme, mais ne se connectent pas directement au titre de la vidéo."
           },
           "branch_2": {
             "name": "Audience level",
-            "score": 0.7,
-            "rationale": "Les commentaires montrent que l'audience est composée de fans passionnés et engagés, suggérant un niveau intermédiaire."
+            "score": 0.8,
+            "rationale": "Les commentaires montrent un engagement passionné, indiquant que l'audience est bien ciblée pour ceux qui recherchent cette vidéo."
           },
           "branch_3": {
             "name": "Pedagogical value",
-            "score": 0.2,
-            "rationale": "Bien que certains commentaires soient élogieux, ils ne fournissent pas de clarté ou de profondeur pédagogique sur le sujet."
+            "score": 0.5,
+            "rationale": "Les commentaires expriment des réflexions sur la culture et la musique, mais manquent de profondeur pédagogique."
           }
         }
       },
       {
         "run": 3,
-        "pertinence_score": 33.33,
-        "label": "non_pertinent",
-        "verdict": "Le vidéo semble avoir un intérêt limité pour ceux qui recherchent spécifiquement le clip officiel de CYSOUL et Lady Ponce, bien que les fans soient engagés.",
+        "pertinence_score": 50.0,
+        "label": "moyennement_pertinent",
+        "verdict": "Cette vidéo semble pertinente pour ceux qui s'intéressent à la chanson 'LOCKO SAWA ROMANCE', bien que le lien direct avec le sujet de recherche soit faible.",
         "fallback_used": false,
         "tot_branches": {
           "branch_1": {
             "name": "Content alignment",
-            "score": 0.1,
-            "rationale": "Les commentaires parlent de la musique et des artistes, mais ne discutent pas directement du clip officiel."
+            "score": 0.2,
+            "rationale": "Les commentaires parlent de la chanson et de son rythme, mais la similarité sémantique est très faible."
           },
           "branch_2": {
             "name": "Audience level",
-            "score": 0.7,
-            "rationale": "Les commentaires montrent que l'audience est composée de fans passionnés et engagés, suggérant un niveau intermédiaire."
+            "score": 0.8,
+            "rationale": "Les commentaires montrent un engagement passionné, indiquant que l'audience est bien ciblée pour ce type de contenu."
           },
           "branch_3": {
             "name": "Pedagogical value",
-            "score": 0.2,
-            "rationale": "Les commentaires ne mettent pas en avant de clarté ou de valeur d'apprentissage significative concernant le clip."
+            "score": 0.5,
+            "rationale": "Bien que les commentaires expriment des émotions et des réflexions, ils ne fournissent pas de clarté ou de profondeur pédagogique significative."
           }
         }
       }
@@ -100,16 +100,16 @@
     "low_consensus": false,
     "similarity_score": 0.0,
     "key_topics": [
-      "ekang",
-      "lady",
-      "miss",
-      "flora",
-      "notre",
-      "cysoul",
-      "ponce",
-      "être",
-      "vous",
-      "seulement"
+      "suis",
+      "cette",
+      "locko",
+      "makossa",
+      "chanson",
+      "merci",
+      "pointer",
+      "viens",
+      "video",
+      "comme"
     ]
   }
 }

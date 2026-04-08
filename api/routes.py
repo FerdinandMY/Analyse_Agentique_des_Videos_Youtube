@@ -341,6 +341,7 @@ def ask(request: AskRequest) -> Any:
         confidence=result.get("confidence", 0.0),
         transcript_used=result.get("transcript_used", False),
         fallback_used=result.get("fallback_used", False),
+        out_of_scope=result.get("out_of_scope", False),
     )
 
 

@@ -10,6 +10,10 @@ Principe anti-hallucination FR-88 :
   "Réponds UNIQUEMENT à partir du contexte fourni."
   Toute réponse doit citer ses sources (FR-89).
   Le LLM DOIT décliner explicitement si la réponse dépasse le contexte (FR-91).
+
+Garde hors-contexte (FR-92) :
+  Vérification heuristique avant appel LLM — questions sans lien avec la vidéo
+  analysée sont rejetées immédiatement (zéro token consommé).
 """
 from __future__ import annotations
 
@@ -28,6 +32,97 @@ _MAX_DESCRIPTION_CHARS = 1_000   # Limite description vidéo injectée dans le p
 _MAX_TOP_COMMENTS      = 50      # Limite commentaires top A4 (PRD §4.4)
 _MAX_HISTORY_TURNS     = 5       # Limite historique conversation (FR-90)
 _QA_TEMPERATURE        = 0.2     # Température LLM Q&A (PRD §6.4)
+
+# ── Garde hors-contexte (FR-92) ───────────────────────────────────────────────
+
+# Mots vides (FR/EN) exclus du calcul de chevauchement lexical
+_STOP_WORDS: frozenset[str] = frozenset({
+    # Français
+    "le", "la", "les", "de", "du", "des", "un", "une", "et", "est", "en",
+    "je", "tu", "il", "elle", "nous", "vous", "ils", "elles", "que", "qui",
+    "ce", "se", "sa", "son", "ses", "mon", "ma", "mes", "ton", "ta", "tes",
+    "a", "au", "aux", "par", "pour", "sur", "dans", "avec", "ou", "pas",
+    "ne", "plus", "y", "on", "mais", "donc", "or", "ni", "car", "si",
+    "quoi", "quels", "quelles", "quel", "quelle", "comment", "combien",
+    "pourquoi", "quand", "est-ce", "c'est", "n'est", "qu'est",
+    # Anglais
+    "the", "is", "are", "was", "were", "an", "in", "of", "to", "for",
+    "and", "but", "not", "this", "that", "it", "its", "be", "been",
+    "have", "has", "had", "do", "does", "did", "will", "would", "can",
+    "could", "should", "what", "which", "who", "how", "when", "where", "why",
+})
+
+# Mots-clés signalant une question clairement liée à la vidéo/l'analyse
+_VIDEO_KEYWORDS: frozenset[str] = frozenset({
+    "vidéo", "video", "chaîne", "chaine", "commentaire", "commentaires",
+    "contenu", "créateur", "createur", "vues", "abonné", "abonnés",
+    "abonnes", "auteur", "discours", "sentiment", "analyse", "sujet",
+    "thème", "theme", "audience", "spectateur", "spectateurs", "viewers",
+    "youtuber", "miniature", "transcription", "résumé", "resume", "score",
+    "qualité", "qualite", "avis", "opinion", "réaction", "reaction",
+    "critique", "retour", "feedback", "viewer", "channel", "creator",
+    "subscriber", "subscribers", "likes", "comments", "thumbnail",
+})
+
+# Patterns de questions de connaissance générale — clairement hors-vidéo
+_OFF_TOPIC_PATTERNS: list[str] = [
+    r"\b(capitale|president|premier.ministre)\b",
+    r"\b(recette|météo|meteo|bourse|cac40|bitcoin)\b",
+    r"\b(date de naissance|biographie|histoire de|inventé par|inventeur de)\b",
+    r"\b(traduction|traduis|translate|définition|definition)\b",
+    r"\b(prix de|combien coute|combien vaut|acheter|vendre)\b",
+    r"\b(wikipedia|google|bing|yahoo|actualité|actualites)\b",
+    # Anglais
+    r"\b(what is the capital|who invented|how to make|recipe for|weather in)\b",
+    r"\b(stock price|exchange rate|biography of)\b",
+]
+
+
+def _is_off_topic(question: str, qa_context: dict[str, Any]) -> tuple[bool, str]:
+    """
+    Garde heuristique rapide (sans LLM) pour détecter les questions hors-contexte.
+
+    Trois niveaux par ordre de priorité :
+    1. Mots-clés vidéo     → question valide  (court-circuit positif)
+    2. Patterns généraux   → hors-contexte    (court-circuit négatif)
+    3. Chevauchement lexical avec le contexte (titre + desc + top_comments)
+
+    Returns:
+        (True, reason)  si la question est hors-contexte.
+        (False, "")     si la question semble liée à la vidéo.
+    """
+    q_lower = question.lower().strip()
+    q_words = set(re.findall(r'\b\w+\b', q_lower)) - _STOP_WORDS
+
+    # Niveau 1 : mots-clés vidéo → toujours valide
+    if q_words & _VIDEO_KEYWORDS:
+        return False, ""
+
+    # Niveau 2 : patterns de connaissance générale → toujours hors-sujet
+    for pattern in _OFF_TOPIC_PATTERNS:
+        if re.search(pattern, q_lower, re.IGNORECASE):
+            return True, "general_knowledge_pattern"
+
+    # Niveau 3 : chevauchement lexical avec le contexte de la vidéo
+    # (ne s'active que si la question a >= 4 mots significatifs)
+    if len(q_words) >= 4:
+        context_text = " ".join([
+            qa_context.get("video_title", ""),
+            qa_context.get("video_description", "")[:500],
+            " ".join(
+                c.get("text", "")[:100]
+                for c in (qa_context.get("top_comments") or [])[:20]
+            ),
+        ]).lower()
+        context_words = set(re.findall(r'\b\w+\b', context_text)) - _STOP_WORDS
+
+        if context_words:
+            overlap = q_words & context_words
+            if not overlap:
+                return True, "no_lexical_overlap"
+
+    return False, ""
+
 
 _SYSTEM_PROMPT = """\
 Tu es un assistant pédagogique spécialisé dans l'analyse de vidéos YouTube.
@@ -50,10 +145,11 @@ Retourne UNIQUEMENT un JSON valide avec cette structure :
   "confidence": <float 0.0-1.0>
 }"""
 
-# Réponses de refus explicites (FR-91)
+# Réponses de refus explicites (FR-91 / FR-92)
 _REFUSAL_OUT_OF_SCOPE = (
-    "Cette question ne concerne pas le contenu de la vidéo analysée. "
-    "Je ne peux répondre qu'à des questions sur le contenu de cette vidéo spécifique."
+    "Cette question ne semble pas liée au contenu de la vidéo analysée. "
+    "Je peux uniquement répondre à des questions sur cette vidéo spécifique : "
+    "son contenu, ses commentaires, les thèmes abordés, les avis des spectateurs, etc."
 )
 _REFUSAL_NOT_FOUND = (
     "Je n'ai pas trouvé cette information dans le contenu disponible de la vidéo. "
@@ -250,11 +346,28 @@ def answer_question(
     """
     if not question.strip():
         return {
-            "answer":         "Veuillez poser une question.",
-            "sources":        [],
-            "confidence":     0.0,
+            "answer":          "Veuillez poser une question.",
+            "sources":         [],
+            "confidence":      0.0,
             "transcript_used": False,
-            "fallback_used":  False,
+            "fallback_used":   False,
+            "out_of_scope":    False,
+        }
+
+    # ── Garde hors-contexte FR-92 (avant appel LLM) ───────────────────────────
+    off_topic, reason = _is_off_topic(question, qa_context)
+    if off_topic:
+        logger.info(
+            "qa_module: question hors-contexte bloquée | reason=%s | q=%r",
+            reason, question[:80],
+        )
+        return {
+            "answer":          _REFUSAL_OUT_OF_SCOPE,
+            "sources":         [],
+            "confidence":      0.0,
+            "transcript_used": False,
+            "fallback_used":   False,
+            "out_of_scope":    True,
         }
 
     transcript           = qa_context.get("transcript") or []
@@ -319,6 +432,7 @@ def answer_question(
             "confidence":      parsed["confidence"],
             "transcript_used": transcript_used,
             "fallback_used":   False,
+            "out_of_scope":    False,
         }
 
     except Exception as exc:
