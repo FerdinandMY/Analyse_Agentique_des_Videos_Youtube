@@ -25,6 +25,7 @@ class ReportCache:
     def __init__(self) -> None:
         self._store: dict[str, Any] = {}
         self._qa_store: dict[str, Any] = {}
+        self._quiz_store: dict[str, Any] = {}           # video_id → quiz generé
         self._enrich_status: dict[str, EnrichStatus] = {}  # key → statut enrichissement
 
     @staticmethod
@@ -81,6 +82,20 @@ class ReportCache:
         """True si un contexte Q&A est disponible pour ce video_id."""
         return video_id in self._qa_store
 
+    # ── Quiz QCM ──────────────────────────────────────────────────────────────
+
+    def set_quiz(self, video_id: str, quiz: dict[str, Any]) -> None:
+        """Stocke le quiz genere pour un video_id."""
+        self._quiz_store[video_id] = quiz
+
+    def get_quiz(self, video_id: str) -> Optional[dict[str, Any]]:
+        """Retourne le quiz en cache, ou None si absent."""
+        return self._quiz_store.get(video_id)
+
+    def has_quiz(self, video_id: str) -> bool:
+        """True si un quiz a deja ete genere pour ce video_id."""
+        return video_id in self._quiz_store
+
     # ── Utilitaires ───────────────────────────────────────────────────────────
 
     def clear_video(self, video_id: str) -> int:
@@ -112,6 +127,7 @@ class ReportCache:
     def clear(self) -> None:
         self._store.clear()
         self._qa_store.clear()
+        self._quiz_store.clear()
         self._enrich_status.clear()
 
 

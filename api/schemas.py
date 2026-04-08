@@ -112,6 +112,69 @@ class ReportNotFound(BaseModel):
     detail: str = "Report not found. Run POST /analyze first."
 
 
+# ── QCM / Quiz (module pedagogique) ──────────────────────────────────────────
+
+class QuizSource(BaseModel):
+    start: Optional[float] = Field(
+        default=None,
+        description="Timestamp debut du segment (transcription uniquement)",
+    )
+    text: str = Field(description="Extrait verbatim du contenu source")
+    source_type: str = Field(
+        default="transcript",
+        description="'transcript' | 'description' | 'comment'",
+    )
+
+
+class QuizQuestion(BaseModel):
+    question: str = Field(description="Enonce de la question")
+    options: list[str] = Field(
+        description="4 options de reponse (indices 0 a 3)",
+        min_length=4,
+        max_length=4,
+    )
+    correct: int = Field(
+        ge=0,
+        le=3,
+        description="Index (0-3) de la bonne reponse dans 'options'",
+    )
+    explanation: str = Field(
+        description="Justification de la bonne reponse et invalidation des distracteurs",
+    )
+    source: Optional[QuizSource] = Field(
+        default=None,
+        description="Passage source verbatim utilise pour formuler la question (anti-hallucination)",
+    )
+    difficulty: str = Field(
+        default="medium",
+        description="'easy' | 'medium' | 'hard'",
+    )
+
+
+class QuizResponse(BaseModel):
+    video_id: str
+    video_title: str
+    questions: list[QuizQuestion]
+    n_questions: int = Field(description="Nombre de questions effectivement generees")
+    mode: str = Field(
+        description=(
+            "'full' — transcript disponible, qualite maximale. "
+            "'degraded' — pas de transcript, questions depuis description + commentaires (max 3)."
+        ),
+    )
+    transcript_used: bool = Field(
+        description="True si la transcription a ete utilisee pour generer les questions",
+    )
+    generated_at: Optional[str] = Field(
+        default=None,
+        description="Timestamp ISO 8601 de la generation",
+    )
+    error: Optional[str] = Field(
+        default=None,
+        description="Message d'erreur si la generation a echoue (questions=[]).",
+    )
+
+
 # ── Q&A Request / Response (PRD v1.1 §6.2) ───────────────────────────────────
 
 class ConversationTurn(BaseModel):

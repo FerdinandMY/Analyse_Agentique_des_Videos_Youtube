@@ -116,6 +116,59 @@ def _run_enrichment(
         cache.set_enrich_status(video_id, topic, "done")  # évite une boucle infinie
 
 
+def _run_quiz_generation(video_id: str, n_questions: int) -> None:
+    """
+    Genere le quiz QCM dans un thread daemon.
+    Appele apres chaque analyse reussie — le qa_context est deja en cache.
+    """
+    from api.cache import cache
+    from api.quiz import generate_quiz
+
+    qa_context = cache.get_qa_context(video_id)
+    if qa_context is None:
+        logger.warning("quiz_bg: qa_context absent pour video_id=%s — abandon", video_id)
+        return
+
+    logger.info(
+        "quiz_bg: generation quiz video_id=%s n_questions=%d transcript=%s",
+        video_id, n_questions, qa_context.get("transcript_available"),
+    )
+    try:
+        quiz = generate_quiz(qa_context=qa_context, n_questions=n_questions)
+        cache.set_quiz(video_id, quiz)
+        logger.info(
+            "quiz_bg: quiz genere video_id=%s — %d questions | mode=%s",
+            video_id, quiz.get("n_questions", 0), quiz.get("mode"),
+        )
+    except Exception as exc:
+        logger.error("quiz_bg: echec generation video_id=%s — %s", video_id, exc)
+
+
+def generate_quiz_in_background(
+    video_id:    str,
+    n_questions: int = 5,
+) -> None:
+    """
+    Lance la generation du quiz dans un thread daemon.
+
+    Ignore silencieusement si un quiz est deja en cache pour ce video_id
+    (evite les doublons sur requetes rapprochees).
+    """
+    from api.cache import cache
+
+    if cache.has_quiz(video_id):
+        logger.info("quiz_bg: quiz deja en cache pour video_id=%s — ignore", video_id)
+        return
+
+    t = threading.Thread(
+        target=_run_quiz_generation,
+        args=(video_id, n_questions),
+        daemon=True,
+        name=f"quiz-{video_id[:8]}",
+    )
+    t.start()
+
+
 def enrich_in_background(
     video_id:             str,
     topic:                str,

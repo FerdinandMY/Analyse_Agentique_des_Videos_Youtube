@@ -16,13 +16,14 @@ from typing import Any
 from fastapi import APIRouter, HTTPException
 
 from api.cache import cache
-from api.background import enrich_in_background
+from api.background import enrich_in_background, generate_quiz_in_background
 from api.qa import answer_question, extract_top_comments
 from api.schemas import (
     AnalyzeRequest,
     AnalyzeResponse,
     AskRequest,
     AskResponse,
+    QuizResponse,
 )
 from graph import run_pipeline
 from utils.logger import get_logger
@@ -235,6 +236,9 @@ def analyze(request: AnalyzeRequest) -> Any:
         video_description=video_description or "",
     )
 
+    # ── 9. Generation du quiz QCM en background ───────────────────────────────
+    generate_quiz_in_background(video_id=video_id)
+
     return response
 
 
@@ -404,6 +408,81 @@ def debug_qa_context(video_id: str) -> Any:
         "video_title":          ctx.get("video_title"),
     }
 
+
+# ── GET /quiz/{video_id} ──────────────────────────────────────────────────────
+
+@router.get(
+    "/quiz/{video_id}",
+    response_model=QuizResponse,
+    summary="Quiz QCM pedagogique genere depuis le contenu de la video",
+    tags=["quiz"],
+    responses={
+        404: {"description": "Aucun rapport en cache — analyser la video d'abord"},
+    },
+)
+def get_quiz(
+    video_id:    str,
+    n_questions: int = 5,
+    regenerate:  bool = False,
+) -> Any:
+    """
+    Retourne un QCM pedagogique ancre sur la transcription et les commentaires
+    de la video.
+
+    - **video_id**    : Identifiant YouTube (doit avoir ete analyse via POST /analyze)
+    - **n_questions** : Nombre de questions souhaitees (defaut 5, max 10)
+    - **regenerate**  : Si True, force la re-generation meme si un quiz est en cache
+
+    Le quiz est pre-genere en background apres chaque analyse — la premiere
+    requete est donc generalement instantanee. Si le quiz n'est pas encore pret,
+    il est genere de facon synchrone (delai ~5-10s).
+
+    Chaque question inclut :
+    - 4 options dont une seule correcte
+    - L'explication de la bonne reponse
+    - Le segment source horodate (anti-hallucination)
+    - La difficulte estimee (easy / medium / hard)
+    """
+    # Resoudre l'URL eventuelle vers un video_id propre
+    try:
+        from agents.a0_collector import extract_video_id
+        video_id = extract_video_id(video_id)
+    except ValueError:
+        pass
+
+    # Verifier qu'une analyse existe (prerequis)
+    qa_context = cache.get_qa_context(video_id)
+    if qa_context is None:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "error_code": "NO_REPORT_IN_CACHE",
+                "message": f"Analysez d'abord cette video via POST /analyze (video_id='{video_id}')",
+            },
+        )
+
+    # Limiter n_questions
+    n_questions = max(1, min(n_questions, 10))
+
+    # Cache hit (sauf si regenerate demande)
+    if not regenerate and cache.has_quiz(video_id):
+        cached_quiz = cache.get_quiz(video_id)
+        logger.info("get_quiz: cache hit video_id=%s", video_id)
+        return QuizResponse(video_id=video_id, **cached_quiz)
+
+    # Generation synchrone (quiz pas encore pret)
+    logger.info(
+        "get_quiz: generation synchrone video_id=%s n_questions=%d regenerate=%s",
+        video_id, n_questions, regenerate,
+    )
+    from api.quiz import generate_quiz
+    quiz = generate_quiz(qa_context=qa_context, n_questions=n_questions)
+    cache.set_quiz(video_id, quiz)
+
+    return QuizResponse(video_id=video_id, **quiz)
+
+
+# ── DELETE /cache/{video_id} ──────────────────────────────────────────────────
 
 @router.delete(
     "/cache/{video_id}",
