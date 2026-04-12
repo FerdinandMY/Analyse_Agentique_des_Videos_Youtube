@@ -2,96 +2,96 @@
   "agent": "a7_topic_matcher",
   "pipeline_id": "1775629187",
   "data": {
-    "score_pertinence": 47.78,
-    "score_final": 55.56,
-    "topic_verdict": "Cette vidéo ne semble pas pertinente pour le sujet des suites numériques, bien qu'elle soit appréciée pour son enseignement général. Les commentaires indiquent un bon niveau pédagogique, mais sans lien direct avec le thème recherché.",
+    "score_pertinence": 58.89,
+    "score_final": 73.51,
+    "topic_verdict": "Bien que la vidéo ne traite pas spécifiquement du hacking, elle est utile pour les débutants en programmation et en cybersécurité, ce qui peut être un bon point de départ.",
     "tot_branches": {
       "branch_1": {
         "name": "Content alignment",
         "score": 0.0,
-        "rationale": "Les commentaires ne mentionnent pas directement les concepts de 'Suite Numérique'."
+        "rationale": "Les commentaires ne montrent pas de lien direct avec le hacking, mais plutôt avec la programmation en général."
       },
       "branch_2": {
         "name": "Audience level",
-        "score": 0.7,
-        "rationale": "Les commentaires indiquent que l'audience est probablement des débutants cherchant des explications simples."
+        "score": 0.8,
+        "rationale": "Les commentaires indiquent que la vidéo cible principalement des débutants et des personnes passionnées par l'informatique."
       },
       "branch_3": {
         "name": "Pedagogical value",
-        "score": 0.6,
-        "rationale": "Les commentaires louent la clarté et la valeur d'apprentissage, mais sans lien spécifique avec les suites numériques."
+        "score": 0.9,
+        "rationale": "Les commentaires louent la clarté et la motivation apportées par la vidéo, ce qui est essentiel pour les apprenants."
       }
     },
     "sc_runs": [
       {
         "run": 1,
-        "pertinence_score": 43.33,
+        "pertinence_score": 56.67,
         "label": "moyennement_pertinent",
-        "verdict": "Cette vidéo ne semble pas pertinente pour le sujet des suites numériques, bien qu'elle soit appréciée pour son enseignement général. Les commentaires indiquent un bon niveau pédagogique, mais sans lien direct avec le thème recherché.",
+        "verdict": "Bien que la vidéo ne traite pas spécifiquement du hacking, elle est utile pour les débutants en programmation et en cybersécurité, ce qui peut être un bon point de départ.",
         "fallback_used": false,
         "tot_branches": {
           "branch_1": {
             "name": "Content alignment",
             "score": 0.0,
-            "rationale": "Les commentaires ne mentionnent pas directement les concepts de 'Suite Numérique'."
+            "rationale": "Les commentaires ne montrent pas de lien direct avec le hacking, mais plutôt avec la programmation en général."
           },
           "branch_2": {
             "name": "Audience level",
-            "score": 0.7,
-            "rationale": "Les commentaires indiquent que l'audience est probablement des débutants cherchant des explications simples."
+            "score": 0.8,
+            "rationale": "Les commentaires indiquent que la vidéo cible principalement des débutants et des personnes passionnées par l'informatique."
           },
           "branch_3": {
             "name": "Pedagogical value",
-            "score": 0.6,
-            "rationale": "Les commentaires louent la clarté et la valeur d'apprentissage, mais sans lien spécifique avec les suites numériques."
+            "score": 0.9,
+            "rationale": "Les commentaires louent la clarté et la motivation apportées par la vidéo, ce qui est essentiel pour les apprenants."
           }
         }
       },
       {
         "run": 2,
-        "pertinence_score": 50.0,
+        "pertinence_score": 60.0,
         "label": "moyennement_pertinent",
-        "verdict": "Bien que la vidéo soit appréciée pour son enseignement, elle ne semble pas directement pertinente pour le sujet des suites numériques. Il serait préférable de chercher une vidéo spécifiquement axée sur ce thème.",
+        "verdict": "Bien que la vidéo soit appréciée pour sa clarté et sa motivation, elle ne traite pas spécifiquement du hacking. Elle pourrait néanmoins être utile pour les débutants intéressés par la cybersécurité.",
         "fallback_used": false,
         "tot_branches": {
           "branch_1": {
             "name": "Content alignment",
-            "score": 0.0,
-            "rationale": "Les commentaires ne mentionnent pas directement les concepts de 'Suite Numérique'."
+            "score": 0.1,
+            "rationale": "Les commentaires ne montrent pas de lien direct avec le hacking, mais plutôt avec la programmation et la motivation."
           },
           "branch_2": {
             "name": "Audience level",
-            "score": 0.7,
-            "rationale": "Les commentaires indiquent que l'audience est probablement des débutants cherchant des explications simples."
+            "score": 0.8,
+            "rationale": "Les commentaires indiquent que l'audience est principalement composée de débutants et d'intermédiaires cherchant à s'initier à la programmation et à la cybersécurité."
           },
           "branch_3": {
             "name": "Pedagogical value",
-            "score": 0.8,
-            "rationale": "Les commentaires louent la clarté et la valeur d'apprentissage, même si ce n'est pas spécifiquement sur les suites numériques."
+            "score": 0.9,
+            "rationale": "Les commentaires louent la clarté et la valeur d'apprentissage de la vidéo, ce qui est pertinent pour ceux qui cherchent à commencer dans le domaine."
           }
         }
       },
       {
         "run": 3,
-        "pertinence_score": 50.0,
+        "pertinence_score": 60.0,
         "label": "moyennement_pertinent",
-        "verdict": "Bien que la vidéo soit appréciée pour son enseignement, elle ne semble pas directement pertinente pour le sujet des suites numériques. Il serait préférable de chercher une vidéo spécifiquement axée sur ce thème.",
+        "verdict": "Bien que la vidéo ne traite pas directement du hacking, elle est utile pour les débutants intéressés par la programmation et la cybersécurité. Elle peut servir de motivation pour ceux qui souhaitent commencer dans ce domaine.",
         "fallback_used": false,
         "tot_branches": {
           "branch_1": {
             "name": "Content alignment",
-            "score": 0.0,
-            "rationale": "Les commentaires ne mentionnent pas directement les concepts de 'Suite Numérique'."
+            "score": 0.1,
+            "rationale": "Les commentaires ne mentionnent pas spécifiquement le hacking, mais plutôt la programmation et la cybersécurité."
           },
           "branch_2": {
             "name": "Audience level",
-            "score": 0.7,
-            "rationale": "Les commentaires indiquent que l'audience est probablement des débutants cherchant des explications simples."
+            "score": 0.8,
+            "rationale": "Les commentaires proviennent principalement de débutants et de personnes cherchant à s'initier à la programmation et à la cybersécurité."
           },
           "branch_3": {
             "name": "Pedagogical value",
-            "score": 0.8,
-            "rationale": "Les commentaires louent la clarté et la valeur d'apprentissage, même si ce n'est pas spécifiquement sur les suites numériques."
+            "score": 0.9,
+            "rationale": "Les commentaires louent la clarté et la motivation apportées par la vidéo, ce qui est pertinent pour les apprenants."
           }
         }
       }
@@ -100,16 +100,16 @@
     "low_consensus": false,
     "similarity_score": 0.0,
     "key_topics": [
+      "merci",
+      "vidéo",
       "vous",
-      "vraiment",
-      "comprends",
-      "votre",
-      "plus",
-      "meilleur",
+      "bien",
+      "beaucoup",
       "tout",
-      "êtes",
-      "travail",
-      "grâce"
+      "suis",
+      "programmation",
+      "nous",
+      "comme"
     ]
   }
 }

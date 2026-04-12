@@ -2,63 +2,52 @@
   "agent": "a4_discourse",
   "pipeline_id": "1775629187",
   "data": {
-    "informativeness": 50.0,
-    "argumentation": 60.0,
-    "constructiveness": 40.0,
-    "discourse_score": 50.0,
+    "informativeness": 90.0,
+    "argumentation": 70.0,
+    "constructiveness": 80.0,
+    "discourse_score": 80.0,
     "high_quality_indices": [
       0,
       1,
-      4,
-      6,
-      14,
+      3,
+      5,
       20,
-      23,
-      24
+      25
     ],
-    "rationale": "Overall, the comments reflect appreciation and some depth but lack significant discussion and informative content.",
-    "reasoning": "The analysis reveals that while the comments show some depth in content and express appreciation, they lack nuanced discussion and do not provide substantial epistemic value.",
-    "tot_branches": {
-      "branch_1": {
-        "name": "Content Depth",
-        "score": 0.7,
-        "rationale": "Many comments express gratitude and reflect on the content's impact, indicating a moderate depth of engagement."
-      },
-      "branch_2": {
-        "name": "Discussion Quality",
-        "score": 0.3,
-        "rationale": "The comments are largely isolated reactions with minimal back-and-forth or nuanced discussion."
-      },
-      "branch_3": {
-        "name": "Epistemic Value",
-        "score": 0.4,
-        "rationale": "While some comments mention specific topics like arithmetic and sequences, they do not provide substantial information useful before watching."
-      }
-    },
-    "tot_used": true,
+    "rationale": "The comments exhibit a high level of informativeness, constructive engagement, and some structured argumentation.",
+    "reasoning": "The comments collectively provide a wealth of personal experiences and insights related to programming and hacking, indicating a high level of informativeness. The presence of argumentative markers suggests that some comments are structured and provide reasoning, although not all are deeply argumentative. The tone across the comments is generally positive and supportive, indicating a constructive atmosphere. Based on the analysis, the informativeness score is high due to the variety of experiences shared, the argumentation score reflects some structured reasoning but is not uniformly high, and the constructiveness score is also high due to the supportive nature of the comments. Comments with high-quality discourse are those that provide substantial insights or encouragement. The indices of high-quality comments are 0, 1, 3, 5, 20, and 25, which reflect a strong engagement with the topic.",
+    "tot_branches": {},
+    "tot_used": false,
     "text_stats": {
-      "word_count": 330,
-      "char_count": 1913,
-      "sentence_count": 13,
+      "word_count": 700,
+      "char_count": 4098,
+      "sentence_count": 35,
       "avg_word_length": 4.75,
-      "question_count": 0,
-      "unique_word_ratio": 0.5697,
+      "question_count": 4,
+      "unique_word_ratio": 0.5,
       "caps_ratio": 0.0
     },
     "arg_markers": {
-      "total_markers": 3,
+      "total_markers": 12,
       "categories": {
         "causality": [
+          "comme",
+          "comme",
           "comme"
         ],
         "contrast": [
           "mais"
         ],
         "example": [
+          "comme",
+          "comme",
           "comme"
+        ],
+        "nuance": [
+          "malgré"
         ]
       },
-      "argumentation_score": 0.6,
+      "argumentation_score": 0.8,
       "is_argumentative": true
     }
   }

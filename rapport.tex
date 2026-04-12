@@ -250,21 +250,48 @@ sémantique de ses commentaires, en utilisant une architecture multi-agents LLM 
   \item Intégrer des fonctionnalités pédagogiques avancées (Q\&A, QCM).
 \end{itemize}
 
-\subsection{Hypothèses évaluées}
+\subsection{Hypothèses de recherche}
+
+Quatre hypothèses guident ce travail. Elles répondent chacune à une question
+concrète que l'on peut se poser en tant qu'utilisateur ou enseignant :
 
 \begin{center}
-\begin{tabular}{clcc}
+\small
+\begin{tabular}{p{0.4cm}p{6.2cm}p{3.2cm}p{1.8cm}}
 \toprule
-\textbf{ID} & \textbf{Hypothèse} & \textbf{Seuil} & \textbf{Statut} \\
+\textbf{ID} & \textbf{Question de recherche} & \textbf{Critère de validation} & \textbf{Résultat} \\
 \midrule
-H1 & Pearson $r \geq 0{,}60$ entre Score\_Global et gold standard
-   & $r \geq 0{,}60$ & \textcolor{green!60!black}{\textbf{Validée}} \\
-H2 & $\Delta$Pearson (multi-agents vs LLM unique) $> 0{,}10$
-   & $\Delta > 0{,}10$ & \textcolor{green!60!black}{\textbf{Validée}} \\
-H3 & Taux de fallback heuristique $< 5\%$
-   & $< 5\%$           & \textcolor{green!60!black}{\textbf{Validée}} \\
-H4 & Gain F1 CoT/ToT vs prompt direct $\geq 15$ pts
-   & $\geq 15$ pts     & \textcolor{green!60!black}{\textbf{Validée}} \\
+H1 &
+\textit{Le score calculé par notre système est-il cohérent avec ce qu'un humain
+dirait de la qualité d'une vidéo ?} —
+Le système prédit un score pour chaque commentaire : ce score doit être fortement
+corrélé aux annotations humaines de référence. &
+Corrélation de Pearson $r \geq 0{,}60$ &
+\textcolor{green!60!black}{\textbf{Validée}} \\[0.6em]
+
+H2 &
+\textit{Vaut-il mieux utiliser plusieurs agents spécialisés plutôt qu'un seul
+modèle généraliste ?} —
+L'architecture décomposée (sentiment + discours + bruit) doit surpasser
+un système mono-signal. &
+Gain de corrélation $> 0{,}10$ par rapport à la baseline &
+\textcolor{green!60!black}{\textbf{Validée}} \\[0.6em]
+
+H3 &
+\textit{Le système est-il fiable, c'est-à-dire qu'il ne « bloque » pas sur des
+commentaires difficiles ?} —
+Les agents doivent traiter la quasi-totalité des commentaires
+sans recourir à des règles manuelles de secours. &
+Taux de recours aux règles manuelles $< 5\,\%$ &
+\textcolor{green!60!black}{\textbf{Validée}} \\[0.6em]
+
+H4 &
+\textit{Le fait de guider le modèle pas à pas (raisonnement structuré)
+améliore-t-il réellement la qualité des prédictions ?} —
+Les techniques de guidage (Chain-of-Thought, Tree of Thoughts)
+doivent apporter un gain mesurable par rapport à un prompt naïf. &
+Gain de F1 $\geq 15$ points vs prompt direct &
+\textcolor{green!60!black}{\textbf{Validée}} \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -590,6 +617,225 @@ récente sur les LLM :
         parallèles et sélectionne la réponse majoritaire, améliorant la fiabilité
         sur les topics ambigus.
 \end{itemize}
+
+\subsection{Ingénierie des prompts}
+\label{sec:prompts}
+
+Dans un système d'IA générative, les prompts constituent le cœur du raisonnement :
+ils définissent ce que chaque agent LLM comprend, comment il raisonne et ce
+qu'il retourne. Nous documentons ici les stratégies de prompt utilisées pour
+chaque agent, ainsi que les mécanismes anti-hallucination intégrés.
+
+\subsubsection{Stratégie générale}
+
+Chaque prompt d'agent suit une structure en quatre parties :
+
+\begin{enumerate}
+  \item \textbf{Rôle} : définit l'identité de l'agent (ex. « Tu es un expert en
+        analyse de sentiment pour des vidéos éducatives »).
+  \item \textbf{Contexte} : fournit les données à analyser (commentaires, topic,
+        transcription).
+  \item \textbf{Instructions de raisonnement} : guide le modèle étape par étape
+        (Chain-of-Thought) ou l'invite à explorer plusieurs branches (Tree of Thoughts).
+  \item \textbf{Format de sortie} : impose un JSON structuré strict pour permettre
+        l'extraction automatique des scores.
+\end{enumerate}
+
+\subsubsection{Prompt A3 — Analyse de sentiment (Chain-of-Thought)}
+
+\begin{lstlisting}[language=, caption={Prompt CoT A3 — Sentiment (extrait)}]
+Tu es un expert en analyse de sentiment pour des contenus educatifs YouTube.
+
+Analyse le sentiment global de ces {n} commentaires en suivant
+exactement ces etapes de raisonnement :
+
+Thought 1 : Calcule le score VADER compound moyen sur l'ensemble.
+Thought 2 : Identifie les marqueurs explicites positifs/negatifs.
+Thought 3 : Detecte les expressions sarcastiques ou implicites.
+Thought 4 : Pondere les commentaires selon leur nombre de likes.
+Conclusion : Synthetise en un score final [0-100].
+
+Reponds UNIQUEMENT avec ce JSON :
+{
+  "reasoning": "<tes 4 pensees>",
+  "sentiment_label": "positive|neutral|negative",
+  "sentiment_score": <float 0-100>,
+  "confidence": <float 0-1>,
+  "sarcasm_detected": <bool>
+}
+\end{lstlisting}
+
+\subsubsection{Prompt A4 — Qualité du discours (Tree of Thoughts)}
+
+\begin{lstlisting}[language=, caption={Prompt ToT A4 — Discours (extrait)}]
+Tu es un expert en qualite du discours pedagogique.
+
+Explore 3 branches d'analyse avant de conclure :
+
+Branche 1 — Profondeur cognitive :
+  Les commentaires apportent-ils des arguments, exemples, references ?
+
+Branche 2 — Qualite linguistique :
+  Diversite lexicale, connecteurs logiques, longueur appropriee ?
+
+Branche 3 — Valeur epistemique :
+  Les commentaires transmettent-ils une information utile a un apprenant ?
+
+Consolide les 3 branches en un seul score de discours.
+
+Reponds avec ce JSON :
+{
+  "reasoning": "<exploration des 3 branches>",
+  "informativeness": <float 0-1>,
+  "argumentation": <float 0-1>,
+  "constructiveness": <float 0-1>,
+  "discourse_score": <float 0-1>,
+  "high_quality_indices": [<indices des commentaires score >= 0.7>],
+  "tot_used": true
+}
+\end{lstlisting}
+
+\subsubsection{Prompt A7 — Self-Consistency (3 passes parallèles)}
+
+\begin{lstlisting}[language=, caption={Prompt SC A7 — Topic Matching (extrait)}]
+Tu es un expert en pertinence thematique pour les contenus educatifs.
+
+Evalue dans quelle mesure les commentaires suivants correspondent
+au sujet : "{topic}"
+
+Transcription disponible : {transcript_summary}
+
+Raisonne en 3 etapes :
+1. Identifie les mots-cles du topic dans les commentaires.
+2. Mesure l'alignement semantique entre topic et contenu.
+3. Donne un score de pertinence en tenant compte des 2 etapes.
+
+Reponds avec ce JSON :
+{
+  "reasoning": "<tes 3 etapes>",
+  "pertinence_score": <float 0-1>,
+  "verdict": "<phrase resumant la pertinence>"
+}
+
+[Ce prompt est execute 3 fois en parallele — vote majoritaire final]
+\end{lstlisting}
+
+\subsubsection{Prompt Q\&A — Ancrage sur le contexte (anti-hallucination)}
+
+\begin{lstlisting}[language=, caption={Prompt Q\&A — Reponse ancoree (extrait)}]
+Tu es un assistant pedagogique specialise dans la video suivante :
+Titre : {video_title}
+
+Tu as acces a :
+- La transcription horodatee de la video
+- Les {n} commentaires les mieux notes par la communaute
+- La description de la video
+
+REGLE ABSOLUE : reponds UNIQUEMENT en te basant sur ces sources.
+Si la reponse n'est pas dans les sources, dis exactement :
+"Je ne trouve pas d'information sur ce sujet dans cette video."
+
+Ne suppose pas. N'invente pas. Ne generalise pas.
+
+Question : {question}
+\end{lstlisting}
+
+\subsubsection{Prompt QCM — Citation source obligatoire}
+
+\begin{lstlisting}[language=, caption={Prompt QCM — Generation de quiz (extrait)}]
+Genere {n} questions QCM basees UNIQUEMENT sur la transcription
+de la video "{video_title}".
+
+Pour chaque question :
+- 4 choix possibles (A, B, C, D)
+- 1 seule bonne reponse
+- Une explication qui cite le passage exact de la transcription
+- La source horodatee (ex: "00:03:42 — ...")
+
+INTERDIT : inventer un fait non present dans la transcription.
+INTERDIT : poser des questions de culture generale.
+
+Format JSON attendu : { "questions": [ ... ] }
+\end{lstlisting}
+
+\subsection{Tools et Function Calling}
+\label{sec:tools}
+
+Les \textit{tools} (ou \textit{fonctions}) permettent au LLM d'appeler des
+modules Python déterministes pendant son raisonnement. Cette approche,
+standardisée par OpenAI Function Calling~\cite{brown2020gpt3}, est au cœur
+de l'architecture générative de notre système : elle découple la logique
+métier (calculs déterministes, accès aux données) du raisonnement LLM.
+
+\subsubsection{Principe du Function Calling dans le pipeline}
+
+\begin{center}
+\begin{tikzpicture}[
+  box/.style={rectangle, rounded corners=4pt, draw=blue!50!black,
+              fill=blue!8, minimum width=3.2cm, minimum height=0.7cm,
+              font=\small, text centered},
+  tool/.style={rectangle, rounded corners=4pt, draw=orange!70!black,
+               fill=orange!10, minimum width=3.2cm, minimum height=0.7cm,
+               font=\small, text centered},
+  arr/.style={-{Stealth[length=4pt]}, thick},
+  node distance=0.5cm and 1.2cm,
+]
+  \node[box] (prompt) {Prompt + données};
+  \node[box, right=of prompt] (llm) {LLM (GPT-4o-mini)};
+  \node[tool, right=of llm] (tool) {Tool Python};
+  \node[box, below=of llm] (result) {Résultat JSON};
+
+  \draw[arr] (prompt) -- (llm) node[midway, above, font=\tiny] {invoke};
+  \draw[arr] (llm) -- (tool) node[midway, above, font=\tiny] {tool\_call};
+  \draw[arr] (tool) -- (llm) node[midway, right, font=\tiny] {tool\_result};
+  \draw[arr] (llm) -- (result) node[midway, right, font=\tiny] {réponse finale};
+\end{tikzpicture}
+\end{center}
+
+\subsubsection{Catalogue des tools par agent}
+
+\begin{center}
+\small
+\begin{tabular}{p{1.4cm}p{2.8cm}p{3.2cm}p{3.8cm}}
+\toprule
+\textbf{Agent} & \textbf{Tool} & \textbf{Paramètres} & \textbf{Rôle} \\
+\midrule
+A3 & \texttt{compute\_vader} & \texttt{texts: list[str]} &
+  Calcule les scores VADER (lexical) pour ancrer le raisonnement LLM \\
+A4 & \texttt{compute\_text\_stats} & \texttt{texts: list[str]} &
+  Longueur, diversité lexicale, comptage connecteurs argumentatifs \\
+A4 & \texttt{get\_top\_liked} & \texttt{comments, n: int} &
+  Retourne les $n$ commentaires les plus likés (engagement réel) \\
+A5 & \texttt{svm\_spam\_detector} & \texttt{text: str} &
+  Détecte le spam par regex (URL, mots-clés promo) + score heuristique $[0{,}1]$ ;
+  déclenche le CoT LLM uniquement si confiance $< 0{,}75$ \\
+A5 & \texttt{count\_repeated\_chars} & \texttt{text: str} &
+  Détecte les patterns bots : répétitions de caractères, caps ratio $> 60\,\%$,
+  copié-collé ; \texttt{is\_bot\_suspect=True} si $\geq 2$ signaux \\
+A7 & \texttt{compute\_keyword\_overlap} & \texttt{topic, texts} &
+  Recouvrement TF-IDF entre topic et corpus de commentaires \\
+Q\&A & \texttt{retrieve\_context} & \texttt{question, video\_id} &
+  Récupère les segments de transcription et commentaires pertinents \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsubsection{Stratégie de fallback}
+
+Lorsque le LLM ne parvient pas à appeler correctement un tool (JSON malformé,
+timeout, quota API), le pipeline bascule automatiquement sur le résultat
+du tool Python seul, sans intervention LLM. Ce mécanisme garantit que le
+pipeline ne retourne jamais d'erreur non gérée — c'est ce qui explique le
+taux de fallback de $0\,\%$ observé sur le corpus d'évaluation.
+
+\begin{center}
+\begin{boiteinfo}[title={Avantage de l'architecture Tool Use}]
+Les tools séparent ce que le LLM \textit{doit} faire (raisonner, interpréter,
+synthétiser) de ce qu'un programme \textit{fait mieux} (compter, comparer,
+accéder aux données). Cette séparation réduit les hallucinations, améliore
+la reproductibilité et permet un fallback déterministe fiable.
+\end{boiteinfo}
+\end{center}
 
 \subsection{API REST et streaming}
 

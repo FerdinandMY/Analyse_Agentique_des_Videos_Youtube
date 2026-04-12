@@ -4,12 +4,12 @@
   "data": {
     "spam_ratio": 0.0,
     "offtopic_ratio": 0.0,
-    "reaction_ratio": 25.0,
+    "reaction_ratio": 0.0,
     "toxic_ratio": 0.0,
-    "bot_ratio": 10.0,
-    "noise_ratio": 35.0,
-    "noise_score": 65.0,
-    "rationale": "The comments primarily express appreciation and requests for more content, with a notable presence of reactions and some generic praise.",
+    "bot_ratio": 0.0,
+    "noise_ratio": 0.0,
+    "noise_score": 100.0,
+    "rationale": "All comments are genuine, informative, and relevant to the video content.",
     "reasoning": "",
     "svm_used": true
   }

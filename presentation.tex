@@ -1,0 +1,884 @@
+% ============================================================
+%  PRÉSENTATION BEAMER — YouTube Quality Analyzer
+%  Système Multi-Agents LLM pour l'Analyse de la Qualité
+%  des Commentaires YouTube à Vocation Pédagogique
+% ============================================================
+% Compilation : pdflatex presentation.tex (2 passes)
+% ============================================================
+
+\documentclass[aspectratio=169, 12pt]{beamer}
+
+% ── Thème ────────────────────────────────────────────────────
+\usetheme{Madrid}
+\usecolortheme{whale}
+\usefonttheme{structurebold}
+
+% ── Encodage ─────────────────────────────────────────────────
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{pifont}
+\newcommand{\cmark}{\textcolor{accentgreen}{\ding{51}}}
+\newcommand{\xmark}{\textcolor{red}{\ding{55}}}
+
+% ── Packages ─────────────────────────────────────────────────
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{amsmath}
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta, shapes.geometric, fit, backgrounds}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage{listings}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins}
+
+% ── Couleurs personnalisées ───────────────────────────────────
+\definecolor{ytred}{RGB}{255, 0, 0}
+\definecolor{mainblue}{RGB}{0, 60, 120}
+\definecolor{accentgreen}{RGB}{40, 160, 40}
+\definecolor{accentorange}{RGB}{220, 120, 0}
+\definecolor{lightgray}{RGB}{245, 245, 245}
+
+\setbeamercolor{palette primary}{bg=mainblue, fg=white}
+\setbeamercolor{palette secondary}{bg=mainblue!80, fg=white}
+\setbeamercolor{palette tertiary}{bg=mainblue!60, fg=white}
+\setbeamercolor{structure}{fg=mainblue}
+\setbeamercolor{block title}{bg=mainblue, fg=white}
+\setbeamercolor{block body}{bg=lightgray}
+\setbeamercolor{alertblock title}{bg=ytred!80!black, fg=white}
+
+% ── Listings (code) ──────────────────────────────────────────
+\lstset{
+  basicstyle=\ttfamily\tiny,
+  breaklines=true,
+  backgroundcolor=\color{lightgray},
+  frame=single,
+  showstringspaces=false,
+}
+
+% ── Navigation symbols ───────────────────────────────────────
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}{%
+  \begin{beamercolorbox}[wd=\paperwidth, ht=2.5ex, dp=1ex,
+                         leftskip=0.4cm, rightskip=0.4cm]{palette primary}%
+    \usebeamerfont{author in head/foot}%
+    \insertshortauthor\hfill
+    \insertshorttitle\hfill
+    \insertframenumber\,/\,\inserttotalframenumber%
+  \end{beamercolorbox}%
+}
+
+% ── Informations ─────────────────────────────────────────────
+\title[YouTube Quality Analyzer]{YouTube Quality Analyzer}
+\subtitle{Système Multi-Agents LLM pour l'Analyse\\
+          de la Qualité des Commentaires Pédagogiques}
+\author[MASSO YETNA · MOUKODI · WATAT]{
+  \textbf{MASSO YETNA} Ferdinand Hervé \\[0.2em]
+  \textbf{MOUKODI} Claudia Lauren Julienne \\[0.2em]
+  \textbf{WATAT YONDEP} Stive Kevin
+}
+\institute{}
+\date{Avril 2026}
+
+% ═══════════════════════════════════════════════════════════════
+\begin{document}
+% ═══════════════════════════════════════════════════════════════
+
+% ── SLIDE 1 — Page de titre ──────────────────────────────────
+\begin{frame}[plain]
+
+  %% ── Bandeau titre ────────────────────────────────────────
+  \begin{beamercolorbox}[wd=\paperwidth, ht=3.0cm, dp=0.4cm, center]{palette primary}
+    \vspace{0.45cm}
+    {\LARGE\textbf{YouTube Quality Analyzer}}\\[0.3em]
+    {\small\itshape Système Multi-Agents LLM pour l'Analyse\\
+    de la Qualité des Commentaires Pédagogiques}
+  \end{beamercolorbox}
+
+  \vspace{0.35cm}
+
+  %% ── Auteurs + framework ──────────────────────────────────
+  \begin{columns}[T]
+    \begin{column}{0.54\textwidth}
+      \begin{center}
+        \small
+        \textbf{MASSO YETNA} Ferdinand Hervé\\[0.18em]
+        \textbf{MOUKODI} Claudia Lauren Julienne\\[0.18em]
+        \textbf{WATAT YONDEP} Stive Kevin\\[0.35em]
+        \textcolor{gray}{\textit{Avril 2026}}
+      \end{center}
+    \end{column}
+    \begin{column}{0.43\textwidth}
+      \begin{center}
+        \scriptsize\textcolor{gray}{\textit{Projet de recherche appliquée\\
+        en intelligence artificielle pédagogique}}\\[0.35em]
+        \scriptsize\textbf{Framework :}\\[0.1em]
+        \scriptsize LangGraph · FastAPI\\
+        GPT-4o-mini · YouTube Data API v3
+      \end{center}
+    \end{column}
+  \end{columns}
+
+  \vspace{0.25cm}
+  {\color{mainblue!30}\rule{\linewidth}{0.4pt}}
+  \vspace{0.15cm}
+
+  %% ── Logos ────────────────────────────────────────────────
+  \begin{center}
+    \begin{tabular}{@{\hspace{0.3cm}}c@{\hspace{0.5cm}}c@{\hspace{0.5cm}}c@{\hspace{0.5cm}}c@{\hspace{0.5cm}}c@{\hspace{0.5cm}}c@{\hspace{0.3cm}}}
+      \IfFileExists{logo_cnrs.png}{\includegraphics[height=0.85cm]{logo_cnrs.png}}{} &
+      \IfFileExists{logo_uca.png}{\includegraphics[height=0.85cm]{logo_uca.png}}{} &
+      \IfFileExists{logo_ummisco.png}{\includegraphics[height=0.85cm]{logo_ummisco.png}}{} &
+      \IfFileExists{logo_inp.png}{\includegraphics[height=0.85cm]{logo_inp.png}}{} &
+      \IfFileExists{logo_enspy.png}{\includegraphics[height=0.85cm]{logo_enspy.png}}{} &
+      \IfFileExists{logo_uy1.png}{\includegraphics[height=0.85cm]{logo_uy1.png}}{}
+    \end{tabular}
+  \end{center}
+
+\end{frame}
+
+% ── SLIDE 2 — Plan ───────────────────────────────────────────
+\begin{frame}{Plan de la présentation}
+  \tableofcontents[hideallsubsections]
+\end{frame}
+
+\section{Le Problème}
+
+% ── SLIDE 3 — Problématique ──────────────────────────────────
+\begin{frame}{Problématique}
+
+  \begin{block}{Contexte}
+    \begin{itemize}
+      \item Des millions de vidéos pédagogiques sur YouTube
+      \item La qualité perçue est \textbf{difficile à mesurer automatiquement}
+      \item Les commentaires = signal riche, massif, non structuré
+    \end{itemize}
+  \end{block}
+
+  \vspace{0.4cm}
+  \begin{alertblock}{Question de recherche}
+    \centering
+    \textit{Un système d'intelligence artificielle peut-il lire\\
+    les commentaires YouTube et en déduire si une vidéo\\
+    vaut la peine d'être regardée pour apprendre ?}
+  \end{alertblock}
+
+\end{frame}
+
+% ── SLIDE — Persona 1 ────────────────────────────────────────
+\begin{frame}{Persona 1 — L'Étudiante}
+  \begin{columns}[T]
+    \begin{column}{0.40\textwidth}
+      \begin{center}
+        \vspace{0.5cm}
+        {\LARGE\textcolor{mainblue}{\textbf{Aminata}}}\\[0.3em]
+        {\large 20 ans · Étudiante}\\[0.2em]
+        \textit{Licence Sciences Économiques}
+      \end{center}
+    \end{column}
+    \begin{column}{0.57\textwidth}
+      \begin{block}{Contexte}
+        \small Utilise YouTube pour compléter ses cours universitaires.
+        Face à des dizaines de vidéos sur le même sujet, elle ne sait
+        pas laquelle choisir.
+      \end{block}
+      \vspace{0.2cm}
+      \begin{alertblock}{Frustration}
+        \small Les likes et les vues ne garantissent pas la qualité
+        pédagogique réelle d'une vidéo.
+      \end{alertblock}
+      \vspace{0.2cm}
+      \begin{exampleblock}{Ce que la solution lui apporte}
+        \small Un score de qualité perçue agrégé lui permet de choisir
+        la meilleure vidéo \textbf{en quelques secondes}, sans lire
+        des dizaines de commentaires.
+      \end{exampleblock}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ── SLIDE — Persona 2 ────────────────────────────────────────
+\begin{frame}{Persona 2 — L'Apprenant Sourd}
+  \begin{columns}[T]
+    \begin{column}{0.40\textwidth}
+      \begin{center}
+        \vspace{0.5cm}
+        {\LARGE\textcolor{mainblue}{\textbf{Théo}}}\\[0.3em]
+        {\large 22 ans · Étudiant}\\[0.2em]
+        \textit{Licence Informatique\\sourd de naissance}
+      \end{center}
+    \end{column}
+    \begin{column}{0.57\textwidth}
+      \begin{block}{Contexte}
+        \small S'appuie exclusivement sur les sous-titres et les visuels
+        pour apprendre via YouTube. Il ne peut pas évaluer la clarté
+        audio d'une vidéo.
+      \end{block}
+      \vspace{0.2cm}
+      \begin{alertblock}{Frustration}
+        \small Aucune métrique YouTube ne reflète la qualité des
+        sous-titres ni l'accessibilité réelle du contenu.
+      \end{alertblock}
+      \vspace{0.2cm}
+      \begin{exampleblock}{Ce que la solution lui apporte}
+        \small Détection des signaux de clarté et de compréhensibilité
+        dans les commentaires — indicateur indirect d'accessibilité.
+      \end{exampleblock}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{Notre Solution}
+
+% ── SLIDE — Extension Chrome (1/4) ───────────────────────────
+\begin{frame}{Extension Chrome — Présentation (1/4)}
+
+  \begin{block}{Qu'est-ce que c'est ?}
+    \normalsize
+    Une extension navigateur \textbf{Chrome MV3} qui s'intègre directement
+    dans l'interface YouTube. L'utilisateur n'a pas besoin de quitter la
+    page vidéo pour obtenir une analyse de qualité des commentaires.
+  \end{block}
+
+  \vspace{0.4cm}
+
+  \begin{block}{Ce qu'elle fait}
+    \begin{itemize}
+      \item Détecte automatiquement l'URL de la vidéo YouTube en cours de visionnage
+      \item Envoie la requête d'analyse vers l'API backend (FastAPI)
+      \item Affiche le \textbf{score de qualité perçue} directement en overlay sur la page
+      \item Présente un résumé sentimental et les thèmes dominants en temps réel
+    \end{itemize}
+  \end{block}
+
+\end{frame}
+
+% ── SLIDE — Extension Chrome (2/4) ───────────────────────────
+\begin{frame}{Extension Chrome — Ce qui est fonctionnel (2/4)}
+
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \begin{block}{Fonctionnalités de base}
+        \begin{itemize}
+          \item Injection de contenu dans la page YouTube
+          \item Communication avec l'API via requêtes HTTP
+          \item Interface d'affichage du score de qualité intégrée
+        \end{itemize}
+      \end{block}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{exampleblock}{Module Q\&A intégré}
+        \small
+        \begin{itemize}
+          \item Pose une question sur la vidéo en cours
+          \item Réponse générée à partir des commentaires et de la transcription
+          \item Résultat affiché directement dans l'overlay
+        \end{itemize}
+      \end{exampleblock}
+    \end{column}
+  \end{columns}
+
+\end{frame}
+
+% ── SLIDE — Extension Chrome (3/4) ───────────────────────────
+\begin{frame}{Extension Chrome — Système de quiz (3/4)}
+
+  \begin{block}{Qu'est-ce que le système de quiz ?}
+    \normalsize
+    Un module intégré à l'extension qui génère automatiquement des
+    \textbf{QCM} à partir du contenu de la vidéo YouTube en cours de
+    visionnage, sans quitter la page.
+  \end{block}
+
+  \vspace{0.4cm}
+
+  \begin{exampleblock}{Fonctionnement}
+    \begin{itemize}
+      \item Génération de questions à choix multiples à partir de la transcription et des commentaires
+      \item Chaque question est \textbf{horodatée} avec une citation source obligatoire
+      \item Correction immédiate — l'apprenant voit sa réponse validée ou corrigée en temps réel
+      \item Permet de tester la compréhension \textbf{directement dans l'interface YouTube}
+    \end{itemize}
+  \end{exampleblock}
+
+\end{frame}
+
+% ── SLIDE — Extension Chrome (4/4) ───────────────────────────
+\begin{frame}{Extension Chrome — Garantie qualité (4/4)}
+
+  \begin{alertblock}{Garantie anti-hallucination}
+    \normalsize
+    Chaque question est ancrée sur une \textbf{citation horodatée} extraite
+    du contenu réel de la vidéo — le LLM ne peut pas inventer de réponse
+    hors source.
+  \end{alertblock}
+
+  \vspace{0.5cm}
+
+  \begin{block}{Pourquoi c'est important ?}
+    \begin{itemize}
+      \item Les réponses générées restent \textbf{vérifiables} par l'apprenant
+      \item La citation horodatée permet de \textbf{retrouver le passage} dans la vidéo
+      \item Aucune information inventée ne peut passer dans le quiz
+      \item Renforce la \textbf{confiance} de l'utilisateur dans le système
+    \end{itemize}
+  \end{block}
+
+\end{frame}
+
+% ── SLIDE — API REST (1/2) ────────────────────────────────────
+\begin{frame}{API REST — Architecture \& Utilité (1/2)}
+
+  \begin{block}{Architecture FastAPI}
+    \begin{itemize}
+      \item Endpoint principal \texttt{POST /analyze} — déclenche le pipeline complet
+      \item \textbf{Streaming SSE (Server-Sent Events)} — les résultats arrivent progressivement
+      \item Réponse initiale en \textbf{$\approx$8 secondes} sur 300 commentaires
+      \item Enrichissement du corpus complet en arrière-plan (thread daemon)
+    \end{itemize}
+  \end{block}
+
+  \vspace{0.4cm}
+
+  \begin{block}{Utilité}
+    \normalsize
+    Tout client — extension Chrome, application web, script Python — peut
+    appeler l'API pour obtenir un \textbf{score de qualité perçue} sur
+    n'importe quelle vidéo YouTube pédagogique, sans connaître les détails
+    du pipeline interne.
+  \end{block}
+
+\end{frame}
+
+% ── SLIDE — API REST (2/2) ────────────────────────────────────
+\begin{frame}[fragile]{API REST — Flux temps réel (2/2)}
+
+  \begin{block}{Comment fonctionne le Streaming SSE ?}
+    \normalsize
+    Le client reçoit les événements au fur et à mesure que chaque agent
+    termine son traitement — sans attendre la fin du pipeline complet.
+  \end{block}
+
+  \vspace{0.3cm}
+
+  \begin{exampleblock}{Exemple de flux SSE reçu par le client}
+    \lstset{basicstyle=\ttfamily\small}
+    \begin{lstlisting}
+t+0s   event: started       -> pipeline lancé
+t+2s   event: collected     -> commentaires récupérés
+t+3s   event: preprocessed  -> nettoyage terminé
+t+6s   event: scores        -> scores agents disponibles
+t+7s   event: global        -> score global calculé
+t+8s   event: final         -> score final avec pertinence
+t+8s   event: done          -> pipeline terminé
+    \end{lstlisting}
+  \end{exampleblock}
+
+\end{frame}
+
+% ── SLIDE — Collecte de données (1/2) ────────────────────────
+\begin{frame}{Projet de collecte de données — Présentation (1/2)}
+
+  \begin{block}{Un projet open source dédié}
+    \normalsize
+    Avant de construire le système d'analyse, nous avons conçu un
+    \textbf{pipeline de collecte automatique} de commentaires YouTube
+    via la \textbf{YouTube Data API v3}. Ce projet est indépendant
+    et réutilisable par la communauté.\\[0.5em]
+    \textbf{Code source disponible :}\\[0.2em]
+    \href{https://github.com/FerdinandMY/data_collection_youtube}
+      {\texttt{github.com/FerdinandMY/data\_collection\_youtube}}
+  \end{block}
+
+  \vspace{0.4cm}
+
+  \begin{exampleblock}{Corpus produit}
+    \centering
+    \begin{tabular}{lc}
+      \toprule
+      \textbf{Métrique} & \textbf{Valeur} \\
+      \midrule
+      Commentaires collectés & \textbf{42\,860} \\
+      Vidéos pédagogiques & \textbf{591} \\
+      Langues & FR 65\% · EN 35\% \\
+      Licence & MIT (open source) \\
+      \bottomrule
+    \end{tabular}
+  \end{exampleblock}
+
+\end{frame}
+
+% ── SLIDE — Collecte de données (2/2) ────────────────────────
+\begin{frame}{Projet de collecte de données — Fonctionnement (2/2)}
+
+  \begin{block}{Comment le pipeline collecte les données ?}
+    \begin{itemize}
+      \item Recherche automatique de vidéos par \textbf{mots-clés pédagogiques}
+      \item Filtrage par langue, durée minimale et niveau d'engagement
+      \item Récupération des commentaires via pagination de l'API YouTube
+      \item Export structuré en \textbf{CSV} (métadonnées vidéo + commentaires)
+      \item Gestion automatique des \textbf{quotas API} (10\,000 unités/jour)
+    \end{itemize}
+  \end{block}
+
+  \vspace{0.4cm}
+
+  \begin{block}{Pourquoi ce projet est important ?}
+    \normalsize
+    Il constitue la \textbf{première base de données publique} de commentaires
+    YouTube pédagogiques en français, directement utilisable pour entraîner
+    ou évaluer d'autres systèmes d'analyse de qualité.
+  \end{block}
+
+\end{frame}
+
+\section{Architecture du Système}
+
+% ── SLIDE 4a — Architecture Pipeline ─────────────────────────
+\begin{frame}{Architecture du Système — Pipeline d'Analyse}
+\begin{center}
+  \IfFileExists{architecture_pipeline.png}{%
+    \includegraphics[width=0.92\textwidth, height=0.82\textheight,
+                     keepaspectratio]{architecture_pipeline.png}%
+  }{%
+    \textcolor{gray}{\textit{[Image non trouvée : placer \texttt{architecture\_pipeline.png}
+    dans le dossier du projet]}}%
+  }
+\end{center}
+\end{frame}
+
+% ── SLIDE 4b — Outils LangChain ───────────────────────────────
+\begin{frame}{Architecture du Système — Outils \& Couches Transverses}
+\begin{center}
+  \IfFileExists{architecture_tools.png}{%
+    \includegraphics[width=0.92\textwidth, height=0.82\textheight,
+                     keepaspectratio]{architecture_tools.png}%
+  }{%
+    \textcolor{gray}{\textit{[Image non trouvée : placer \texttt{architecture\_tools.png}
+    dans le dossier du projet]}}%
+  }
+\end{center}
+\end{frame}
+
+% ── SLIDE 6 — IA Générative : Prompts ────────────────────────
+\begin{frame}{IA Générative — Ingénierie des prompts}
+
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \begin{block}{Structure de chaque prompt}
+        \begin{enumerate}
+          \item \textbf{Rôle} — identité de l'agent
+          \item \textbf{Contexte} — données à analyser
+          \item \textbf{Raisonnement} — CoT / ToT / SC
+          \item \textbf{Format} — JSON strict
+        \end{enumerate}
+      \end{block}
+
+      \vspace{0.1cm}
+      \begin{alertblock}{Anti-hallucination}
+        \small
+        \begin{itemize}\setlength{\itemsep}{1pt}
+          \item Q\&A : répondre \textbf{UNIQUEMENT} sur les sources
+          \item QCM : citation horodatée \textbf{obligatoire}
+          \item A7 : vote majoritaire (3 passes)
+        \end{itemize}
+      \end{alertblock}
+    \end{column}
+
+    \begin{column}{0.48\textwidth}
+      \begin{block}{Techniques de raisonnement}
+        \small
+        \textbf{Chain-of-Thought (A3)} \\
+        \textit{Thought 1 : VADER → Thought 2 : marqueurs → Conclusion}
+        \vspace{0.15cm}
+
+        \textbf{Tree of Thoughts (A4)} \\
+        \textit{Br. 1 : profondeur · Br. 2 : lexique · Br. 3 : épistémique}
+        \vspace{0.15cm}
+
+        \textbf{Self-Consistency (A7)} \\
+        \textit{3 évaluations parallèles $\rightarrow$ vote majoritaire}
+      \end{block}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ── SLIDE — Techniques de raisonnement ──────────────────────
+\begin{frame}{Techniques de raisonnement — ReAct, CoT, ToT}
+
+  \begin{columns}[T]
+
+    \begin{column}{0.32\textwidth}
+      \begin{block}{ReAct — Agent A3}
+        \small\textbf{Sentiment}\\[0.3em]
+        \scriptsize
+        Cycle itératif :\\
+        \textbf{Thought} → \textbf{Action} → \textbf{Obs.} → \textbf{Result}\\[0.4em]
+        Étapes réelles :
+        \begin{enumerate}\setlength{\itemsep}{1pt}
+          \item Thought 1 — score VADER
+          \item Thought 2 — correction sarcastique
+          \item Thought 3 — tonalité finale
+          \item Result — JSON
+        \end{enumerate}
+        \vspace{0.2cm}
+        \textcolor{gray}{\tiny Tools appelés \textbf{avant} le LLM :\\
+        \texttt{vader\_sentiment} · \texttt{detect\_sarcasm\_markers}}
+      \end{block}
+    \end{column}
+
+    \begin{column}{0.32\textwidth}
+      \begin{block}{CoT + ToT conditionnel — A4}
+        \small\textbf{Discours}\\[0.3em]
+        \scriptsize
+        \textbf{CoT} (toujours) :\\
+        Thought 1 info → Thought 2 arg.\\
+        → Thought 3 construct. → Result\\[0.4em]
+        \textbf{ToT} si score ambigu $[0.35, 0.65]$ :\\
+        \begin{itemize}\setlength{\itemsep}{1pt}
+          \item Br. 1 — profondeur du contenu
+          \item Br. 2 — qualité de la discussion
+          \item Br. 3 — valeur épistémique
+          \item Synthèse des 3 branches
+        \end{itemize}
+        \textcolor{gray}{\tiny ToT remplace CoT si non-fallback}
+      \end{block}
+    \end{column}
+
+    \begin{column}{0.32\textwidth}
+      \begin{block}{ToT + Self-Consistency — A7}
+        \small\textbf{Topic Matcher}\\[0.3em]
+        \scriptsize
+        \textbf{ToT systématique} (3 branches) :\\
+        \begin{itemize}\setlength{\itemsep}{1pt}
+          \item Br. 1 — alignement contenu
+          \item Br. 2 — niveau audience
+          \item Br. 3 — valeur pédagogique
+        \end{itemize}
+        \vspace{0.2cm}
+        \textbf{Self-Consistency} (3 runs $\parallel$) :\\
+        \texttt{ThreadPoolExecutor} · vote\\
+        majoritaire label + moyenne score\\
+        Si consensus $< 2/3$ → flag\\
+        \texttt{low\_consensus} dans rapport
+      \end{block}
+    \end{column}
+
+  \end{columns}
+
+  \vspace{0.2cm}
+  \begin{center}
+    \scriptsize
+    \textcolor{gray}{A5 utilise un \textbf{CoT léger} uniquement si confiance heuristique $< 0.75$ —
+    sinon résultat heuristique direct sans LLM.}
+  \end{center}
+
+\end{frame}
+
+% ── SLIDE 7 — Tools & Function Calling ───────────────────────
+\begin{frame}{Tools \& Function Calling}
+
+  \begin{columns}[T]
+    \begin{column}{0.44\textwidth}
+      \begin{center}
+      \begin{tikzpicture}[
+        box/.style={rectangle, rounded corners=3pt, draw=mainblue,
+                    fill=mainblue!10, minimum width=2.4cm, minimum height=0.55cm,
+                    font=\scriptsize, text centered},
+        tool/.style={rectangle, rounded corners=3pt, draw=accentorange,
+                     fill=accentorange!10, minimum width=2.4cm, minimum height=0.55cm,
+                     font=\scriptsize, text centered},
+        arr/.style={-{Stealth[length=3pt]}, thick},
+        node distance=0.35cm and 0.8cm,
+      ]
+        \node[box] (p) {Prompt + données};
+        \node[box, below=0.5cm of p] (llm) {LLM GPT-4o-mini};
+        \node[tool, right=0.9cm of llm] (t) {Tool Python};
+        \node[box, below=0.5cm of llm] (r) {Résultat JSON};
+        \draw[arr] (p) -- (llm) node[midway,right,font=\tiny]{invoke};
+        \draw[arr] (llm) -- (t) node[midway,above,font=\tiny]{tool\_call};
+        \draw[arr] (t) -- (r) node[midway,right,font=\tiny]{résultat};
+        \draw[arr] (llm) -- (r);
+      \end{tikzpicture}
+      \end{center}
+    \end{column}
+
+    \begin{column}{0.54\textwidth}
+      \scriptsize
+      \begin{tabular}{@{}lp{2.9cm}@{}}
+        \toprule
+        \textbf{Tool} & \textbf{Rôle} \\
+        \midrule
+        \texttt{compute\_vader} & Scores VADER — ancrage A3 \\
+        \texttt{compute\_text\_stats} & Diversité lexicale (A4) \\
+        \texttt{get\_top\_liked} & Top commentaires par likes (A4) \\
+        \texttt{svm\_spam\_detector} & Heuristique spam (A5) \\
+        \texttt{count\_repeated\_chars} & Détection bots (A5) \\
+        \texttt{retrieve\_context} & Transcription + top comments (Q\&A) \\
+        \bottomrule
+      \end{tabular}
+
+      \vspace{0.15cm}
+      \begin{block}{\small Avantage}
+        \scriptsize LLM = raisonnement · Tool = calcul déterministe\\
+        $\rightarrow$ fallback si LLM indisponible
+      \end{block}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% (suite Notre Solution)
+
+\section{Réalisations}
+
+% ── SLIDE — Formules de scoring ──────────────────────────────
+\begin{frame}{Formules de scoring}
+
+  \begin{block}{Score Global — 3 dimensions pondérées}
+    \begin{equation*}
+      \text{Score\_Global} = \underbrace{0{,}35}_{\text{Sentiment}} \times S
+                           + \underbrace{0{,}40}_{\text{Discours}} \times D
+                           + \underbrace{0{,}25}_{\text{Bruit}} \times N
+    \end{equation*}
+  \end{block}
+
+  \vspace{0.3cm}
+
+  \begin{block}{Score Final — pertinence thématique}
+    \begin{equation*}
+      \text{Score\_Final} = 0{,}60 \times \text{Score\_Global}
+                          + 0{,}40 \times \text{Score\_Pertinence}
+    \end{equation*}
+  \end{block}
+
+  \vspace{0.3cm}
+  \begin{alertblock}{Interprétation}
+    \small
+    \begin{itemize}
+      \item $S$ = score sentiment · $D$ = score discours · $N$ = score bruit inversé
+      \item \texttt{Score\_Pertinence} calculé par A7 (Topic Matcher) via Self-Consistency
+      \item Score Final $\in [0, 100]$ — seuil de qualité pédagogique : $\geq 60$
+    \end{itemize}
+  \end{alertblock}
+
+\end{frame}
+
+% ── SLIDE — Justification des poids ──────────────────────────
+\begin{frame}{Justification des poids — Micro-ablation}
+
+  \begin{columns}[T]
+    \begin{column}{0.54\textwidth}
+      \begin{block}{Étude d'ablation sur les pondérations}
+        \centering\small
+        \begin{tabular}{lc}
+          \toprule
+          Configuration & Pearson $r$ \\
+          \midrule
+          Uniforme (0,33 / 0,33 / 0,33) & 0,8421 \\
+          Sentiment dominant & 0,8104 \\
+          \textbf{Discours dominant (retenu)} & \textbf{0,8867} \\
+          Bruit dominant & 0,7932 \\
+          \bottomrule
+        \end{tabular}
+      \end{block}
+    \end{column}
+    \begin{column}{0.43\textwidth}
+      \begin{alertblock}{Pourquoi $w_D = 0{,}40$ ?}
+        \small La qualité du discours — connecteurs logiques,
+        diversité lexicale, marqueurs argumentatifs — est le
+        \textbf{meilleur prédicteur empirique} de la valeur
+        pédagogique perçue.
+      \end{alertblock}
+    \end{column}
+  \end{columns}
+
+\end{frame}
+
+\section{Éthique}
+
+% ── SLIDE — Éthique (1/2) ────────────────────────────────────
+\begin{frame}{Considérations éthiques (1/2) — Données \& Vie privée}
+
+  \begin{block}{Données collectées}
+    \begin{itemize}
+      \item Commentaires \textbf{publics} uniquement — aucune donnée privée
+      \item Collecte via YouTube Data API v3 dans le respect des
+            \textbf{conditions d'utilisation} Google
+      \item Aucun identifiant personnel stocké — les auteurs de
+            commentaires ne sont pas tracés
+      \item Dataset publié sous licence \textbf{MIT} (open source)
+    \end{itemize}
+  \end{block}
+
+  \vspace{0.4cm}
+  \begin{exampleblock}{Mesures prises pour limiter les biais}
+    \small
+    Annotation croisée inter-modèles (GPT-4o-mini $\times$ Llama-3.1-70B,
+    $\kappa = 0{,}779$) pour limiter le biais auto-référentiel — niveau 3
+    (annotation humaine) identifié comme perspective prioritaire.\\[0.3em]
+    Corpus majoritairement FR/EN — résultats non généralisables à d'autres
+    langues sans adaptation spécifique.
+  \end{exampleblock}
+
+\end{frame}
+
+% ── SLIDE — Éthique (2/2) ────────────────────────────────────
+\begin{frame}{Considérations éthiques (2/2) — IA \& Usage pédagogique}
+
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \begin{block}{Transparence du système}
+        \begin{itemize}
+          \item Le score est \textbf{explicable} : chaque dimension
+                (sentiment, discours, bruit) est visible dans le rapport
+          \item Les citations horodatées du quiz permettent à l'apprenant
+                de \textbf{vérifier} chaque réponse générée
+          \item L'utilisateur est informé que le score est basé sur
+                les \textbf{commentaires}, pas sur le contenu vidéo direct
+        \end{itemize}
+      \end{block}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{alertblock}{Risques identifiés}
+        \begin{itemize}
+          \item Un score bas peut \textbf{décourager} l'accès à une vidéo
+                de qualité sous-commentée
+          \item Le système ne remplace pas le \textbf{jugement humain}
+                d'un enseignant
+          \item Hallucinations résiduelles possibles malgré les
+                5 niveaux de garde
+        \end{itemize}
+      \end{alertblock}
+    \end{column}
+  \end{columns}
+
+  \vspace{0.3cm}
+  \begin{block}{Engagement}
+    \small
+    Le système est conçu comme un \textbf{outil d'aide à la décision},
+    non comme un arbitre unique. L'apprenant reste acteur de son parcours —
+    le score est un signal parmi d'autres, pas une vérité absolue.
+  \end{block}
+
+\end{frame}
+
+% ── SLIDE — Conclusion ───────────────────────────────────────
+\begin{frame}{Conclusion}
+
+  \begin{block}{Bilan}
+    \begin{itemize}
+      \item Pipeline multi-agents \textbf{opérationnel} et évalué sur corpus réel
+      \item 4 hypothèses validées avec \textbf{marges significatives}
+            (Pearson $r = 0{,}8867$, F1-macro $= 0{,}9652$, fallback $= 0\,\%$)
+      \item Modules pédagogiques Q\&A et QCM \textbf{intégrés} à l'extension Chrome
+      \item Architecture \textbf{extensible} et open source (MIT)
+    \end{itemize}
+  \end{block}
+
+  \vspace{0.4cm}
+
+  \begin{center}
+    {\Large\textbf{\textcolor{mainblue}{Merci !}}}\\[0.4em]
+    \rule{0.5\linewidth}{0.4pt}\\[0.3em]
+    \small
+    \textbf{Contact :}
+    MASSO YETNA Ferdinand Hervé ·
+    MOUKODI Claudia Lauren Julienne ·
+    WATAT YONDEP Stive Kevin\\[0.2em]
+    \scriptsize\textit{ENSPY / Université de Yaoundé I — Avril 2026}
+  \end{center}
+
+\end{frame}
+
+% ── SLIDE — Perspectives ─────────────────────────────────────
+\begin{frame}{Perspectives \& Pistes d'amélioration}
+
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \begin{block}{Amélioration du système}
+        \begin{itemize}\setlength{\itemsep}{3pt}
+          \item Annotation humaine (niveau 3) — réduire le biais
+                auto-référentiel LLM
+          \item Extension corpus au-delà de 100 commentaires annotés
+                (contrainte GPU T4)
+          \item Améliorer le rappel A5 : 12\,\% $\to$ 40\,\%+
+                pour détecter le bruit subtil
+          \item Déploiement cloud stable (Railway / Render)
+        \end{itemize}
+      \end{block}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{exampleblock}{Généralisation \& Accessibilité}
+        \begin{itemize}\setlength{\itemsep}{3pt}
+          \item Généralisation au-delà du domaine STEM
+                (langues, sciences humaines)
+          \item Accessibilité : détection explicite des signaux
+                sous-titres pour les apprenants sourds
+          \item Extension Chrome MV3 complète
+                + publication Chrome Web Store
+          \item \textcolor{accentgreen}{\textbf{Acquis :}} annotation
+                croisée niveau 2 ($\kappa=0{,}779$) \cmark
+        \end{itemize}
+      \end{exampleblock}
+    \end{column}
+  \end{columns}
+
+\end{frame}
+
+% ── SLIDE 16 — Références ────────────────────────────────────
+\section*{Références}
+\begin{frame}[allowframebreaks]{Références bibliographiques}
+  \footnotesize
+  \setlength{\parskip}{4pt}
+  \begin{thebibliography}{99}
+
+    \bibitem{hutto2014}
+      \textbf{Hutto, C. \& Gilbert, E.} (2014).
+      VADER: A Parsimonious Rule-based Model for Sentiment Analysis of
+      Social Media Text.
+      \textit{Proc. ICWSM}, 8, 216--225.
+
+    \bibitem{wei2022}
+      \textbf{Wei, J. et al.} (2022).
+      Chain-of-Thought Prompting Elicits Reasoning in Large Language Models.
+      \textit{NeurIPS 2022}.
+
+    \bibitem{yao2023}
+      \textbf{Yao, S. et al.} (2023).
+      Tree of Thoughts: Deliberate Problem Solving with Large Language Models.
+      \textit{NeurIPS 2023}.
+
+    \bibitem{wang2023}
+      \textbf{Wang, X. et al.} (2023).
+      Self-Consistency Improves Chain of Thought Reasoning in LLMs.
+      \textit{ICLR 2023}.
+
+    \bibitem{park2016}
+      \textbf{Park, S.} (2016).
+      Learning Effectiveness of YouTube Videos as Online Learning Resources.
+      \textit{Interdisciplinary Journal of E-Learning \& Learning Objects},
+      12, 327--345.
+
+    \bibitem{cohen1960}
+      \textbf{Cohen, J.} (1960).
+      A coefficient of agreement for nominal scales.
+      \textit{Educational and Psychological Measurement}, 20(1), 37--46.
+
+    \bibitem{langgraph2024}
+      \textbf{LangChain AI.} (2024).
+      LangGraph: Building Stateful, Multi-Actor Applications with LLMs.
+      \texttt{https://github.com/langchain-ai/langgraph}.
+
+    \bibitem{openai2024}
+      \textbf{OpenAI.} (2024).
+      GPT-4o Technical Report.
+      \texttt{https://openai.com/research/gpt-4o}.
+
+  \end{thebibliography}
+\end{frame}
+
+% ═══════════════════════════════════════════════════════════════
+\end{document}
